@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.4.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\BookFast.Security\BookFast.Security.csproj" />
+    <ProjectReference Include="..\BookFast.SeedWork\BookFast.SeedWork.csproj" />
+  </ItemGroup>
+
+</Project>

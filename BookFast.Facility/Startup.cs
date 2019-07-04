@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace BookFast.Facility
 {
@@ -71,19 +70,17 @@ namespace BookFast.Facility
 
         private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<AuthenticationOptions>(configuration.GetSection("Authentication:AzureAd"));
-            var serviceProvider = services.BuildServiceProvider();
-            var authOptions = serviceProvider.GetService<IOptions<AuthenticationOptions>>();
+            var authOptions = configuration.GetSection("Authentication:AzureAd").Get<AuthenticationOptions>();
 
             services.AddAuthentication(Constants.OrganizationalAuthenticationScheme)
                 .AddJwtBearer(Constants.OrganizationalAuthenticationScheme, options =>
                 {
-                    options.Authority = authOptions.Value.Authority;
-                    options.Audience = authOptions.Value.Audience;
+                    options.Authority = authOptions.Authority;
+                    options.Audience = authOptions.Audience;
 
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
-                        ValidIssuers = authOptions.Value.ValidIssuersAsArray
+                        ValidIssuers = authOptions.ValidIssuersAsArray
                     };
                 });
         }

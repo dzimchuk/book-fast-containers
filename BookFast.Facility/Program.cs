@@ -12,6 +12,7 @@ namespace BookFast.Facility
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseDefaultServiceProvider(options => options.ValidateScopes = false) // scoped services (e.g. DbContext) cannot be used in singletons (e.g. IHostedService)
                 .UseStartup<Startup>();
     }
 }

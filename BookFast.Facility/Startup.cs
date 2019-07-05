@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using BookFast.Api.Authentication;
 using BookFast.Facility.Integration;
 using BookFast.ReliableEvents;
-using BookFast.Security;
 using BookFast.SeedWork;
 using BookFast.ServiceBus;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +24,8 @@ namespace BookFast.Facility
         
         public void ConfigureServices(IServiceCollection services)
         {
-            AddAuthentication(services, configuration);
+            services.AddAuthentication(configuration);
+            services.AddAuthorizationPolicies();
 
             services.AddSecurityContext();
             services.AddAndConfigureMvc();
@@ -38,8 +37,6 @@ namespace BookFast.Facility
 
             services.AddIntegrationEventPublisher(configuration);
             services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
-
-            RegisterAuthorizationPolicies(services);
 
             services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.Facility.xml");
 
@@ -68,35 +65,6 @@ namespace BookFast.Facility
             app.UseMvc();
 
             app.UseSwagger(apiTitle, apiVersion);
-        }
-
-        private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
-        {
-            var authOptions = configuration.GetSection("Authentication:AzureAd").Get<AuthenticationOptions>();
-
-            services.AddAuthentication(Constants.OrganizationalAuthenticationScheme)
-                .AddJwtBearer(Constants.OrganizationalAuthenticationScheme, options =>
-                {
-                    options.Authority = authOptions.Authority;
-                    options.Audience = authOptions.Audience;
-
-                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                    {
-                        ValidIssuers = authOptions.ValidIssuersAsArray
-                    };
-                });
-        }
-
-        private static void RegisterAuthorizationPolicies(IServiceCollection services)
-        {
-            services.AddAuthorization(
-                options =>
-                {
-                    options.AddPolicy("Facility.Write", config =>
-                    {
-                        config.RequireRole(InteractorRole.FacilityProvider.ToString(), InteractorRole.ImporterProcess.ToString());
-                    });
-                });
         }
     }
 }

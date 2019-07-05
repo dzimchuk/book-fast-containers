@@ -2,6 +2,7 @@
 using BookFast.Facility.Domain.Exceptions;
 using BookFast.Facility.QueryStack;
 using BookFast.Facility.QueryStack.Representations;
+using BookFast.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BookFast.Facility.Controllers
 {
-    [Authorize(Policy = "Facility.Write")]
+    [Authorize(Policy = AuthorizationPolicies.FacilityWrite)]
     public class FacilityController : Controller
     {
         private readonly IFacilityQueryDataSource queryDataSource;

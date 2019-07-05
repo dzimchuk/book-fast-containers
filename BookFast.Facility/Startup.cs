@@ -31,6 +31,8 @@ namespace BookFast.Facility
             services.AddSecurityContext();
             services.AddAndConfigureMvc();
 
+            services.AddApplicationInsightsTelemetry(configuration);
+
             services.AddCommandContext();
             services.AddReliableEventsDispatcher(configuration, new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
 

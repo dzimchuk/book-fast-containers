@@ -1,4 +1,5 @@
-﻿using BookFast.Api.Formatters;
+﻿using BookFast.Api.Authentication;
+using BookFast.Api.Formatters;
 using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
@@ -32,6 +33,35 @@ namespace Microsoft.Extensions.DependencyInjection
             });
         }
 
+        public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var authOptions = configuration.GetSection("Authentication:AzureAd").Get<AuthenticationOptions>();
+
+            services.AddAuthentication(Constants.OrganizationalAuthenticationScheme)
+                .AddJwtBearer(Constants.OrganizationalAuthenticationScheme, options =>
+                {
+                    options.Authority = authOptions.Authority;
+                    options.Audience = authOptions.Audience;
+
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidIssuers = authOptions.ValidIssuersAsArray
+                    };
+                });
+        }
+
+        public static void AddAuthorizationPolicies(this IServiceCollection services)
+        {
+            services.AddAuthorization(
+                options =>
+                {
+                    options.AddPolicy(AuthorizationPolicies.FacilityWrite, config =>
+                    {
+                        config.RequireRole(InteractorRole.FacilityProvider.ToString(), InteractorRole.ImporterProcess.ToString());
+                    });
+                });
+        }
+
         public static void AddSwashbuckle(this IServiceCollection services, IConfiguration configuration, string title, string version, string xmlDocFileName = null)
         {
             services.AddSwaggerGen(options =>
@@ -41,6 +71,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     Title = title,
                     Version = version
                 });
+
+                options.EnableAnnotations();
 
                 options.OperationFilter<DefaultContentTypeOperationFilter>();
                 options.OperationFilter<SecurityRequirementsOperationFilter>();

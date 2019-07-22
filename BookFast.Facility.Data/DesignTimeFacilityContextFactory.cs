@@ -1,6 +1,6 @@
+using BookFast.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using System;
 
 namespace BookFast.Facility.Data
 {
@@ -8,14 +8,8 @@ namespace BookFast.Facility.Data
     {
         public FacilityContext CreateDbContext(string[] args)
         {
-            var targetEnv = Environment.GetEnvironmentVariable("TargetEnv");
-            if (string.IsNullOrWhiteSpace(targetEnv))
-            {
-                throw new ArgumentException("No target environment has been specified. Please make sure to define TargetEnv environment variable.");
-            }
-
             var optionsBuilder = new DbContextOptionsBuilder<FacilityContext>()
-                .UseSqlServer(ConfigurationHelper.GetConnectionString(targetEnv));
+                .UseSqlServer(ConfigurationHelper.GetConnectionString("BookFast.Facility"));
 
             return new FacilityContext(optionsBuilder.Options);
         }

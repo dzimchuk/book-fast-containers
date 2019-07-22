@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.CommandSt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Data", "BookFast.Facility.Data\BookFast.Facility.Data.csproj", "{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Facility", "BookFast.Facility\BookFast.Facility.csproj", "{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility", "BookFast.Facility\BookFast.Facility.csproj", "{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Configuration", "Common\BookFast.Configuration\BookFast.Configuration.csproj", "{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,10 @@ Global
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{AE2BD311-C7E6-4EC9-8EDB-853B7A48522B} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{524F5E71-824C-4613-968B-BE5C055C12B7} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{D4D8916A-C24F-4319-8A08-CF4A0BC6A7F3} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

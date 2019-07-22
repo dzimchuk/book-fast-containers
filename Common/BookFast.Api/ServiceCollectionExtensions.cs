@@ -72,6 +72,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     Version = version
                 });
 
+                options.EnableAnnotations();
+
                 options.OperationFilter<DefaultContentTypeOperationFilter>();
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
 

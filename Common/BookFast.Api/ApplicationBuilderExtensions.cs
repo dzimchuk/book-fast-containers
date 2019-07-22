@@ -18,11 +18,12 @@ namespace Microsoft.AspNetCore.Builder
                 options.RouteTemplate = "api-docs/{documentName}/swagger.json";
             });
 
-            //app.UseSwaggerUI(options =>
-            //{
-            //    options.SwaggerEndpoint($"/api-docs/{version}/swagger.json", $"{title} {version}");
-            //    options.RoutePrefix = "api-docs";
-            //});
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint($"/api-docs/{version}/swagger.json", $"{title} {version}");
+                options.RoutePrefix = "api-docs";
+                options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+            });
         }
     }
 }

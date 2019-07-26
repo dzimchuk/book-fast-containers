@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  bookfast.facility:
+    image: ${DOCKER_REGISTRY-}bookfast-facility
+    build:
+      context: .
+      dockerfile: BookFast.Facility/Dockerfile

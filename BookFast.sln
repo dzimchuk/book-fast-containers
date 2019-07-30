@@ -39,6 +39,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Configuration", "C
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0663A4F1-035F-4824-ADD3-E3BE83C7070B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Client", "BookFast.Facility.Client\BookFast.Facility.Client.csproj", "{568302C4-044A-4D93-8202-AD21B60FED6B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Web.Contracts", "BookFast.Web.Contracts\BookFast.Web.Contracts.csproj", "{4C8CE9BE-A671-4E64-8096-33AEC357DB46}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Web.Proxy", "BookFast.Web.Proxy\BookFast.Web.Proxy.csproj", "{50C8F322-96B3-4A1F-90B1-DF4255E545AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Files.Client", "BookFast.Files.Client\BookFast.Files.Client.csproj", "{9692D030-5CCB-45B8-BC7A-EDBE53D06752}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Client", "BookFast.Search.Client\BookFast.Search.Client.csproj", "{AC3D428B-378D-4C9B-A51D-8BD97D718D73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.Client", "BookFast.Booking.Client\BookFast.Booking.Client.csproj", "{D688810C-3CB5-4798-ADBB-6FDB2679FAE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +113,30 @@ Global
 		{0663A4F1-035F-4824-ADD3-E3BE83C7070B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0663A4F1-035F-4824-ADD3-E3BE83C7070B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0663A4F1-035F-4824-ADD3-E3BE83C7070B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{568302C4-044A-4D93-8202-AD21B60FED6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{568302C4-044A-4D93-8202-AD21B60FED6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{568302C4-044A-4D93-8202-AD21B60FED6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{568302C4-044A-4D93-8202-AD21B60FED6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC3D428B-378D-4C9B-A51D-8BD97D718D73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC3D428B-378D-4C9B-A51D-8BD97D718D73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC3D428B-378D-4C9B-A51D-8BD97D718D73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC3D428B-378D-4C9B-A51D-8BD97D718D73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D688810C-3CB5-4798-ADBB-6FDB2679FAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D688810C-3CB5-4798-ADBB-6FDB2679FAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D688810C-3CB5-4798-ADBB-6FDB2679FAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D688810C-3CB5-4798-ADBB-6FDB2679FAE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

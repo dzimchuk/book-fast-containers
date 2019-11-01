@@ -18,7 +18,6 @@ namespace BookFast.ReliableEvents
     {
         private const int PeriodicCheckIntervalInMinutes = 2;
 
-        private readonly IReliableEventsDataSource dataSource;
         private readonly ILogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ConnectionOptions serviceBusConnectionOptions;
@@ -26,13 +25,12 @@ namespace BookFast.ReliableEvents
 
         private readonly AutoResetEvent dispatcherTrigger = new AutoResetEvent(false);
 
-        public ReliableEventsDispatcher(IReliableEventsDataSource dataSource,
+        public ReliableEventsDispatcher(
             ILogger<ReliableEventsDispatcher> logger,
             IServiceProvider serviceProvider,
             IOptions<ConnectionOptions> serviceBusConnectionOptions,
             IReliableEventMapper eventMapper)
         {
-            this.dataSource = dataSource;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.serviceBusConnectionOptions = serviceBusConnectionOptions.Value;
@@ -127,16 +125,21 @@ namespace BookFast.ReliableEvents
             {
                 try
                 {
-                    var events = await dataSource.GetPendingEventsAsync(cancellationToken);
-                    foreach (var @event in events)
+                    using (var scope = serviceProvider.CreateScope())
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
+                        var dataSource = scope.ServiceProvider.GetRequiredService<IReliableEventsDataSource>();
 
-                        var okToClear = await PublishEventAsync(@event, cancellationToken);
-                        if (okToClear)
+                        var events = await dataSource.GetPendingEventsAsync(cancellationToken);
+                        foreach (var @event in events)
                         {
-                            await dataSource.ClearEventAsync(@event.Id, cancellationToken);
-                        }
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            var okToClear = await PublishEventAsync(@event, cancellationToken, scope.ServiceProvider);
+                            if (okToClear)
+                            {
+                                await dataSource.ClearEventAsync(@event.Id, cancellationToken);
+                            }
+                        } 
                     }
                 }
                 catch (OperationCanceledException)
@@ -153,7 +156,7 @@ namespace BookFast.ReliableEvents
             }
         }
 
-        private async Task<bool> PublishEventAsync(ReliableEvent @event, CancellationToken cancellationToken)
+        private async Task<bool> PublishEventAsync(ReliableEvent @event, CancellationToken cancellationToken, IServiceProvider serviceProvider)
         {
             var actualEvent = Deserialize(@event);
             if (actualEvent == null)

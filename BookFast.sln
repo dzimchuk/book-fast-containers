@@ -57,7 +57,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Files.Business", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Files.Data", "BookFast.Files.Data\BookFast.Files.Data.csproj", "{BCB7BD49-8B3B-4557-AB0B-250DDEA90068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Files", "BookFast.Files\BookFast.Files.csproj", "{E59D4716-DD11-4616-BE05-07AA896DFA13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Files", "BookFast.Files\BookFast.Files.csproj", "{E59D4716-DD11-4616-BE05-07AA896DFA13}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.Domain", "BookFast.Booking.Domain\BookFast.Booking.Domain.csproj", "{69627D61-C87C-48EF-A0D3-C24292DEA8DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.QueryStack", "BookFast.Booking.QueryStack\BookFast.Booking.QueryStack.csproj", "{0B74F9BA-DD8D-4A80-AAF1-D693F7EDD804}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.CommandStack", "BookFast.Booking.CommandStack\BookFast.Booking.CommandStack.csproj", "{148CD206-3C28-4D45-B4A9-D13B5526446F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.Data", "BookFast.Booking.Data\BookFast.Booking.Data.csproj", "{3D0A95D2-E524-4CE1-9110-EADB151C0F67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Booking", "BookFast.Booking\BookFast.Booking.csproj", "{3047AF86-0091-4D4E-950D-DB2EA798687E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,6 +171,26 @@ Global
 		{E59D4716-DD11-4616-BE05-07AA896DFA13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E59D4716-DD11-4616-BE05-07AA896DFA13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E59D4716-DD11-4616-BE05-07AA896DFA13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69627D61-C87C-48EF-A0D3-C24292DEA8DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69627D61-C87C-48EF-A0D3-C24292DEA8DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69627D61-C87C-48EF-A0D3-C24292DEA8DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69627D61-C87C-48EF-A0D3-C24292DEA8DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B74F9BA-DD8D-4A80-AAF1-D693F7EDD804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B74F9BA-DD8D-4A80-AAF1-D693F7EDD804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B74F9BA-DD8D-4A80-AAF1-D693F7EDD804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B74F9BA-DD8D-4A80-AAF1-D693F7EDD804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{148CD206-3C28-4D45-B4A9-D13B5526446F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{148CD206-3C28-4D45-B4A9-D13B5526446F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{148CD206-3C28-4D45-B4A9-D13B5526446F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{148CD206-3C28-4D45-B4A9-D13B5526446F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D0A95D2-E524-4CE1-9110-EADB151C0F67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D0A95D2-E524-4CE1-9110-EADB151C0F67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D0A95D2-E524-4CE1-9110-EADB151C0F67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D0A95D2-E524-4CE1-9110-EADB151C0F67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,3 +13,8 @@ services:
       context: .
       dockerfile: BookFast.Files/Dockerfile
 
+  bookfast.booking:
+    image: ${DOCKER_REGISTRY-}bookfast-booking
+    build:
+      context: .
+      dockerfile: BookFast.Booking/Dockerfile

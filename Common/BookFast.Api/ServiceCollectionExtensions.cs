@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -46,6 +48,32 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
                     {
                         ValidIssuers = authOptions.ValidIssuersAsArray
+                    };
+                });
+        }
+
+        public static void AddB2CAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var authOptions = configuration.GetSection("Authentication:AzureAd:B2C").Get<B2CAuthenticationOptions>();
+
+            services.AddAuthentication(Constants.CustomerAuthenticationScheme)
+                .AddJwtBearer(Constants.CustomerAuthenticationScheme, options =>
+                {
+                    options.MetadataAddress = $"{authOptions.Authority}/.well-known/openid-configuration?p={authOptions.Policy}";
+                    options.Audience = authOptions.Audience;
+
+                    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                    {
+                        OnTokenValidated = ctx =>
+                        {
+                            var nameClaim = ctx.Principal.FindFirst("name");
+                            if (nameClaim != null)
+                            {
+                                var claimsIdentity = (ClaimsIdentity)ctx.Principal.Identity;
+                                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, nameClaim.Value));
+                            }
+                            return Task.FromResult(0);
+                        }
                     };
                 });
         }

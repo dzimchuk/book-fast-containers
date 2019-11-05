@@ -15,10 +15,10 @@ namespace BookFast.Facility.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("Relational:Sequence:fm.accommodationseq", "'accommodationseq', 'fm', '1', '10', '', '', 'Int64', 'False'")
-                .HasAnnotation("Relational:Sequence:fm.facilityseq", "'facilityseq', 'fm', '1', '10', '', '', 'Int64', 'False'")
+                .HasAnnotation("Relational:Sequence:facility.accommodationseq", "'accommodationseq', 'facility', '1', '10', '', '', 'Int64', 'False'")
+                .HasAnnotation("Relational:Sequence:facility.facilityseq", "'facilityseq', 'facility', '1', '10', '', '', 'Int64', 'False'")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("BookFast.Facility.Data.Models.Accommodation", b =>
@@ -26,7 +26,7 @@ namespace BookFast.Facility.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:HiLoSequenceName", "accommodationseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "fm")
+                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "facility")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
                     b.Property<string>("Description");
@@ -45,7 +45,7 @@ namespace BookFast.Facility.Data.Migrations
 
                     b.HasIndex("FacilityId");
 
-                    b.ToTable("Accommodations","fm");
+                    b.ToTable("Accommodations","facility");
                 });
 
             modelBuilder.Entity("BookFast.Facility.Data.Models.Facility", b =>
@@ -53,7 +53,7 @@ namespace BookFast.Facility.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:HiLoSequenceName", "facilityseq")
-                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "fm")
+                        .HasAnnotation("SqlServer:HiLoSequenceSchema", "facility")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
 
                     b.Property<string>("Description");
@@ -75,14 +75,13 @@ namespace BookFast.Facility.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Facilities","fm");
+                    b.ToTable("Facilities","facility");
                 });
 
             modelBuilder.Entity("BookFast.ReliableEvents.ReliableEvent", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<string>("EventName")
                         .IsRequired()
@@ -103,7 +102,7 @@ namespace BookFast.Facility.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events","fm");
+                    b.ToTable("Events","facility");
                 });
 
             modelBuilder.Entity("BookFast.Facility.Data.Models.Accommodation", b =>

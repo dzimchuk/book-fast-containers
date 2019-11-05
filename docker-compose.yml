@@ -6,3 +6,10 @@ services:
     build:
       context: .
       dockerfile: BookFast.Facility/Dockerfile
+
+  bookfast.files:
+    image: ${DOCKER_REGISTRY-}bookfast-files
+    build:
+      context: .
+      dockerfile: BookFast.Files/Dockerfile
+

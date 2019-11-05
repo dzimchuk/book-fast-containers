@@ -10,6 +10,7 @@ COPY ["BookFast.Files/", "BookFast.Files/"]
 COPY ["BookFast.Files.Business/", "BookFast.Files.Business/"]
 COPY ["BookFast.Files.Contracts/", "BookFast.Files.Contracts/"]
 COPY ["BookFast.Files.Data/", "BookFast.Files.Data/"]
+COPY ["BookFast.Facility.Client/", "BookFast.Facility.Client/"]
 
 RUN dotnet restore "BookFast.Files/BookFast.Files.csproj"
 

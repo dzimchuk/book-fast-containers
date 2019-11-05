@@ -9,3 +9,12 @@ services:
       - "54409:80"
     volumes:
       - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.files:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54410:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro

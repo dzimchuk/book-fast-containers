@@ -67,7 +67,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.CommandSta
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking.Data", "BookFast.Booking.Data\BookFast.Booking.Data.csproj", "{3D0A95D2-E524-4CE1-9110-EADB151C0F67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Booking", "BookFast.Booking\BookFast.Booking.csproj", "{3047AF86-0091-4D4E-950D-DB2EA798687E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Booking", "BookFast.Booking\BookFast.Booking.csproj", "{3047AF86-0091-4D4E-950D-DB2EA798687E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Contracts", "BookFast.Search.Contracts\BookFast.Search.Contracts.csproj", "{70044367-31E1-4C16-8CB3-37FF91B1417E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Adapter", "BookFast.Search.Adapter\BookFast.Search.Adapter.csproj", "{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +195,14 @@ Global
 		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3047AF86-0091-4D4E-950D-DB2EA798687E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70044367-31E1-4C16-8CB3-37FF91B1417E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70044367-31E1-4C16-8CB3-37FF91B1417E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70044367-31E1-4C16-8CB3-37FF91B1417E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70044367-31E1-4C16-8CB3-37FF91B1417E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

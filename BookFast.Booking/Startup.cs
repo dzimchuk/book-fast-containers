@@ -32,7 +32,9 @@ namespace BookFast.Booking
             services.AddApplicationInsightsTelemetry(configuration);
 
             services.AddCommandContext();
-            services.AddReliableEventsDispatcher(configuration, new DefaultReliableEventMapper(typeof(Domain.Events.BookingCreatedEvent).Assembly));
+            services.AddReliableEventsDispatcher(configuration["ServiceBus:Booking:NotificationQueueName"],
+                                                 configuration["ServiceBus:Booking:NotificationQueueConnection"],
+                                                 new DefaultReliableEventMapper(typeof(Domain.Events.BookingCreatedEvent).Assembly));
 
             services.AddIntegrationEventPublisher(configuration);
             services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());

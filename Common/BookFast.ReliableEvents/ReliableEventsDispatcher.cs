@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Security.Claims;
@@ -20,7 +19,8 @@ namespace BookFast.ReliableEvents
 
         private readonly ILogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly ConnectionOptions serviceBusConnectionOptions;
+        private readonly string notificationQueueName;
+        private readonly string notificationQueueConnection;
         private readonly IReliableEventMapper eventMapper;
 
         private readonly AutoResetEvent dispatcherTrigger = new AutoResetEvent(false);
@@ -28,12 +28,14 @@ namespace BookFast.ReliableEvents
         public ReliableEventsDispatcher(
             ILogger<ReliableEventsDispatcher> logger,
             IServiceProvider serviceProvider,
-            IOptions<ConnectionOptions> serviceBusConnectionOptions,
+            string notificationQueueName,
+            string notificationQueueConnection,
             IReliableEventMapper eventMapper)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.serviceBusConnectionOptions = serviceBusConnectionOptions.Value;
+            this.notificationQueueName = notificationQueueName;
+            this.notificationQueueConnection = notificationQueueConnection;
             this.eventMapper = eventMapper;
         }
 
@@ -94,9 +96,9 @@ namespace BookFast.ReliableEvents
         {
             QueueClient queueClient = null;
 
-            if (!string.IsNullOrWhiteSpace(serviceBusConnectionOptions.NotificationQueueConnection))
+            if (!string.IsNullOrWhiteSpace(notificationQueueConnection) && !string.IsNullOrWhiteSpace(notificationQueueName))
             {
-                queueClient = new QueueClient(serviceBusConnectionOptions.NotificationQueueConnection, serviceBusConnectionOptions.NotificationQueueName, ReceiveMode.ReceiveAndDelete, RetryPolicy.Default);
+                queueClient = new QueueClient(notificationQueueConnection, notificationQueueName, ReceiveMode.ReceiveAndDelete, RetryPolicy.Default);
                 queueClient.RegisterMessageHandler((message, cancellationToken) =>
                 {
                     dispatcherTrigger.Set();

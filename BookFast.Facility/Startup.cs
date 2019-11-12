@@ -33,7 +33,9 @@ namespace BookFast.Facility
             services.AddApplicationInsightsTelemetry(configuration);
 
             services.AddCommandContext();
-            services.AddReliableEventsDispatcher(configuration, new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
+            services.AddReliableEventsDispatcher(configuration["ServiceBus:Facility:NotificationQueueName"],
+                                                 configuration["ServiceBus:Facility:NotificationQueueConnection"],
+                                                 new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
 
             services.AddIntegrationEventPublisher(configuration);
             services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());

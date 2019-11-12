@@ -1,22 +1,27 @@
 using BookFast.ReliableEvents.CommandStack;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace BookFast.ReliableEvents
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddReliableEventsDispatcher(this IServiceCollection services, IConfiguration configuration, IReliableEventMapper reliableEventMapper)
+        public static void AddReliableEventsDispatcher(this IServiceCollection services,
+                                                       string notificationQueueName,
+                                                       string notificationQueueConnection,
+                                                       IReliableEventMapper reliableEventMapper)
         {
-            services.AddSingleton<ReliableEventsDispatcher>();
+            services.AddSingleton(serviceProvider =>
+                new ReliableEventsDispatcher(serviceProvider.GetRequiredService<ILogger<ReliableEventsDispatcher>>(),
+                                             serviceProvider,
+                                             notificationQueueName,
+                                             notificationQueueConnection,
+                                             reliableEventMapper));
             services.AddSingleton<IHostedService, ReliableEventsDispatcherService>();
 
-            services.Configure<ConnectionOptions>(configuration.GetSection("ServiceBus"));
             services.AddSingleton<INotificationHandler<EventsAvailableNotification>, NotificationPublisher>();
-
-            services.AddSingleton(reliableEventMapper);
         }
 
         public static void AddCommandContext(this IServiceCollection services)

@@ -33,3 +33,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
     volumes:
       - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.search:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54412:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro

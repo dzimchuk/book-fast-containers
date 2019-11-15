@@ -24,3 +24,9 @@ services:
     build:
       context: .
       dockerfile: BookFast.Search.Indexer/Dockerfile
+
+  bookfast.search:
+    image: ${DOCKER_REGISTRY-}bookfast-search
+    build:
+      context: .
+      dockerfile: BookFast.Search/Dockerfile

@@ -1,7 +1,7 @@
 ﻿using BookFast.Configuration;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace BookFast.Facility
 {
@@ -9,11 +9,11 @@ namespace BookFast.Facility
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .UseDefaultServiceProvider(options => options.ValidateScopes = true) // scoped services (e.g. DbContext) cannot be used in singletons (e.g. IHostedService)
                 .ConfigureAppConfiguration((context, config) =>
                 {
@@ -22,6 +22,9 @@ namespace BookFast.Facility
                         config.AddAzureKeyVault();
                     }
                 })
-                .UseStartup<Startup>();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }

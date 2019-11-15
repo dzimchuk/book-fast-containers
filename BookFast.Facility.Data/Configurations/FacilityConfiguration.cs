@@ -10,7 +10,7 @@ namespace BookFast.Facility.Data.Configurations
             builder.ToTable("Facilities", "facility");
 
             builder.HasKey(facility => facility.Id);
-            builder.Property(facility => facility.Id).ForSqlServerUseSequenceHiLo("facilityseq", "facility");
+            builder.Property(facility => facility.Id).UseHiLo("facilityseq", "facility");
 
             builder.Property(facility => facility.Name).IsRequired(true).HasMaxLength(320);
             builder.Property(facility => facility.Description).IsRequired(false);

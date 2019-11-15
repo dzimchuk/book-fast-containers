@@ -4,7 +4,6 @@ using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
@@ -24,14 +23,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void AddAndConfigureMvc(this IServiceCollection services)
         {
-            services.AddMvc(options =>
+            services.AddControllers(options =>
             {
                 options.OutputFormatters.Insert(0, new BusinessExceptionOutputFormatter());
             })
-            .SetCompatibilityVersion(AspNetCore.Mvc.CompatibilityVersion.Version_2_1)
             .AddJsonOptions(options =>
             {
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.JsonSerializerOptions.IgnoreNullValues = true;
             });
         }
 

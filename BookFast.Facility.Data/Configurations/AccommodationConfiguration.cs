@@ -11,7 +11,7 @@ namespace BookFast.Facility.Data.Configurations
             builder.ToTable("Accommodations", "facility");
 
             builder.HasKey(accommodation => accommodation.Id);
-            builder.Property(accommodation => accommodation.Id).ForSqlServerUseSequenceHiLo("accommodationseq", "facility");
+            builder.Property(accommodation => accommodation.Id).UseHiLo("accommodationseq", "facility");
 
             builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(320);
             builder.Property(accommodation => accommodation.Description).IsRequired(false);

@@ -2,13 +2,11 @@ using BookFast.SeedWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BookFast.Rest;
-using Microsoft.Extensions.Caching.Distributed;
 using BookFast.Booking.CommandStack.Data;
 using BookFast.Booking.QueryStack;
 using BookFast.ReliableEvents;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BookFast.Booking.Data.Composition
 {
@@ -19,8 +17,7 @@ namespace BookFast.Booking.Data.Composition
             services.AddDbContext<BookingContext>(options => options.UseSqlServer(configuration["Data:DefaultConnection:ConnectionString"], sqlOptions =>
             {
                 sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null); // see also https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
-            })
-            .ConfigureWarnings(warnings => warnings.Throw(RelationalEventId.QueryClientEvaluationWarning))); // disable client side evaluation, see https://docs.microsoft.com/en-us/ef/core/querying/client-eval
+            }));
 
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingQueryDataSource, BookingQueryDataSource>();

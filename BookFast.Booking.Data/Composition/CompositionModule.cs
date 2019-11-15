@@ -22,7 +22,7 @@ namespace BookFast.Booking.Data.Composition
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IBookingQueryDataSource, BookingQueryDataSource>();
 
-            services.AddSingleton<IReliableEventsDataSource, ReliableEventsDataSource>();
+            services.AddScoped<IReliableEventsDataSource, ReliableEventsDataSource>();
 
             services.AddScoped<IFacilityDataSource, FacilityDataSource>();
             //services.AddScoped<IFacilityDataSource, CachingFacilityDataSource>(serviceProvider => 

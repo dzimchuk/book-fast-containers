@@ -66,6 +66,7 @@ namespace BookFast.Booking
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSecurityContext();
 

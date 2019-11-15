@@ -30,7 +30,7 @@ services:
 
   bookfast.search.indexer:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_ENVIRONMENT=Production
     volumes:
       - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
 

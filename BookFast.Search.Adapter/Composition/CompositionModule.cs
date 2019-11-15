@@ -20,7 +20,7 @@ namespace BookFast.Search.Adapter.Composition
             services.AddScoped<ISearchResultMapper, SearchResultMapper>();
             services.AddScoped<ISearchServiceProxy>(provider => new SearchServiceProxy(CreateSearchIndexClient(provider, false), provider.GetService<ISearchResultMapper>()));
 
-            services.AddSingleton<ISearchIndexer, SearchIndexer>();
+            services.AddScoped<ISearchIndexer, SearchIndexer>();
         }
 
         private static ISearchIndexClient CreateSearchIndexClient(IServiceProvider provider, bool useAdminKey)

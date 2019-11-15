@@ -65,6 +65,7 @@ namespace BookFast.Facility
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSecurityContext();
 

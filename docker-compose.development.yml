@@ -27,3 +27,9 @@ services:
       - "54411:80"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  bookfast.search.indexer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

@@ -27,3 +27,9 @@ services:
       - "54411:80"
     volumes:
       - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.search.indexer:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro

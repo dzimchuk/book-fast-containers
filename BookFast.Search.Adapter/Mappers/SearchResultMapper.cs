@@ -13,9 +13,8 @@ namespace BookFast.Search.Adapter.Mappers
             var mapperConfiguration = new MapperConfiguration(configuration =>
                                                               {
                                                                   configuration.CreateMap<Microsoft.Azure.Search.Models.Document, Document>()
-                                                                               .ConvertUsing(searchDocument =>
+                                                                               .ConvertUsing((searchDocument, doc) =>
                                                                                              {
-                                                                                                 var doc = new Document();
                                                                                                  foreach (var key in searchDocument.Keys)
                                                                                                  {
                                                                                                      doc.Add(key, searchDocument[key]);
@@ -24,12 +23,11 @@ namespace BookFast.Search.Adapter.Mappers
                                                                                                  return doc;
                                                                                              });
                                                                   configuration.CreateMap<Microsoft.Azure.Search.Models.HitHighlights, HitHighlights>()
-                                                                               .ConvertUsing(searchHighlights =>
+                                                                               .ConvertUsing((searchHighlights, highlights) =>
                                                                                              {
                                                                                                  if (searchHighlights == null)
                                                                                                      return null;
 
-                                                                                                 var highlights = new HitHighlights();
                                                                                                  foreach (var key in searchHighlights.Keys)
                                                                                                  {
                                                                                                      highlights.Add(key, searchHighlights[key]);

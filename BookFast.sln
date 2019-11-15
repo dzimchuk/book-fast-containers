@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Contracts",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Adapter", "BookFast.Search.Adapter\BookFast.Search.Adapter.csproj", "{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Search.Indexer", "BookFast.Search.Indexer\BookFast.Search.Indexer.csproj", "{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -203,6 +205,10 @@ Global
 		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81BB0F2E-774D-473E-8F8C-2A9E4BE50052}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

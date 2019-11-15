@@ -2,7 +2,6 @@ using BookFast.SeedWork.Modeling;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace BookFast.ServiceBus
 {
@@ -18,7 +17,7 @@ namespace BookFast.ServiceBus
         public static void AddIntegrationEventReceiver(this IServiceCollection services, IConfiguration configuration, IEventMapper eventMapper)
         {
             services.Configure<ConnectionOptions>(configuration.GetSection("ServiceBus"));
-            services.AddSingleton<IHostedService, IntegrationEventReceiver>();
+            services.AddHostedService<IntegrationEventReceiver>();
             services.AddSingleton(eventMapper);
         }
     }

@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BookFast.SeedWork.Hosting
+namespace BookFast.Hosting
 {
     public abstract class BackgroundService : Microsoft.Extensions.Hosting.BackgroundService
     {

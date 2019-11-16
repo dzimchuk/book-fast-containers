@@ -167,14 +167,21 @@ namespace BookFast.ReliableEvents
 
             using (var scope = serviceProvider.CreateScope())
             {
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                //var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var publisher = scope.ServiceProvider.GetRequiredService<IIntegrationEventPublisher>();
                 var securityContext = scope.ServiceProvider.GetRequiredService<ISecurityContext>();
 
                 InitializeSecurityContext(@event, securityContext);
 
                 try
                 {
-                    await mediator.Publish(actualEvent, cancellationToken);
+                    //await mediator.Publish(actualEvent, cancellationToken);
+                    
+                    if (actualEvent is IntegrationEvent integrationEvent)
+                    {
+                        await publisher.PublishAsync(integrationEvent);
+                    }
+                    
                     return true;
                 }
                 catch (BusinessException ex)

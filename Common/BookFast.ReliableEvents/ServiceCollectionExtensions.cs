@@ -1,4 +1,5 @@
 using BookFast.ReliableEvents.CommandStack;
+using BookFast.SeedWork.Modeling;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +25,8 @@ namespace BookFast.ReliableEvents
             services.AddSingleton<INotificationHandler<EventsAvailableNotification>, NotificationPublisher>();
 
             services.AddSingleton(reliableEventMapper);
+
+            services.AddScoped<IIntegrationEventPublisher, DummyIntegrationEventPublisher>();
         }
 
         public static void AddCommandContext(this IServiceCollection services)

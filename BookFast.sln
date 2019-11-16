@@ -75,7 +75,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Adapter", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Indexer", "BookFast.Search.Indexer\BookFast.Search.Indexer.csproj", "{B1FCB2B6-0F49-4CAE-9D23-9CFA71E0DE0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Search", "BookFast.Search\BookFast.Search.csproj", "{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search", "BookFast.Search\BookFast.Search.csproj", "{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Hosting", "Common\BookFast.Hosting\BookFast.Hosting.csproj", "{1ADA5937-C8EA-4749-8CF1-0081A616DC88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -215,6 +217,10 @@ Global
 		{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -228,6 +234,7 @@ Global
 		{524F5E71-824C-4613-968B-BE5C055C12B7} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{D4D8916A-C24F-4319-8A08-CF4A0BC6A7F3} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{1ADA5937-C8EA-4749-8CF1-0081A616DC88} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

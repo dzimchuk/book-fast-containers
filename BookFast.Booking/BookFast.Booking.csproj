@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BookFast.Booking.Data\BookFast.Booking.Data.csproj" />
     <ProjectReference Include="..\Common\BookFast.Api\BookFast.Api.csproj" />
+    <ProjectReference Include="..\Common\BookFast.Hosting\BookFast.Hosting.csproj" />
     <ProjectReference Include="..\Common\BookFast.ServiceBus\BookFast.ServiceBus.csproj" />
   </ItemGroup>
 

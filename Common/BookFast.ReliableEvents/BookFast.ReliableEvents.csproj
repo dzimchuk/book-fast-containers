@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookFast.DistributedMutex\BookFast.DistributedMutex.csproj" />
+    <ProjectReference Include="..\BookFast.Hosting\BookFast.Hosting.csproj" />
     <ProjectReference Include="..\BookFast.Security\BookFast.Security.csproj" />
     <ProjectReference Include="..\BookFast.SeedWork\BookFast.SeedWork.csproj" />
   </ItemGroup>

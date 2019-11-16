@@ -16,6 +16,7 @@
     <ProjectReference Include="..\BookFast.Facility.Client\BookFast.Facility.Client.csproj" />
     <ProjectReference Include="..\BookFast.Search.Adapter\BookFast.Search.Adapter.csproj" />
     <ProjectReference Include="..\Common\BookFast.Configuration\BookFast.Configuration.csproj" />
+    <ProjectReference Include="..\Common\BookFast.Hosting\BookFast.Hosting.csproj" />
     <ProjectReference Include="..\Common\BookFast.ServiceBus\BookFast.ServiceBus.csproj" />
   </ItemGroup>
 </Project>

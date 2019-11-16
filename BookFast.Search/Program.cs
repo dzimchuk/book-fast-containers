@@ -1,4 +1,5 @@
 using BookFast.Configuration;
+using BookFast.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +25,7 @@ namespace BookFast.Search
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+                .UseCustomServiceProviderFactory();
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BookFast.Configuration;
+using BookFast.Hosting;
 using BookFast.SeedWork;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,7 @@ namespace BookFast.Search.Indexer
                     {
                         module.AddServices(services, hostContext.Configuration);
                     }
-                });
+                })
+                .UseCustomServiceProviderFactory();
     }
 }

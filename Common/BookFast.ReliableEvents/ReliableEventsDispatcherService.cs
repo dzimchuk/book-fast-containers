@@ -1,5 +1,5 @@
 ﻿using BookFast.DistributedMutex;
-using BookFast.SeedWork.Hosting;
+using BookFast.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;

@@ -1,4 +1,4 @@
-namespace BookFast.ReliableEvents
+﻿namespace BookFast.ReliableEvents
 {
     internal class ConnectionOptions
     {

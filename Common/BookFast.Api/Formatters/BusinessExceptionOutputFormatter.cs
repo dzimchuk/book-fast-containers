@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BookFast.Api.Formatters
@@ -26,10 +26,10 @@ namespace BookFast.Api.Formatters
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            var options = context.HttpContext.RequestServices.GetService(typeof(IOptions<MvcJsonOptions>)) as IOptions<MvcJsonOptions>;
+            var options = context.HttpContext.RequestServices.GetService(typeof(IOptions<JsonOptions>)) as IOptions<JsonOptions>;
 
             var exception = (BusinessException)context.Object;
-            var payload = JsonConvert.SerializeObject(new { error = exception.ErrorCode, error_description = exception.ErrorDescription }, options.Value.SerializerSettings);
+            var payload = JsonSerializer.Serialize(new { error = exception.ErrorCode, error_description = exception.ErrorDescription }, options.Value.JsonSerializerOptions);
 
             return context.HttpContext.Response.WriteAsync(payload);
         }

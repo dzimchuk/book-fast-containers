@@ -6,3 +6,27 @@ services:
     build:
       context: .
       dockerfile: BookFast.Facility/Dockerfile
+
+  bookfast.files:
+    image: ${DOCKER_REGISTRY-}bookfast-files
+    build:
+      context: .
+      dockerfile: BookFast.Files/Dockerfile
+
+  bookfast.booking:
+    image: ${DOCKER_REGISTRY-}bookfast-booking
+    build:
+      context: .
+      dockerfile: BookFast.Booking/Dockerfile
+
+  bookfast.search.indexer:
+    image: ${DOCKER_REGISTRY-}bookfast-search-indexer
+    build:
+      context: .
+      dockerfile: BookFast.Search.Indexer/Dockerfile
+
+  bookfast.search:
+    image: ${DOCKER_REGISTRY-}bookfast-search
+    build:
+      context: .
+      dockerfile: BookFast.Search/Dockerfile

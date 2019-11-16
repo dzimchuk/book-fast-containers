@@ -1,5 +1,6 @@
+using BookFast.Facility.Data.Configurations;
 using BookFast.Facility.Data.Models;
-using BookFast.Facility.Data.Models.Configurations;
+using BookFast.ReliableEvents;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.Facility.Data

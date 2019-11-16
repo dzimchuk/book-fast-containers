@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookFast.ServiceBus
 {
-    internal class IntegrationEventPublisher : INotificationHandler<IntegrationEvent>
+    internal class IntegrationEventPublisher : INotificationHandler<IntegrationEvent>, IIntegrationEventPublisher
     {
         private readonly TopicClientProvider topicClientProvider;
         private readonly ISecurityContext securityContext;
@@ -41,6 +41,11 @@ namespace BookFast.ServiceBus
             AddSecurityContext(message);
 
             return topicClient.SendAsync(message);
+        }
+
+        public Task PublishAsync(IntegrationEvent @event)
+        {
+            return Handle(@event, CancellationToken.None);
         }
 
         private void AddSecurityContext(Message message)

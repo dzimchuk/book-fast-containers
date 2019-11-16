@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BookFast.Facility
 {
@@ -33,7 +34,9 @@ namespace BookFast.Facility
             services.AddApplicationInsightsTelemetry(configuration);
 
             services.AddCommandContext();
-            services.AddReliableEventsDispatcher(configuration, new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
+            services.AddReliableEventsDispatcher(configuration["ServiceBus:Facility:NotificationQueueName"],
+                                                 configuration["ServiceBus:Facility:NotificationQueueConnection"],
+                                                 new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
 
             services.AddIntegrationEventPublisher(configuration);
             services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
@@ -52,17 +55,24 @@ namespace BookFast.Facility
             }
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseRouting();
+
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSecurityContext();
-            app.UseMvc();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.UseSwagger(apiTitle, apiVersion);
         }

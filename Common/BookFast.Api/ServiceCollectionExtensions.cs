@@ -4,10 +4,11 @@ using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -22,14 +23,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void AddAndConfigureMvc(this IServiceCollection services)
         {
-            services.AddMvc(options =>
+            services.AddControllers(options =>
             {
                 options.OutputFormatters.Insert(0, new BusinessExceptionOutputFormatter());
             })
-            .SetCompatibilityVersion(AspNetCore.Mvc.CompatibilityVersion.Version_2_1)
             .AddJsonOptions(options =>
             {
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.JsonSerializerOptions.IgnoreNullValues = true;
             });
         }
 
@@ -50,6 +50,32 @@ namespace Microsoft.Extensions.DependencyInjection
                 });
         }
 
+        public static void AddB2CAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            var authOptions = configuration.GetSection("Authentication:AzureAd:B2C").Get<B2CAuthenticationOptions>();
+
+            services.AddAuthentication(Constants.CustomerAuthenticationScheme)
+                .AddJwtBearer(Constants.CustomerAuthenticationScheme, options =>
+                {
+                    options.MetadataAddress = $"{authOptions.Authority}/.well-known/openid-configuration?p={authOptions.Policy}";
+                    options.Audience = authOptions.Audience;
+
+                    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                    {
+                        OnTokenValidated = ctx =>
+                        {
+                            var nameClaim = ctx.Principal.FindFirst("name");
+                            if (nameClaim != null)
+                            {
+                                var claimsIdentity = (ClaimsIdentity)ctx.Principal.Identity;
+                                claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, nameClaim.Value));
+                            }
+                            return Task.FromResult(0);
+                        }
+                    };
+                });
+        }
+
         public static void AddAuthorizationPolicies(this IServiceCollection services)
         {
             services.AddAuthorization(
@@ -64,6 +90,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void AddSwashbuckle(this IServiceCollection services, IConfiguration configuration, string title, string version, string xmlDocFileName = null)
         {
+            return; // update to 5.0 - https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v5.0.0-rc3
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc(version, new Info

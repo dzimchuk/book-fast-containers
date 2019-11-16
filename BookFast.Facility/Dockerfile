@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
 COPY ["Common/", "Common/"]
@@ -15,12 +15,12 @@ COPY ["BookFast.Facility.Data/", "BookFast.Facility.Data/"]
 RUN dotnet restore "BookFast.Facility/BookFast.Facility.csproj"
 
 WORKDIR "/src/BookFast.Facility"
-RUN dotnet build "BookFast.Facility.csproj" -c Release -o /app
+RUN dotnet build "BookFast.Facility.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BookFast.Facility.csproj" -c Release -o /app
+RUN dotnet publish "BookFast.Facility.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BookFast.Facility.dll"]

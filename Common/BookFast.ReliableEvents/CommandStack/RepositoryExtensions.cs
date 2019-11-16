@@ -53,7 +53,7 @@ namespace BookFast.ReliableEvents.CommandStack
             return from @event in events
                    select new ReliableEvent
                    {
-                       Id = @event.EventId.ToString(),
+                       Id = @event.EventId,
                        EventName = @event.GetType().Name,
                        OccurredAt = @event.OccurredAt,
                        User = securityContext.GetCurrentUser(),

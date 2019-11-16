@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  bookfast.facility:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54409:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.files:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54410:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.booking:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54411:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.search.indexer:
+    environment:
+      - DOTNET_ENVIRONMENT=Production
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
+  bookfast.search:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "54412:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro

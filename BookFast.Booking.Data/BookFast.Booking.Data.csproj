@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BookFast.Booking.CommandStack\BookFast.Booking.CommandStack.csproj" />
+    <ProjectReference Include="..\BookFast.Booking.QueryStack\BookFast.Booking.QueryStack.csproj" />
+    <ProjectReference Include="..\BookFast.Facility.Client\BookFast.Facility.Client.csproj" />
+    <ProjectReference Include="..\Common\BookFast.Configuration\BookFast.Configuration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>

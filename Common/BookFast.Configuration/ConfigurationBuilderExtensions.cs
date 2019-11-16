@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 namespace BookFast.Configuration
 {
@@ -9,19 +8,14 @@ namespace BookFast.Configuration
         public static IConfigurationBuilder AddAzureKeyVault(this IConfigurationBuilder builder)
         {
             var builtConfig = builder.Build();
+            var keyVaultName = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/keyVaultName");
+            var clientId = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/clientId");
+            var secret = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/clientSecret");
 
-            using (var store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-            {
-                store.Open(OpenFlags.ReadOnly);
-                var certs = store.Certificates.Find(X509FindType.FindByThumbprint, builtConfig["KeyVault:AzureADCertThumbprint"], false);
-
-                builder.AddAzureKeyVault(
-                    $"https://{builtConfig["KeyVault:KeyVaultName"]}.vault.azure.net/",
-                    builtConfig["KeyVault:AzureADApplicationId"],
-                    certs.OfType<X509Certificate2>().Single());
-
-                store.Close();
-            }
+            builder.AddAzureKeyVault(
+                    $"https://{keyVaultName}.vault.azure.net/",
+                    clientId,
+                    secret);
 
             return builder;
         }

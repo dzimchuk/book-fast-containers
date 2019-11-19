@@ -6,7 +6,7 @@
     <ProjectGuid>0663a4f1-035f-4824-add3-e3be83c7070b</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
-    <DockerServiceName>bookfast.facility</DockerServiceName>
+    <DockerServiceName>bookfast.web</DockerServiceName>
     <!--<DockerComposeBaseFilePath>Compose</DockerComposeBaseFilePath>-->
     <!--<AdditionalComposeFilePaths>docker-compose.development.yml;docker-compose.production.yml</AdditionalComposeFilePaths>-->
     <AdditionalComposeFilePaths>docker-compose.development.yml</AdditionalComposeFilePaths>

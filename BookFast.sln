@@ -77,7 +77,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Indexer", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search", "BookFast.Search\BookFast.Search.csproj", "{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Hosting", "Common\BookFast.Hosting\BookFast.Hosting.csproj", "{1ADA5937-C8EA-4749-8CF1-0081A616DC88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Hosting", "Common\BookFast.Hosting\BookFast.Hosting.csproj", "{1ADA5937-C8EA-4749-8CF1-0081A616DC88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Web", "BookFast.Web\BookFast.Web.csproj", "{DF087D63-FA4D-4343-A394-F65E624212FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -221,6 +223,10 @@ Global
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF087D63-FA4D-4343-A394-F65E624212FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF087D63-FA4D-4343-A394-F65E624212FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF087D63-FA4D-4343-A394-F65E624212FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF087D63-FA4D-4343-A394-F65E624212FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

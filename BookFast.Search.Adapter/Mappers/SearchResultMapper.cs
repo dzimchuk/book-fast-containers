@@ -15,6 +15,7 @@ namespace BookFast.Search.Adapter.Mappers
                                                                   configuration.CreateMap<Microsoft.Azure.Search.Models.Document, Document>()
                                                                                .ConvertUsing((searchDocument, doc) =>
                                                                                              {
+                                                                                                 doc = new Document();
                                                                                                  foreach (var key in searchDocument.Keys)
                                                                                                  {
                                                                                                      doc.Add(key, searchDocument[key]);
@@ -28,6 +29,7 @@ namespace BookFast.Search.Adapter.Mappers
                                                                                                  if (searchHighlights == null)
                                                                                                      return null;
 
+                                                                                                 highlights = new HitHighlights();
                                                                                                  foreach (var key in searchHighlights.Keys)
                                                                                                  {
                                                                                                      highlights.Add(key, searchHighlights[key]);

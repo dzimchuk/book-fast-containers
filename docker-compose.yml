@@ -12,21 +12,44 @@ services:
     build:
       context: .
       dockerfile: BookFast.Files/Dockerfile
+    depends_on:
+      - bookfast.facility
 
   bookfast.booking:
     image: ${DOCKER_REGISTRY-}bookfast-booking
     build:
       context: .
       dockerfile: BookFast.Booking/Dockerfile
+    depends_on:
+      - bookfast.facility
 
   bookfast.search.indexer:
     image: ${DOCKER_REGISTRY-}bookfast-search-indexer
     build:
       context: .
       dockerfile: BookFast.Search.Indexer/Dockerfile
+    depends_on:
+      - bookfast.facility
 
   bookfast.search:
     image: ${DOCKER_REGISTRY-}bookfast-search
     build:
       context: .
       dockerfile: BookFast.Search/Dockerfile
+
+  bookfast.web:
+    image: ${DOCKER_REGISTRY-}bookfast-web
+    build:
+      context: .
+      dockerfile: BookFast.Web/Dockerfile
+    depends_on:
+      - bookfast.facility
+      - bookfast.files
+      - bookfast.booking
+      - bookfast.search
+      - redis.cache
+
+  redis.cache:
+    image: redis
+    ports:
+      - "6379:6379"

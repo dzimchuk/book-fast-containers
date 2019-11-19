@@ -54,3 +54,4 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${OneDrive}/dev/BookFast/Https:/root/.aspnet/https:ro
+      - ${OneDrive}/dev/BookFast/Https:/root/.https_cert:ro

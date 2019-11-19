@@ -48,9 +48,17 @@ namespace BookFast.Web.Composition
 
         private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
         {
-            var authOptions = configuration.GetSection("WebApp:Authentication:AzureAd").Get<AuthenticationOptions>();
-            var b2cAuthOptions = configuration.GetSection("WebApp:Authentication:AzureAd:B2C").Get<B2CAuthenticationOptions>();
-            var b2cPolicies = configuration.GetSection("WebApp:Authentication:AzureAd:B2C:Policies").Get<B2CPolicies>();
+            var authOptionsSection = configuration.GetSection("WebApp:Authentication:AzureAd");
+            var b2cAuthOptionsSection = configuration.GetSection("WebApp:Authentication:AzureAd:B2C");
+            var b2cPoliciesSection = configuration.GetSection("WebApp:Authentication:AzureAd:B2C:Policies");
+
+            services.Configure<AuthenticationOptions>(authOptionsSection);
+            services.Configure<B2CAuthenticationOptions>(b2cAuthOptionsSection);
+            services.Configure<B2CPolicies>(b2cPoliciesSection);
+
+            var authOptions = authOptionsSection.Get<AuthenticationOptions>();
+            var b2cAuthOptions = b2cAuthOptionsSection.Get<B2CAuthenticationOptions>();
+            var b2cPolicies = b2cPoliciesSection.Get<B2CPolicies>();
 
             var serviceProvider = services.BuildServiceProvider();
             var distributedCache = serviceProvider.GetService<IDistributedCache>();

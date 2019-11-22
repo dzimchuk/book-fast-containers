@@ -1,4 +1,5 @@
 using BookFast.SeedWork.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -8,20 +9,20 @@ namespace BookFast.Api.Swagger
 {
     internal class SwaggerIgnoreSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema model, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var properties = context.SystemType.GetProperties();
+            var properties = context.ApiModel.Type.GetProperties();
             foreach (var property in properties)
             {
                 var ignoreAttrs = property.GetCustomAttributes(typeof(SwaggerIgnoreAttribute), true);
                 if (ignoreAttrs != null && ignoreAttrs.Any())
                 {
-                    var propertyName = model.Properties
+                    var propertyName = schema.Properties
                         .Where(prop => prop.Key.Equals(property.Name, StringComparison.OrdinalIgnoreCase))
                         .Select(prop => prop.Key).FirstOrDefault();
                     if (propertyName != null)
                     {
-                        model.Properties.Remove(propertyName); 
+                        schema.Properties.Remove(propertyName);
                     }
                 }
             }

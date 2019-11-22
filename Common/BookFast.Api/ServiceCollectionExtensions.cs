@@ -4,9 +4,9 @@ using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
 using Microsoft.Extensions.Configuration;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
+using Microsoft.OpenApi.Models;
 using System.IO;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -90,11 +90,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void AddSwashbuckle(this IServiceCollection services, IConfiguration configuration, string title, string version, string xmlDocFileName = null)
         {
-            return; // update to 5.0 - https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v5.0.0-rc3
-
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc(version, new Info
+                options.SwaggerDoc(version, new OpenApiInfo
                 {
                     Title = title,
                     Version = version
@@ -102,10 +100,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 options.EnableAnnotations();
 
-                options.OperationFilter<DefaultContentTypeOperationFilter>();
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
-
-                options.DescribeAllEnumsAsStrings();
 
                 options.SchemaFilter<SwaggerIgnoreSchemaFilter>();
 

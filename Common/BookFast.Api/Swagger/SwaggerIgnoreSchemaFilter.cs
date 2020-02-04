@@ -1,6 +1,5 @@
 using BookFast.SeedWork.Swagger;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
@@ -11,7 +10,7 @@ namespace BookFast.Api.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var properties = context.ApiModel.Type.GetProperties();
+            var properties = context.Type.GetProperties();
             foreach (var property in properties)
             {
                 var ignoreAttrs = property.GetCustomAttributes(typeof(SwaggerIgnoreAttribute), true);

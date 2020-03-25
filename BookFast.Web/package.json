@@ -4,12 +4,12 @@
   "private": true,
   "devDependencies": {
     "bootstrap": "3.4.1",
-    "gulp": "3.8.11",
-    "gulp-concat": "2.5.2",
-    "gulp-cssmin": "0.1.7",
-    "gulp-uglify": "3.0.0",
+    "brace-expansion": "1.1.11",
+    "gulp": "^4.0.2",
+    "gulp-concat": "2.6.1",
+    "gulp-cssmin": "0.2.0",
+    "gulp-uglify": "3.0.2",
     "jquery-validation-unobtrusive": "3.2.6",
-    "rimraf": "2.2.8",
-    "brace-expansion": "1.1.11"
+    "rimraf": "2.2.8"
   }
 }

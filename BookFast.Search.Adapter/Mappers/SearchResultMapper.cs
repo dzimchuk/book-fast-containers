@@ -23,7 +23,7 @@ namespace BookFast.Search.Adapter.Mappers
 
                                                                                                  return doc;
                                                                                              });
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.HitHighlights, HitHighlights>()
+                                                                  configuration.CreateMap<IDictionary<string, IList<string>>, HitHighlights>()
                                                                                .ConvertUsing((searchHighlights, highlights) =>
                                                                                              {
                                                                                                  if (searchHighlights == null)
@@ -37,8 +37,8 @@ namespace BookFast.Search.Adapter.Mappers
 
                                                                                                  return highlights;
                                                                                              });
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SearchResult, SearchResult>();
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SuggestResult, SuggestResult>();
+                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SearchResult<Microsoft.Azure.Search.Models.Document>, SearchResult>();
+                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SuggestResult<Microsoft.Azure.Search.Models.Document>, SuggestResult>();
 
                                                               });
 
@@ -46,12 +46,12 @@ namespace BookFast.Search.Adapter.Mappers
             Mapper = mapperConfiguration.CreateMapper();
         }
 
-        public IList<SearchResult> MapFrom(IList<Microsoft.Azure.Search.Models.SearchResult> results)
+        public IList<SearchResult> MapFrom(IList<Microsoft.Azure.Search.Models.SearchResult<Microsoft.Azure.Search.Models.Document>> results)
         {
             return Mapper.Map<IList<SearchResult>>(results);
         }
 
-        public IList<SuggestResult> MapFrom(IList<Microsoft.Azure.Search.Models.SuggestResult> results)
+        public IList<SuggestResult> MapFrom(IList<Microsoft.Azure.Search.Models.SuggestResult<Microsoft.Azure.Search.Models.Document>> results)
         {
             return Mapper.Map<IList<SuggestResult>>(results);
         }

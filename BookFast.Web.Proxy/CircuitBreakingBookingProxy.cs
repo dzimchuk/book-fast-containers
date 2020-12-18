@@ -13,7 +13,7 @@ namespace BookFast.Web.Proxy
     internal class CircuitBreakingBookingProxy : IBookingProxy
     {
         private readonly IBookingProxy innerProxy;
-        private readonly CircuitBreakerPolicy breaker =
+        private readonly AsyncCircuitBreakerPolicy breaker =
             Policy.Handle<HttpOperationException>(ex => ex.StatusCode() >= 500 || ex.StatusCode() == 429)
             .CircuitBreakerAsync(
                 exceptionsAllowedBeforeBreaking: 2,

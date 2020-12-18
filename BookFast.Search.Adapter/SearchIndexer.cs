@@ -18,13 +18,13 @@ namespace BookFast.Search.Adapter
         public Task DeleteAccommodationIndexAsync(int accommodationId)
         {
             var action = IndexAction.Delete(new Document { { "Id", accommodationId.ToString() } });
-            return client.Documents.IndexAsync(new IndexBatch(new[] { action }));
+            return client.Documents.IndexAsync(IndexBatch.New(new[] { action }));
         }
 
         public Task IndexAccommodationAsync(Contracts.Models.Accommodation accommodation)
         {
             var action = IndexAction.MergeOrUpload(CreateDocument(accommodation));
-            return client.Documents.IndexAsync(new IndexBatch(new[] { action }));
+            return client.Documents.IndexAsync(IndexBatch.New(new[] { action }));
         }
 
         private static Document CreateDocument(Contracts.Models.Accommodation accommodation)

@@ -34,6 +34,7 @@ jobs:
       - name: Build and push BookFast.Facility
         uses: docker/build-push-action@v2.3.0
         with:
-          context: BookFast.Facility
+          context: .
+          file: BookFast.Facility/Dockerfile
           tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:latest
           push: true

@@ -10,6 +10,10 @@ COPY ["Common/", "Common/"]
 COPY ["BookFast.Web/", "BookFast.Web/"]
 COPY ["BookFast.Web.Contracts/", "BookFast.Web.Contracts/"]
 COPY ["BookFast.Web.Proxy/", "BookFast.Web.Proxy/"]
+COPY ["BookFast.Booking.Client/", "BookFast.Booking.Client/"]
+COPY ["BookFast.Facility.Client/", "BookFast.Facility.Client/"]
+COPY ["BookFast.Files.Client/", "BookFast.Files.Client/"]
+COPY ["BookFast.Search.Client/", "BookFast.Search.Client/"]
 
 RUN dotnet restore "BookFast.Web/BookFast.Web.csproj"
 

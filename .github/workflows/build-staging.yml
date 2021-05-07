@@ -1,0 +1,97 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build and push the latest build to staging
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build_push_image:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+            node-version: ${{ matrix.node-version }}
+      
+      - name: Run npm stuff
+        working-directory: ./BookFast.Web
+        run: |
+          npm ci
+          gulp clean
+          gulp min
+          gulp copy:node:modules
+      
+      # see https://github.com/docker/login-action#github-container-registry
+      - name: Login to Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.REGISTRY_NAME }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push BookFast.Facility
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Facility/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:latest
+          push: true
+
+      - name: Build and push BookFast.Files
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Files/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:latest
+          push: true
+
+      - name: Build and push BookFast.Booking
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Booking/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:latest
+          push: true
+
+      - name: Build and push BookFast.Search.Indexer
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Search.Indexer/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:latest
+          push: true
+
+      - name: Build and push BookFast.Search
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Search/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:latest
+          push: true
+
+      - name: Build and push BookFast.Web
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Web/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-web:latest
+          push: true

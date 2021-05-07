@@ -23,11 +23,11 @@
     <ProjectReference Include="..\Common\BookFast.Hosting\BookFast.Hosting.csproj" />
   </ItemGroup>
 
-  <Target Name="PrepublishScript" BeforeTargets="Build">
+ <!-- <Target Name="PrepublishScript" BeforeTargets="Build">
     <Exec Command="npm install" />
     <Exec Command="gulp clean" />
     <Exec Command="gulp min" />
     <Exec Command="gulp copy:node:modules" />
-  </Target>
+  </Target> -->
 
 </Project>

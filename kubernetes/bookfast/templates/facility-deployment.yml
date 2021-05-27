@@ -4,6 +4,11 @@ metadata:
   name: bookfast-facility
   namespace: {{ default "bookfast-staging" .Release.Namespace }}
 spec:
+  replicas: {{ .Values.facility.replicas }}
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: bookfast-facility
@@ -13,7 +18,7 @@ spec:
         app: bookfast-facility
     spec:
       containers:
-        - image: {{ .Values.image.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.facility.image.tag }}
+        - image: {{ .Values.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.facility.image.tag }}
           name: bookfast-facility
           resources:
             requests:
@@ -25,3 +30,8 @@ spec:
           ports:
             - containerPort: 80
               name: http
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}

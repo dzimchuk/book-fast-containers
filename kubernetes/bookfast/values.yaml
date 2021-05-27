@@ -1,10 +1,14 @@
-image:
-  registry: <your-registry-name>
+registry: <your-registry-name>
+
+env: 
+  "ASPNETCORE_ENVIRONMENT": "Staging"
+  "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true"
 
 facility:
   image:
     name: bookfast/bookfast-facility
     tag: latest
+  replicas: 2
 
 # to get your DNS zone name use:
 # az aks show -g {resource-group-name} -n {aks-cluster-name} -o tsv --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName

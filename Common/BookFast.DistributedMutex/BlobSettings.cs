@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using Azure.Storage.Blobs;
+using System;
 
 namespace BookFast.DistributedMutex
 {
@@ -6,11 +7,15 @@ namespace BookFast.DistributedMutex
     {
         public string Container { get; }
         public string BlobName { get; }
-        public CloudStorageAccount StorageAccount { get; set; }
+        public BlobServiceClient BlobServiceClient { get; }
 
-        public BlobSettings(CloudStorageAccount storageAccount, string container, string blobName)
+        public BlobSettings(string storageConnectionString, string container, string blobName)
         {
-            StorageAccount = storageAccount;
+            var blobClientOptions = new BlobClientOptions();
+            blobClientOptions.Retry.Delay = TimeSpan.FromSeconds(5);
+            blobClientOptions.Retry.MaxRetries = 3;
+
+            BlobServiceClient = new BlobServiceClient(storageConnectionString, blobClientOptions);
             Container = container;
             BlobName = blobName;
         }

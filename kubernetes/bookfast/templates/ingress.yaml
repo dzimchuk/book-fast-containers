@@ -7,7 +7,7 @@ metadata:
 #    kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
-    - host: {{ .Values.dns.name }}
+    - host: {{ .Values.dns.backend }}
       http:
         paths:
           - backend:
@@ -15,7 +15,28 @@ spec:
                 name: bookfast-facility
                 port:
                   number: 80
-            path: /
+            path: /facility
             pathType: Prefix
-
+          - backend:
+              service:
+                name: bookfast-booking
+                port:
+                  number: 80
+            path: /booking
+            pathType: Prefix
+          - backend:
+              service:
+                name: bookfast-files
+                port:
+                  number: 80
+            path: /files
+            pathType: Prefix
+          - backend:
+              service:
+                name: bookfast-search
+                port:
+                  number: 80
+            path: /search
+            pathType: Prefix
+ 
 # see https://stackoverflow.com/questions/64125048/get-error-unknown-field-servicename-in-io-k8s-api-networking-v1-ingressbacken

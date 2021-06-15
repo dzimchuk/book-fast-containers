@@ -3,6 +3,8 @@ registry: <your-registry-name>
 env: 
   "ASPNETCORE_ENVIRONMENT": "Staging"
   "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true"
+  "KeyVaultName": ""
+  "UserAssignedClientId": ""
 
 facility:
   image:
@@ -10,8 +12,33 @@ facility:
     tag: latest
   replicas: 2
 
+booking:
+  image:
+    name: bookfast/bookfast-booking
+    tag: latest
+  replicas: 2
+
+files:
+  image:
+    name: bookfast/bookfast-files
+    tag: latest
+  replicas: 2
+
+search:
+  image:
+    name: bookfast/bookfast-search
+    tag: latest
+  replicas: 2
+
+indexer:
+  image:
+    name: bookfast/bookfast-search-indexer
+    tag: latest
+  replicas: 2
+
+
 # to get your DNS zone name use:
 # az aks show -g {resource-group-name} -n {aks-cluster-name} -o tsv --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
-# example: 51.138.82.127.nip.io (set through GitHub secrets)
+# example: backend.51.138.82.127.nip.io (set through GitHub secrets)
 dns:
-  name: <your-dns-zone-name>
+  backend: <your-dns-zone-name>

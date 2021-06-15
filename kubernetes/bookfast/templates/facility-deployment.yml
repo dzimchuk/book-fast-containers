@@ -16,6 +16,7 @@ spec:
     metadata:
       labels:
         app: bookfast-facility
+        aadpodidbinding: my-pod-identity
     spec:
       containers:
         - image: {{ .Values.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.facility.image.tag }}

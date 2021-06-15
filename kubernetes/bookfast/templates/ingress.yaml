@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookfast
+  namespace: {{ default "bookfast-staging" .Release.Namespace }}
+#  annotations:
+#    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: {{ .Values.dns.name }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: bookfast-facility
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+
+# see https://stackoverflow.com/questions/64125048/get-error-unknown-field-servicename-in-io-k8s-api-networking-v1-ingressbacken

@@ -92,11 +92,3 @@ jobs:
           file: BookFast.Search/Dockerfile
           tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:${{ env.RELEASE_VERSION }}
           push: true
-
-      - name: Build and push BookFast.Web
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Web/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-web:${{ env.RELEASE_VERSION }}
-          push: true

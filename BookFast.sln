@@ -41,10 +41,6 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Client", "BookFast.Facility.Client\BookFast.Facility.Client.csproj", "{568302C4-044A-4D93-8202-AD21B60FED6B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Web.Contracts", "BookFast.Web.Contracts\BookFast.Web.Contracts.csproj", "{4C8CE9BE-A671-4E64-8096-33AEC357DB46}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Web.Proxy", "BookFast.Web.Proxy\BookFast.Web.Proxy.csproj", "{50C8F322-96B3-4A1F-90B1-DF4255E545AC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Files.Client", "BookFast.Files.Client\BookFast.Files.Client.csproj", "{9692D030-5CCB-45B8-BC7A-EDBE53D06752}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search.Client", "BookFast.Search.Client\BookFast.Search.Client.csproj", "{AC3D428B-378D-4C9B-A51D-8BD97D718D73}"
@@ -78,8 +74,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Search", "BookFast.Search\BookFast.Search.csproj", "{1DD309DF-09D8-4CEE-82D2-94BB9F3981EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Hosting", "Common\BookFast.Hosting\BookFast.Hosting.csproj", "{1ADA5937-C8EA-4749-8CF1-0081A616DC88}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Web", "BookFast.Web\BookFast.Web.csproj", "{DF087D63-FA4D-4343-A394-F65E624212FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,14 +141,6 @@ Global
 		{568302C4-044A-4D93-8202-AD21B60FED6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{568302C4-044A-4D93-8202-AD21B60FED6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{568302C4-044A-4D93-8202-AD21B60FED6B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C8CE9BE-A671-4E64-8096-33AEC357DB46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50C8F322-96B3-4A1F-90B1-DF4255E545AC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9692D030-5CCB-45B8-BC7A-EDBE53D06752}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -223,10 +209,6 @@ Global
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DF087D63-FA4D-4343-A394-F65E624212FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF087D63-FA4D-4343-A394-F65E624212FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF087D63-FA4D-4343-A394-F65E624212FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF087D63-FA4D-4343-A394-F65E624212FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

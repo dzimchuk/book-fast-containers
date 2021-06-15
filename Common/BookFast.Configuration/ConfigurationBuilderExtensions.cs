@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.IO;
+﻿using Azure.Identity;
+using Microsoft.Extensions.Configuration;
+using System;
 
 namespace BookFast.Configuration
 {
@@ -8,14 +9,18 @@ namespace BookFast.Configuration
         public static IConfigurationBuilder AddAzureKeyVault(this IConfigurationBuilder builder)
         {
             var builtConfig = builder.Build();
-            var keyVaultName = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/keyVaultName");
-            var clientId = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/clientId");
-            var secret = File.ReadAllText($"{builtConfig["KeyVault:Path"]}/clientSecret");
+            var keyVaultName = builtConfig["KeyVaultName"];
 
-            builder.AddAzureKeyVault(
-                    $"https://{keyVaultName}.vault.azure.net/",
-                    clientId,
-                    secret);
+            if (!string.IsNullOrWhiteSpace(keyVaultName))
+            {
+                var userAssignedClientId = builtConfig["UserAssignedClientId"];
+
+                var credentials = string.IsNullOrWhiteSpace(userAssignedClientId)
+                    ? new DefaultAzureCredential()
+                    : new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = userAssignedClientId });
+
+                builder.AddAzureKeyVault(new Uri($"https://{keyVaultName}.vault.azure.net/"), credentials);
+            }
 
             return builder;
         }

@@ -43,3 +43,6 @@ indexer:
 dns:
   backend: <your-dns-zone-name>
   files: <your-dns-zone-name>
+
+acme:
+  email: <a valid email from your organization>

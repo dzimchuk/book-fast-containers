@@ -15,28 +15,39 @@ spec:
                 name: bookfast-facility
                 port:
                   number: 80
-            path: /facility
+            path: /api/facilities
+            pathType: Prefix
+          - backend:
+              service:
+                name: bookfast-facility
+                port:
+                  number: 80
+            path: /api/accommodations
             pathType: Prefix
           - backend:
               service:
                 name: bookfast-booking
                 port:
                   number: 80
-            path: /booking
-            pathType: Prefix
-          - backend:
-              service:
-                name: bookfast-files
-                port:
-                  number: 80
-            path: /files
+            path: /api/bookings
             pathType: Prefix
           - backend:
               service:
                 name: bookfast-search
                 port:
                   number: 80
-            path: /search
+            path: /api/search
+            pathType: Prefix
+    - host: {{ .Values.dns.files }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: bookfast-files
+                port:
+                  number: 80
+            path: /
             pathType: Prefix
  
 # see https://stackoverflow.com/questions/64125048/get-error-unknown-field-servicename-in-io-k8s-api-networking-v1-ingressbacken
+# see https://kubernetes.io/docs/concepts/services-networking/ingress/

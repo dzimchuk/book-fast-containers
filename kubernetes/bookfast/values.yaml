@@ -10,31 +10,31 @@ facility:
   image:
     name: bookfast/bookfast-facility
     tag: latest
-  replicas: 2
+  replicas: 1
 
 booking:
   image:
     name: bookfast/bookfast-booking
     tag: latest
-  replicas: 2
+  replicas: 1
 
 files:
   image:
     name: bookfast/bookfast-files
     tag: latest
-  replicas: 2
+  replicas: 1
 
 search:
   image:
     name: bookfast/bookfast-search
     tag: latest
-  replicas: 2
+  replicas: 1
 
 indexer:
   image:
     name: bookfast/bookfast-search-indexer
     tag: latest
-  replicas: 2
+  replicas: 1
 
 
 # to get your DNS zone name use:
@@ -42,3 +42,4 @@ indexer:
 # example: backend.51.138.82.127.nip.io (set through GitHub secrets)
 dns:
   backend: <your-dns-zone-name>
+  files: <your-dns-zone-name>

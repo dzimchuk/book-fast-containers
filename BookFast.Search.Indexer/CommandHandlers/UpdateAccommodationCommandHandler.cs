@@ -41,7 +41,7 @@ namespace BookFast.Search.Indexer.CommandHandlers
                 Images = request.Images,
                 FacilityName = result.Body.Name,
                 FacilityDescription = result.Body.Description,
-                FacilityLocation = new Location
+                Location = new Location
                 {
                     Latitude = result.Body.Latitude,
                     Longitude = result.Body.Longitude

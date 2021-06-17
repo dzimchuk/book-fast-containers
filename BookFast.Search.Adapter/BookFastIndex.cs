@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace BookFast.Search.Adapter
 {
     internal class BookFastIndex
     {
-        private readonly ISearchServiceClient client;
+        private readonly SearchIndexClient client;
         private readonly IConfiguration configuration;
 
-        public BookFastIndex(ISearchServiceClient client, IConfiguration configuration)
+        public BookFastIndex(SearchIndexClient client, IConfiguration configuration)
         {
             this.client = client;
             this.configuration = configuration;
@@ -20,46 +20,32 @@ namespace BookFast.Search.Adapter
         public async Task ProvisionAsync()
         {
             var indexName = configuration["Search:IndexName"];
-            await DeleteIndexAsync(indexName);
             await CreateIndexAsync(indexName);
-        }
-
-        private async Task DeleteIndexAsync(string indexName)
-        {
-            if (await client.Indexes.ExistsAsync(indexName))
-            {
-                await client.Indexes.DeleteAsync(indexName);
-            }
         }
 
         private Task CreateIndexAsync(string indexName)
         {
-            var suggester = new Suggester
+            var suggester = new SearchSuggester("sg", new[] { "Name", "FacilityName" });
+
+            var definition = new SearchIndex(indexName)
             {
-                Name = "sg",
-                //SearchMode = "analyzingInfixMatching",
-                SourceFields = new List<string> { "Name", "FacilityName" }
+                Fields = new List<SearchField>
+                         {
+                             new SearchField("Id", SearchFieldDataType.String) { IsKey = true },
+                             new SearchField("FacilityId", SearchFieldDataType.Int32) { IsFilterable = true },
+                             new SearchField("Name", SearchFieldDataType.String) { IsSearchable = true, AnalyzerName = LexicalAnalyzerName.EnMicrosoft },
+                             new SearchField("Description", SearchFieldDataType.String) { IsSearchable = true, AnalyzerName = LexicalAnalyzerName.EnMicrosoft },
+                             new SearchField("FacilityName", SearchFieldDataType.String) { IsSearchable = true, AnalyzerName = LexicalAnalyzerName.EnMicrosoft },
+                             new SearchField("FacilityDescription", SearchFieldDataType.String) { IsSearchable = true, AnalyzerName = LexicalAnalyzerName.EnMicrosoft },
+                             new SearchField("Location", SearchFieldDataType.GeographyPoint) { IsFilterable = true },
+                             new SearchField("RoomCount", SearchFieldDataType.Int32) { IsFilterable = true },
+                             new SearchField("Images", SearchFieldDataType.Collection(SearchFieldDataType.String)) { IsFilterable = false }
+                         }
             };
 
-            var definition = new Index
-            {
-                Name = indexName,
-                Fields = new List<Field>
-                                          {
-                                              new Field("Id", DataType.String) { IsKey = true },
-                                              new Field("FacilityId", DataType.Int32) { IsFilterable = true },
-                                              new Field("Name", DataType.String, AnalyzerName.EnMicrosoft) { IsSearchable = true },
-                                              new Field("Description", DataType.String, AnalyzerName.EnMicrosoft) { IsSearchable = true },
-                                              new Field("FacilityName", DataType.String, AnalyzerName.EnMicrosoft) { IsSearchable = true },
-                                              new Field("FacilityDescription", DataType.String, AnalyzerName.EnMicrosoft) { IsSearchable = true },
-                                              new Field("Location", DataType.GeographyPoint) { IsFilterable = true },
-                                              new Field("RoomCount", DataType.Int32) { IsFilterable = true },
-                                              new Field("Images", DataType.Collection(DataType.String)) { IsFilterable = false }
-                                          },
-                Suggesters = new List<Suggester> { suggester }
-            };
+            definition.Suggesters.Add(suggester);
 
-            return client.Indexes.CreateAsync(definition);
+            return client.CreateOrUpdateIndexAsync(definition);
         }
     }
 }

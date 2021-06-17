@@ -1,5 +1,3 @@
-using System;
-
 namespace BookFast.Search.Contracts.Models
 {
     public class Accommodation
@@ -13,7 +11,7 @@ namespace BookFast.Search.Contracts.Models
         public string FacilityName { get; set; }
         public string FacilityDescription { get; set; }
 
-        public Location FacilityLocation { get; set; }
+        public Location Location { get; set; }
 
         public int RoomCount { get; set; }
         public string[] Images { get; set; }

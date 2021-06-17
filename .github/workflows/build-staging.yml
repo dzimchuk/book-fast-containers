@@ -26,20 +26,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-            node-version: ${{ matrix.node-version }}
-      
-      - name: Run npm stuff
-        working-directory: ./BookFast.Web
-        run: |
-          npm ci
-          gulp clean
-          gulp min
-          gulp copy:node:modules
-      
+            
       # see https://github.com/docker/login-action#github-container-registry
       - name: Login to Registry
         uses: docker/login-action@v1
@@ -87,3 +74,39 @@ jobs:
           file: BookFast.Search/Dockerfile
           tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:latest
           push: true
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_push_image
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v1
+        with:
+          # Version of helm
+          version: v3.6.1 # default is latest
+
+      - name: Get AKS Credentials
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.CLUSTER_NAME }}
+          
+      - name: Run Helm Deploy
+        run: |
+          helm upgrade \
+            --install \
+            --create-namespace \
+            --atomic \
+            --wait \
+            --namespace bookfast-staging \
+            bookfast \
+            ./kubernetes/bookfast \
+            --set registry=${{ secrets.REGISTRY_NAME }} \
+            --set env.KeyVaultName=${{ secrets.KEYVAULT_NAME }} \
+            --set env.UserAssignedClientId=${{ secrets.USER_ASSIGNED_CLIENT_ID }} \
+            --set dns.backend=${{ secrets.DNS_BACKEND }} \
+            --set dns.files=${{ secrets.DNS_FILES }}

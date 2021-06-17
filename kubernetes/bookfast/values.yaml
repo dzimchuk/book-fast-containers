@@ -2,6 +2,7 @@ registry: <your-registry-name>
 
 env: 
   "ASPNETCORE_ENVIRONMENT": "Staging"
+  "DOTNET_ENVIRONMENT": "Staging"
   "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true"
   "KeyVaultName": ""
   "UserAssignedClientId": ""

@@ -112,6 +112,7 @@ jobs:
             ./kubernetes/bookfast \
             --set registry=${{ secrets.REGISTRY_NAME }} \
             --set env.ASPNETCORE_ENVIRONMENT=Production \
+            --set env.DOTNET_ENVIRONMENT=Production \
             --set env.KeyVaultName=${{ secrets.KEYVAULT_NAME_PROD }} \
             --set env.UserAssignedClientId=${{ secrets.USER_ASSIGNED_CLIENT_ID }} \
             --set acme.email=${{ secrets.ACME_EMAIL }} \

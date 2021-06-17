@@ -106,7 +106,9 @@ jobs:
             bookfast \
             ./kubernetes/bookfast \
             --set registry=${{ secrets.REGISTRY_NAME }} \
+            --set env.ASPNETCORE_ENVIRONMENT=Staging \
             --set env.KeyVaultName=${{ secrets.KEYVAULT_NAME }} \
             --set env.UserAssignedClientId=${{ secrets.USER_ASSIGNED_CLIENT_ID }} \
+            --set acme.email=${{ secrets.ACME_EMAIL }} \
             --set dns.backend=${{ secrets.DNS_BACKEND }} \
             --set dns.files=${{ secrets.DNS_FILES }}

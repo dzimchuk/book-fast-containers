@@ -97,7 +97,7 @@ jobs:
         uses: Azure/aks-set-context@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          resource-group: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
           
       - name: Run Helm Deploy

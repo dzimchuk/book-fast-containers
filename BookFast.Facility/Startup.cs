@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using BookFast.Facility.Integration;
+using BookFast.Facility.Rpc;
 using BookFast.ReliableEvents;
 using BookFast.SeedWork;
 using BookFast.ServiceBus;
@@ -43,6 +44,8 @@ namespace BookFast.Facility
 
             services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.Facility.xml");
 
+            services.AddGrpc();
+
             var modules = new List<ICompositionModule>
                           {
                               new CommandStack.Composition.CompositionModule(),
@@ -71,6 +74,7 @@ namespace BookFast.Facility
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGrpcService<FacilityService>();
                 endpoints.MapControllers();
             });
 

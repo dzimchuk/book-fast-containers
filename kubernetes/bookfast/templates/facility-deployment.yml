@@ -19,7 +19,7 @@ spec:
         aadpodidbinding: my-pod-identity
     spec:
       containers:
-        - image: {{ .Values.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.facility.image.tag }}
+        - image: {{ .Values.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.tag }}
           name: bookfast-facility
           resources:
             requests:

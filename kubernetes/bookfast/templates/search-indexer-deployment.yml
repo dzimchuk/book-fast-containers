@@ -19,7 +19,7 @@ spec:
         aadpodidbinding: my-pod-identity
     spec:
       containers:
-        - image: {{ .Values.registry }}/{{ .Values.indexer.image.name }}:{{ default "latest" .Values.indexer.image.tag }}
+        - image: {{ .Values.registry }}/{{ .Values.indexer.image.name }}:{{ default "latest" .Values.tag }}
           name: bookfast-search-indexer
           resources:
             requests:

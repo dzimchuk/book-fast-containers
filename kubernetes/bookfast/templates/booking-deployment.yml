@@ -19,7 +19,7 @@ spec:
         aadpodidbinding: my-pod-identity
     spec:
       containers:
-        - image: {{ .Values.registry }}/{{ .Values.booking.image.name }}:{{ default "latest" .Values.booking.image.tag }}
+        - image: {{ .Values.registry }}/{{ .Values.booking.image.name }}:{{ default "latest" .Values.tag }}
           name: bookfast-booking
           resources:
             requests:

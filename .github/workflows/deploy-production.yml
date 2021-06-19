@@ -1,0 +1,52 @@
+name: Deploy production
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+  
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_push_image
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # see https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v1
+        with:
+          # Version of helm
+          version: v3.6.1 # default is latest
+
+      - name: Get AKS Credentials
+        uses: Azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.CLUSTER_NAME }}
+          
+      - name: Run Helm Deploy
+        run: |
+          helm upgrade \
+            --install \
+            --create-namespace \
+            --atomic \
+            --wait \
+            --namespace bookfast-production \
+            bookfast \
+            ./kubernetes/bookfast \
+            --set registry=${{ secrets.REGISTRY_NAME }} \
+            --set tag=${{ env.RELEASE_VERSION }} \
+            --set env.ASPNETCORE_ENVIRONMENT=Production \
+            --set env.DOTNET_ENVIRONMENT=Production \
+            --set env.KeyVaultName=${{ secrets.KEYVAULT_NAME_PROD }} \
+            --set env.UserAssignedClientId=${{ secrets.USER_ASSIGNED_CLIENT_ID }} \
+            --set acme.email=${{ secrets.ACME_EMAIL }} \
+            --set dns.backend=${{ secrets.DNS_BACKEND_PROD }} \
+            --set dns.files=${{ secrets.DNS_FILES_PROD }}

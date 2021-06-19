@@ -7,34 +7,31 @@ env:
   "KeyVaultName": ""
   "UserAssignedClientId": ""
 
+tag: latest
+
 facility:
   image:
     name: bookfast/bookfast-facility
-    tag: latest
   replicas: 1
 
 booking:
   image:
     name: bookfast/bookfast-booking
-    tag: latest
   replicas: 1
 
 files:
   image:
     name: bookfast/bookfast-files
-    tag: latest
   replicas: 1
 
 search:
   image:
     name: bookfast/bookfast-search
-    tag: latest
   replicas: 1
 
 indexer:
   image:
     name: bookfast/bookfast-search-indexer
-    tag: latest
   replicas: 1
 
 

@@ -10,5 +10,5 @@ spec:
       targetPort: 81
       name: http
   selector:
-    app: bookfast-facility-rpc
+    app: bookfast-facility
   type: ClusterIP

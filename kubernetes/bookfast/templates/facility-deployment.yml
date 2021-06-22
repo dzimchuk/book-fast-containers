@@ -36,3 +36,20 @@ spec:
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
           {{- end }}
+        - image: {{ .Values.registry }}/{{ .Values.facility-rpc.image.name }}:{{ default "latest" .Values.tag }}
+          name: bookfast-facility-rpc
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}

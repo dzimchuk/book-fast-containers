@@ -11,7 +11,7 @@ COPY ["BookFast.Booking.Domain/", "BookFast.Booking.Domain/"]
 COPY ["BookFast.Booking.CommandStack/", "BookFast.Booking.CommandStack/"]
 COPY ["BookFast.Booking.QueryStack/", "BookFast.Booking.QueryStack/"]
 COPY ["BookFast.Booking.Data/", "BookFast.Booking.Data/"]
-COPY ["BookFast.Facility.Client/", "BookFast.Facility.Client/"]
+COPY ["BookFast.Facility.Rpc/Protos/facility.proto", "BookFast.Facility.Rpc/Protos/facility.proto"]
 
 RUN dotnet restore "BookFast.Booking/BookFast.Booking.csproj"
 

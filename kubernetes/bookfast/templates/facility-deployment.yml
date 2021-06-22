@@ -49,6 +49,8 @@ spec:
             - containerPort: 81
               name: http
           env:
+            - name: ASPNETCORE_URLS
+              value: http://+:81
           {{- range $k, $v := .Values.env }}
             - name: {{ $k | quote }}
               value: {{ $v | quote }}

@@ -36,7 +36,7 @@ spec:
             - name: {{ $k | quote }}
               value: {{ $v | quote }}
           {{- end }}
-        - image: {{ .Values.registry }}/{{ .Values.facility-rpc.image.name }}:{{ default "latest" .Values.tag }}
+        - image: {{ .Values.registry }}/{{ .Values.facilityrpc.image.name }}:{{ default "latest" .Values.tag }}
           name: bookfast-facility-rpc
           resources:
             requests:

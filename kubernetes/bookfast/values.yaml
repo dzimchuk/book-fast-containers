@@ -14,7 +14,7 @@ facility:
     name: bookfast/bookfast-facility
   replicas: 1
 
-facility-rpc:
+facilityrpc:
   image:
     name: bookfast/bookfast-facility-rpc
   replicas: 1

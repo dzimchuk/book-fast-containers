@@ -46,6 +46,14 @@ jobs:
           tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:${{ env.RELEASE_VERSION }}
           push: true
 
+      - name: Build and push BookFast.Facility.Rpc
+        uses: docker/build-push-action@v2.3.0
+        with:
+          context: .
+          file: BookFast.Facility.Rpc/Dockerfile
+          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:${{ env.RELEASE_VERSION }}
+          push: true
+
       - name: Build and push BookFast.Files
         uses: docker/build-push-action@v2.3.0
         with:

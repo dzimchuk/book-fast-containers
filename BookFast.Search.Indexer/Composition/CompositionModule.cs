@@ -1,4 +1,3 @@
-using BookFast.Rest;
 using BookFast.Search.Indexer.Integration;
 using BookFast.SeedWork;
 using BookFast.ServiceBus;
@@ -15,8 +14,6 @@ namespace BookFast.Search.Indexer.Composition
             services.AddMediatR(typeof(CompositionModule).Assembly);
 
             services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
-            
-            services.AddSingleton<IAccessTokenProvider, NullAccessTokenProvider>();
         }
     }
 }

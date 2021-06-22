@@ -1,6 +1,6 @@
 using System.Linq;
-using BookFast.Facility.Client.Models;
 using BookFast.Booking.Domain.Models;
+using BookFast.Facility.Rpc;
 
 namespace BookFast.Booking.Data.Mappers
 {

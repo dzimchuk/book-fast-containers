@@ -1,7 +1,6 @@
 using BookFast.SeedWork;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using BookFast.Rest;
 using BookFast.Booking.CommandStack.Data;
 using BookFast.Booking.QueryStack;
 using BookFast.ReliableEvents;
@@ -28,9 +27,6 @@ namespace BookFast.Booking.Data.Composition
             //services.AddScoped<IFacilityDataSource, CachingFacilityDataSource>(serviceProvider => 
             //    new CachingFacilityDataSource(serviceProvider.GetService<FacilityDataSource>(), serviceProvider.GetService<IDistributedCache>()));
             
-            services.AddSingleton<IAccessTokenProvider, NullAccessTokenProvider>();
-            new Facility.Client.Composition.CompositionModule().AddServices(services, configuration);
-
             //services.AddDistributedRedisCache(redisCacheOptions =>
             //{
             //    redisCacheOptions.Configuration = configuration["Redis:Configuration"];

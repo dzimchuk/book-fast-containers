@@ -10,6 +10,15 @@ services:
     volumes:
       - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
 
+  bookfast-facility-rpc:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+
+    ports:
+      - "30408:80"
+    volumes:
+      - ${OneDrive}/dev/BookFast/KeyVault:/root/.keyvault:ro
+
   bookfast-files:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production

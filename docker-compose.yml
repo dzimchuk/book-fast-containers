@@ -7,6 +7,12 @@ services:
       context: .
       dockerfile: BookFast.Facility/Dockerfile
 
+  bookfast-facility-rpc:
+    image: ${DOCKER_REGISTRY-}bookfast-facility-rpc
+    build:
+      context: .
+      dockerfile: BookFast.Facility.Rpc/Dockerfile
+
   bookfast-files:
     image: ${DOCKER_REGISTRY-}bookfast-files
     build:

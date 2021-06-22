@@ -1,10 +1,10 @@
-﻿using BookFast.Configuration;
+using BookFast.Configuration;
 using BookFast.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace BookFast.Facility
+namespace BookFast.Facility.Rpc
 {
     public class Program
     {
@@ -15,7 +15,7 @@ namespace BookFast.Facility
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseDefaultServiceProvider(options => options.ValidateScopes = true) // scoped services (e.g. DbContext) cannot be used in singletons (e.g. IHostedService)
+                .UseDefaultServiceProvider(options => options.ValidateScopes = true)
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     if (context.HostingEnvironment.IsStaging() || context.HostingEnvironment.IsProduction())
@@ -25,19 +25,6 @@ namespace BookFast.Facility
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    //webBuilder.ConfigureKestrel(options =>
-                    //{
-                    //    options.Listen(IPAddress.Loopback, 30408, cfg =>
-                    //    {
-                    //        cfg.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
-                    //    });
-
-                    //    options.Listen(IPAddress.Loopback, 30409, cfg =>
-                    //    {
-                    //        cfg.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
-                    //    });
-                    //});
-
                     webBuilder.UseStartup<Startup>();
                 })
                 .UseCustomServiceProviderFactory();

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\BookFast.Facility\Rpc\Protos\facility.proto" GrpcServices="Client">
+    <Protobuf Include="..\BookFast.Facility.Rpc\Protos\facility.proto" GrpcServices="Client">
       <Link>Protos\facility.proto</Link>
     </Protobuf>
   </ItemGroup>

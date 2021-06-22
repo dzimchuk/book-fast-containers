@@ -7,7 +7,7 @@ spec:
   ports:
     - port: 80
       protocol: TCP
-      targetPort: http
+      targetPort: 81
       name: http
   selector:
     app: bookfast-facility-rpc

@@ -4,7 +4,7 @@ name: Build staging
 on:
   # Triggers the workflow on push events but only for the master branch
   push:
-    branches: [ master, feature/kubernetes ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

@@ -1,13 +1,18 @@
 # Book Fast (Docker)
-A sample demonstrating how to implement a containerized multitenant facility management and accommodation booking application.
+A sample demonstrating how to implement a containerized multitenant facility management and accommodation booking application. It uses microservices architecture and relies on a bunch of Azure services.
 
 ## Features
 
 ### Architecture
 - 4 bounded contexts
 - CQRS and DDD (with [reliable domain events](https://dzimchuk.net/reliable-domain-events/))
-- ASP.NET Core 3.0 Web API and web frontend
-- Docker Compose
+- ASP.NET Core 5, Blazor, gRPC
+- Kubernetes and Docker Compose
+
+### Build and deployment
+- GitHub actions
+- Azure Container Registry
+- Helm
 
 ### Security
 - [Multitenant](https://dzimchuk.net/enabling-multitenant-support-in-you-azure-ad-protected-applications/) Azure AD organizational accounts
@@ -15,6 +20,8 @@ A sample demonstrating how to implement a containerized multitenant facility man
 - OpenID Connect and OAuth2
 
 ### Azure services
+- Azure Kubernetes Service
+- Azure Container Registry
 - Azure SQL databases
 - Azure Storage
 - Azure Service Bus
@@ -22,14 +29,9 @@ A sample demonstrating how to implement a containerized multitenant facility man
 - Application Insights
 - Azure KeyVault
 
-### Misc
-- [Swagger and AutoRest](https://dzimchuk.net/generating-clients-for-your-apis-with-autorest/)
-- Redis cache
-- [Circuit Breaker](https://dzimchuk.net/be-prepared-for-downstream-failures-by-implementing-the-circuit-breaker-pattern/)
-
 ## Configuration
 
-The application supports Development and Production environments. In Development it relies on [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) and in Production it uses Azure KeyVault.
+The application supports Development, Staging and Production environments. In Development it relies on [User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets) and in Staging/Production it uses Azure KeyVault.
 
 Here's a short description of configuration parameters:
 
@@ -67,13 +69,11 @@ Here's a short description of configuration parameters:
   "Search": {
     "QueryKey": "Azure Search query key",
     "AdminKey": "Azure Search admin key",
-    "ServiceName": "Azure Search service name",
+    "ServiceEndpoint": "Azure Search service endpoint",
     "IndexName": "Azure Search index"
   }
 }
 ```
-
-Please inspect service and application manifests to understand how these parameters are used to configure services.
 
 ### User Secrets
 
@@ -81,15 +81,33 @@ All services are configured to use the same User Secrets ID for simplicity. So i
 
 ### Azure KeyVault
 
-In Production mode the following directory gets mounted to containers: `${OneDrive}/dev/BookFast/KeyVault`
+#### Kubernetes
 
-The directory is expected to contain 3 plain text files:
+The application has been designed to run in Azure Kubernetes Service (AKS). In Staging and Production modes services are configured to use pod identity called `my-pod-identity` (see deployment files). [This article](https://docs.microsoft.com/en-us/azure/aks/use-azure-ad-pod-identity) provides details on how to set up pod identity in the application namespace. 
 
+The pod identity in question is expected to reference a user-assigned managed identity that is configured to access KeyVault (list and get permissions).
+
+#### Docker Compose
+
+Currently Docker Compose is supposed to be used locally on a dev box. In Production mode (that is used for demo purpose only) the following directory gets mounted to containers: `${OneDrive}/dev/BookFast/KeyVault`
+
+The directory is expected to contain 4 plain text files:
+
+- tenantId
 - clientId
 - clientSecret
 - keyVaultName
 
-File names are pretty much self explonatory. Just make sure they don't contain extra spaces or line feeds.
+File names are pretty much self explonatory. Just make sure they don't contain extra spaces or line feeds. The app is going to try to create a `ClientSecretCredential` to authenticate to KeyVault.
+
+Alternatively it can also try to use a `DefaultAzureCredential` if there is a `KeyVaultName` environment variable. But in this case make sure to also define the following variables for `DefaultAzureCredential` to work:
+
+- AZURE_CLIENT_ID
+- AZURE_CLIENT_SECRET
+- AZURE_TENANT_ID
+
+In both cases you need to have a corresponding principal in your Azure AD tenant that is also configured to access KeyVault secrets (list and get permissions).
+
 
 ### Azure AD
 
@@ -131,6 +149,6 @@ Also provision 2 notification queues:
 
 BookFast.Search.Adapter can be run from the command line as `dotnet run provision` in order to create an index in your Azure Search service. It will require the following parameters to be defined in [user secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets):
 
-- Search:ServiceName
+- Search:ServiceEndpoint
 - Search:AdminKey
 - Search:IndexName

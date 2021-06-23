@@ -38,50 +38,39 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           
-      - name: Build and push BookFast.Facility
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Facility/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:${{ env.RELEASE_VERSION }}
-          push: true
-
-      - name: Build and push BookFast.Facility.Rpc
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Facility.Rpc/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:${{ env.RELEASE_VERSION }}
-          push: true
-
-      - name: Build and push BookFast.Files
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Files/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:${{ env.RELEASE_VERSION }}
-          push: true
-
-      - name: Build and push BookFast.Booking
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Booking/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:${{ env.RELEASE_VERSION }}
-          push: true
-
-      - name: Build and push BookFast.Search.Indexer
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Search.Indexer/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:${{ env.RELEASE_VERSION }}
-          push: true
-
-      - name: Build and push BookFast.Search
-        uses: docker/build-push-action@v2.3.0
-        with:
-          context: .
-          file: BookFast.Search/Dockerfile
-          tags: ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:${{ env.RELEASE_VERSION }}
-          push: true
+      - name: Tag BookFast.Facility
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility:${{ env.RELEASE_VERSION }}
+        
+      - name: Tag BookFast.Facility.Rpc
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-facility-rpc:${{ env.RELEASE_VERSION }}
+        
+      - name: Tag BookFast.Files
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-files:${{ env.RELEASE_VERSION }}
+        
+      - name: Tag BookFast.Booking
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-booking:${{ env.RELEASE_VERSION }}
+        
+      - name: Tag BookFast.Search.Indexer
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search-indexer:${{ env.RELEASE_VERSION }}
+        
+      - name: Tag BookFast.Search
+        run: |
+          docker pull ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:latest
+          docker tag ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:latest ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:${{ env.RELEASE_VERSION }}
+          docker push ${{ secrets.REGISTRY_NAME }}/bookfast/bookfast-search:${{ env.RELEASE_VERSION }}
+        

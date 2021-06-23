@@ -8,7 +8,7 @@ COPY ["Common/", "Common/"]
 COPY ["BookFast.Search.Indexer/", "BookFast.Search.Indexer/"]
 COPY ["BookFast.Search.Adapter/", "BookFast.Search.Adapter/"]
 COPY ["BookFast.Search.Contracts/", "BookFast.Search.Contracts/"]
-COPY ["BookFast.Facility.Client/", "BookFast.Facility.Client/"]
+COPY ["BookFast.Facility.Rpc/Protos/facility.proto", "BookFast.Facility.Rpc/Protos/facility.proto"]
 
 RUN dotnet restore "BookFast.Search.Indexer/BookFast.Search.Indexer.csproj"
 

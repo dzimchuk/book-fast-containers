@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookfast-facility
+  namespace: {{ default "bookfast-staging" .Release.Namespace }}
+spec:
+  replicas: {{ .Values.facility.replicas }}
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: bookfast-facility
+  template:
+    metadata:
+      labels:
+        app: bookfast-facility
+        aadpodidbinding: my-pod-identity
+    spec:
+      containers:
+        - image: {{ .Values.registry }}/{{ .Values.facility.image.name }}:{{ default "latest" .Values.tag }}
+          name: bookfast-facility
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}
+        - image: {{ .Values.registry }}/{{ .Values.facilityrpc.image.name }}:{{ default "latest" .Values.tag }}
+          name: bookfast-facility-rpc
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 81
+              name: http
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:81
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}

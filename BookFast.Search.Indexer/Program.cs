@@ -18,7 +18,7 @@ namespace BookFast.Search.Indexer
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    if (context.HostingEnvironment.IsProduction())
+                    if (context.HostingEnvironment.IsStaging() || context.HostingEnvironment.IsProduction())
                     {
                         config.AddAzureKeyVault();
                     }
@@ -30,8 +30,7 @@ namespace BookFast.Search.Indexer
                     var modules = new List<ICompositionModule>
                           {
                               new Composition.CompositionModule(),
-                              new Adapter.Composition.CompositionModule(),
-                              new Facility.Client.Composition.CompositionModule()
+                              new Adapter.Composition.CompositionModule()
                           };
 
                     foreach (var module in modules)

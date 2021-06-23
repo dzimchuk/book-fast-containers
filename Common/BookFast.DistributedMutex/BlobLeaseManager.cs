@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+﻿using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,57 +14,59 @@ namespace BookFast.DistributedMutex
     /// </summary>
     internal class BlobLeaseManager
     {
-        private readonly CloudPageBlob leaseBlob;
+        private readonly BlobContainerClient leaseContainerClient;
+        private readonly PageBlobClient leaseBlobClient;
         private readonly ILogger logger;
 
         public BlobLeaseManager(BlobSettings settings, ILogger logger)
-            : this(settings.StorageAccount.CreateCloudBlobClient(), settings.Container, settings.BlobName, logger)
+            : this(settings.BlobServiceClient, settings.Container, settings.BlobName, logger)
         {
         }
 
-        public BlobLeaseManager(CloudBlobClient blobClient, string leaseContainerName, string leaseBlobName, ILogger logger)
+        public BlobLeaseManager(BlobServiceClient blobServiceClient, string leaseContainerName, string leaseBlobName, ILogger logger)
         {
+            leaseContainerClient = blobServiceClient.GetBlobContainerClient(leaseContainerName);
+            leaseBlobClient = leaseContainerClient.GetPageBlobClient(leaseBlobName);
             this.logger = logger;
-
-            var container = blobClient.GetContainerReference(leaseContainerName);
-            leaseBlob = container.GetPageBlobReference(leaseBlobName);
         }
 
         public async Task ReleaseLeaseAsync(string leaseId)
         {
             try
             {
-                await leaseBlob.ReleaseLeaseAsync(new AccessCondition { LeaseId = leaseId });
+                var leaseClient = leaseBlobClient.GetBlobLeaseClient(leaseId);
+                await leaseClient.ReleaseAsync();
             }
-            catch (StorageException storageException)
+            catch (RequestFailedException storageException)
             {
-                logger.LogError($"Error releasing lease. Details: {storageException}");
+                // Lease will eventually be released.
+                logger.LogError($"Error releasing lease. ErrorCode: {storageException.ErrorCode}. Details: {storageException}");
             }
         }
 
         public async Task<string> AcquireLeaseAsync(CancellationToken token)
         {
             var blobNotFound = false;
-
             try
             {
-                return await leaseBlob.AcquireLeaseAsync(TimeSpan.FromSeconds(60));
+                var leaseClient = leaseBlobClient.GetBlobLeaseClient();
+                var lease = await leaseClient.AcquireAsync(TimeSpan.FromSeconds(60), null, token);
+                return lease.Value.LeaseId;
             }
-            catch (StorageException storageException)
+            catch (RequestFailedException storageException)
             {
-                var errorCode = storageException.RequestInformation.ExtendedErrorInformation.ErrorCode;
-                if (errorCode.Equals("ContainerNotFound", StringComparison.OrdinalIgnoreCase) ||
-                    errorCode.Equals("BlobNotFound", StringComparison.OrdinalIgnoreCase))
+                var status = storageException.Status;
+                if (status == (int)HttpStatusCode.NotFound)
                 {
                     blobNotFound = true;
                 }
-                else if (errorCode.Equals("LeaseAlreadyPresent", StringComparison.OrdinalIgnoreCase))
+                else if (status == (int)HttpStatusCode.Conflict)
                 {
                     return null;
                 }
                 else
                 {
-                    logger.LogError($"Error acquiring lease. Details: {storageException}");
+                    logger.LogError($"Error acquiring lease. ErrorCode: {storageException.ErrorCode}. Details: {storageException}");
                 }
             }
 
@@ -79,12 +83,14 @@ namespace BookFast.DistributedMutex
         {
             try
             {
-                await leaseBlob.RenewLeaseAsync(new AccessCondition { LeaseId = leaseId });
+                var leaseClient = leaseBlobClient.GetBlobLeaseClient(leaseId);
+                await leaseClient.RenewAsync(cancellationToken: token);
                 return true;
             }
-            catch (StorageException storageException)
+            catch (RequestFailedException storageException)
             {
-                logger.LogError($"Error renewing lease. Details: {storageException}");
+                logger.LogError($"Error renewing lease. ErrorCode: {storageException.ErrorCode}. Details: {storageException}");
+
                 return false;
             }
         }
@@ -93,16 +99,12 @@ namespace BookFast.DistributedMutex
         {
             try
             {
-                await leaseBlob.Container.CreateIfNotExistsAsync();
-
-                if (!await leaseBlob.ExistsAsync())
-                {
-                    await leaseBlob.CreateAsync(0);
-                }
+                await leaseContainerClient.CreateIfNotExistsAsync(cancellationToken: token);
+                await leaseBlobClient.CreateIfNotExistsAsync(0, cancellationToken: token);
             }
-            catch (StorageException storageException)
+            catch (RequestFailedException storageException)
             {
-                logger.LogError($"Error creating a mutex blob. Details: {storageException}");
+                logger.LogError($"Error creating a mutex blob. ErrorCode: {storageException.ErrorCode}. Details: {storageException}");
                 throw;
             }
         }

@@ -18,13 +18,26 @@ namespace BookFast.Facility
                 .UseDefaultServiceProvider(options => options.ValidateScopes = true) // scoped services (e.g. DbContext) cannot be used in singletons (e.g. IHostedService)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    if (context.HostingEnvironment.IsProduction())
+                    if (context.HostingEnvironment.IsStaging() || context.HostingEnvironment.IsProduction())
                     {
                         config.AddAzureKeyVault();
                     }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    //webBuilder.ConfigureKestrel(options =>
+                    //{
+                    //    options.Listen(IPAddress.Loopback, 30408, cfg =>
+                    //    {
+                    //        cfg.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+                    //    });
+
+                    //    options.Listen(IPAddress.Loopback, 30409, cfg =>
+                    //    {
+                    //        cfg.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
+                    //    });
+                    //});
+
                     webBuilder.UseStartup<Startup>();
                 })
                 .UseCustomServiceProviderFactory();

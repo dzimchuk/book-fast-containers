@@ -5,8 +5,8 @@ namespace BookFast.Search.Adapter
 {
     public interface ISearchResultMapper
     {
-        IList<SearchResult> MapFrom(IList<Microsoft.Azure.Search.Models.SearchResult<Microsoft.Azure.Search.Models.Document>> results);
-        IList<SuggestResult> MapFrom(IList<Microsoft.Azure.Search.Models.SuggestResult<Microsoft.Azure.Search.Models.Document>> results);
+        IList<SearchResult> MapFrom(IList<Azure.Search.Documents.Models.SearchResult<Accommodation>> results);
+        IList<SuggestResult> MapFrom(IList<Azure.Search.Documents.Models.SearchSuggestion<Accommodation>> results);
 
     }
 }

@@ -12,17 +12,6 @@ namespace BookFast.Search.Adapter.Mappers
         {
             var mapperConfiguration = new MapperConfiguration(configuration =>
                                                               {
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.Document, Document>()
-                                                                               .ConvertUsing((searchDocument, doc) =>
-                                                                                             {
-                                                                                                 doc = new Document();
-                                                                                                 foreach (var key in searchDocument.Keys)
-                                                                                                 {
-                                                                                                     doc.Add(key, searchDocument[key]);
-                                                                                                 }
-
-                                                                                                 return doc;
-                                                                                             });
                                                                   configuration.CreateMap<IDictionary<string, IList<string>>, HitHighlights>()
                                                                                .ConvertUsing((searchHighlights, highlights) =>
                                                                                              {
@@ -37,8 +26,8 @@ namespace BookFast.Search.Adapter.Mappers
 
                                                                                                  return highlights;
                                                                                              });
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SearchResult<Microsoft.Azure.Search.Models.Document>, SearchResult>();
-                                                                  configuration.CreateMap<Microsoft.Azure.Search.Models.SuggestResult<Microsoft.Azure.Search.Models.Document>, SuggestResult>();
+                                                                  configuration.CreateMap<Azure.Search.Documents.Models.SearchResult<Accommodation>, SearchResult>();
+                                                                  configuration.CreateMap<Azure.Search.Documents.Models.SearchSuggestion<Accommodation>, SuggestResult>();
 
                                                               });
 
@@ -46,12 +35,12 @@ namespace BookFast.Search.Adapter.Mappers
             Mapper = mapperConfiguration.CreateMapper();
         }
 
-        public IList<SearchResult> MapFrom(IList<Microsoft.Azure.Search.Models.SearchResult<Microsoft.Azure.Search.Models.Document>> results)
+        public IList<SearchResult> MapFrom(IList<Azure.Search.Documents.Models.SearchResult<Accommodation>> results)
         {
             return Mapper.Map<IList<SearchResult>>(results);
         }
 
-        public IList<SuggestResult> MapFrom(IList<Microsoft.Azure.Search.Models.SuggestResult<Microsoft.Azure.Search.Models.Document>> results)
+        public IList<SuggestResult> MapFrom(IList<Azure.Search.Documents.Models.SearchSuggestion<Accommodation>> results)
         {
             return Mapper.Map<IList<SuggestResult>>(results);
         }

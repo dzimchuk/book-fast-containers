@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "BookFast.Facility.Rpc";
+
+package facility;
+
+service Facility {
+  rpc FindFacility (FindRequest) returns (FacilityRepresentation);
+  rpc FindAccommodation (FindRequest) returns (AccommodationRepresentation);
+}
+
+message FindRequest {
+  int32 id = 1;
+}
+
+message FacilityRepresentation {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  string street_address = 4;
+  google.protobuf.DoubleValue longitude = 5;
+  google.protobuf.DoubleValue latitude = 6;
+  repeated string images = 7;
+  int32 accommodationCount = 8;
+}
+
+message AccommodationRepresentation {
+  int32 id = 1;
+  int32 facilityId = 2;
+  string name = 3;
+  string description = 4;
+  int32 roomCount = 5;
+  repeated string images = 6;
+}

@@ -1,7 +1,8 @@
 ﻿using System;
-using Microsoft.Azure.Search;
 using Microsoft.Extensions.Configuration;
 using System.IO;
+using Azure.Search.Documents.Indexes;
+using Azure;
 
 namespace BookFast.Search.Adapter
 {
@@ -26,7 +27,10 @@ namespace BookFast.Search.Adapter
             builder.AddUserSecrets<Program>();
 
             var configuration = builder.Build();
-            var searchServiceClient = new SearchServiceClient(configuration["Search:ServiceName"], new SearchCredentials(configuration["Search:AdminKey"]));
+
+            var endpoint = new Uri(configuration["Search:ServiceEndpoint"]);
+            var credential = new AzureKeyCredential(configuration["Search:AdminKey"]);
+            var searchServiceClient = new SearchIndexClient(endpoint, credential);
 
             var index = new BookFastIndex(searchServiceClient, configuration);
             index.ProvisionAsync().Wait();

@@ -1,32 +1,50 @@
-using BookFast.Facility.Client;
-using BookFast.Rest;
+using BookFast.Facility.Rpc;
 using BookFast.Search.Contracts;
 using BookFast.Search.Contracts.Models;
 using BookFast.Search.Indexer.Commands;
+using Grpc.Core;
+using Grpc.Net.Client;
 using MediatR;
-using System.Net;
+using Microsoft.Extensions.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
+using static BookFast.Facility.Rpc.Facility;
 
 namespace BookFast.Search.Indexer.CommandHandlers
 {
     public class UpdateAccommodationCommandHandler : AsyncRequestHandler<UpdateAccommodationCommand>
     {
         private readonly ISearchIndexer searchIndexer;
-        private readonly IApiClientFactory<IBookFastFacilityAPI> apiClientFactory;
+        private readonly IConfiguration configuration;
 
-        public UpdateAccommodationCommandHandler(ISearchIndexer searchIndexer, IApiClientFactory<IBookFastFacilityAPI> apiClientFactory)
+        public UpdateAccommodationCommandHandler(ISearchIndexer searchIndexer, IConfiguration configuration)
         {
             this.searchIndexer = searchIndexer;
-            this.apiClientFactory = apiClientFactory;
+            this.configuration = configuration;
+        }
+
+        private async Task<FacilityRepresentation> FindFacilityAsync(int facilityId)
+        {
+            using (var channel = GrpcChannel.ForAddress(configuration["FacilityApi:ServiceUri"]))
+            {
+                var client = new FacilityClient(channel);
+
+                try
+                {
+                    return await client.FindFacilityAsync(new FindRequest { Id = facilityId });
+                }
+                catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
+                {
+                    return null;
+                }
+            }
         }
 
         protected override async Task Handle(UpdateAccommodationCommand request, CancellationToken cancellationToken)
         {
-            var api = await apiClientFactory.CreateApiClientAsync();
-            var result = await api.FindFacilityWithHttpMessagesAsync(request.FacilityId);
+            var facility = await FindFacilityAsync(request.FacilityId);
 
-            if (result.Response.StatusCode == HttpStatusCode.NotFound)
+            if (facility == null)
             {
                 return;
             }
@@ -39,12 +57,12 @@ namespace BookFast.Search.Indexer.CommandHandlers
                 Description = request.Description,
                 RoomCount = request.RoomCount,
                 Images = request.Images,
-                FacilityName = result.Body.Name,
-                FacilityDescription = result.Body.Description,
-                FacilityLocation = new Location
+                FacilityName = facility.Name,
+                FacilityDescription = facility.Description,
+                Location = new Location
                 {
-                    Latitude = result.Body.Latitude,
-                    Longitude = result.Body.Longitude
+                    Latitude = facility.Latitude,
+                    Longitude = facility.Longitude
                 }
             };
 

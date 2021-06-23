@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bookfast-booking
+  namespace: {{ default "bookfast-staging" .Release.Namespace }}
+spec:
+  replicas: {{ .Values.booking.replicas }}
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: bookfast-booking
+  template:
+    metadata:
+      labels:
+        app: bookfast-booking
+        aadpodidbinding: my-pod-identity
+    spec:
+      containers:
+        - image: {{ .Values.registry }}/{{ .Values.booking.image.name }}:{{ default "latest" .Values.tag }}
+          name: bookfast-booking
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+          {{- range $k, $v := .Values.env }}
+            - name: {{ $k | quote }}
+              value: {{ $v | quote }}
+          {{- end }}

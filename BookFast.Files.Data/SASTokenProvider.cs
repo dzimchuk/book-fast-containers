@@ -1,9 +1,9 @@
 ﻿using System;
 using BookFast.Files.Contracts.Models;
 using Microsoft.Extensions.Options;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
 using BookFast.Files.Business.Data;
+using Azure.Storage.Sas;
+using Azure.Storage.Blobs;
 
 namespace BookFast.Files.Data
 {
@@ -18,37 +18,41 @@ namespace BookFast.Files.Data
 
         public string GetUrlWithAccessToken(string path, AccessPermission permission, DateTimeOffset expirationTime)
         {
-            var storageAccount = CloudStorageAccount.Parse(storageOptions.ConnectionString);
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var container = blobClient.GetContainerReference(storageOptions.ImageContainer);
+            var blobServiceClient = new BlobServiceClient(storageOptions.ConnectionString);
+            var container = blobServiceClient.GetBlobContainerClient(storageOptions.ImageContainer);
+            var blobClient = container.GetBlobClient(path);
 
-            var blob = container.GetBlockBlobReference(path);
+            var sasBuilder = new BlobSasBuilder()
+            {
+                BlobContainerName = storageOptions.ImageContainer,
+                BlobName = blobClient.Name,
+                Resource = "b",
+                StartsOn = DateTime.UtcNow.AddMinutes(-5),
+                ExpiresOn = expirationTime
+            };
 
-            var sasPolicy = new SharedAccessBlobPolicy();
-            sasPolicy.SharedAccessStartTime = DateTime.UtcNow.AddMinutes(-5);
-            sasPolicy.SharedAccessExpiryTime = expirationTime;
-            sasPolicy.Permissions = MapFrom(permission);
-            
-            string sasToken = blob.GetSharedAccessSignature(sasPolicy);
-            return blob.Uri + sasToken;
+            sasBuilder.SetPermissions(MapFrom(permission));
+
+            var sasUri = blobClient.GenerateSasUri(sasBuilder);
+            return sasUri.ToString();
         }
 
-        private static SharedAccessBlobPermissions MapFrom(AccessPermission permissions)
+        private static BlobSasPermissions MapFrom(AccessPermission permissions)
         {
-            var blobPermissions = SharedAccessBlobPermissions.None;
+            var blobPermissions = BlobSasPermissions.Read;
             if ((permissions & AccessPermission.Read) != 0)
             {
-                blobPermissions |= SharedAccessBlobPermissions.Read;
+                blobPermissions |= BlobSasPermissions.Read;
             }
 
             if ((permissions & AccessPermission.Write) != 0)
             {
-                blobPermissions |= SharedAccessBlobPermissions.Write;
+                blobPermissions |= BlobSasPermissions.Write;
             }
 
             if ((permissions & AccessPermission.Delete) != 0)
             {
-                blobPermissions |= SharedAccessBlobPermissions.Delete;
+                blobPermissions |= BlobSasPermissions.Delete;
             }
 
             return blobPermissions;

@@ -9,6 +9,8 @@ using System.IO;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -35,27 +37,23 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void AddAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(configuration.GetSection("Authentication:AzureAd"));
+
             var authOptions = configuration.GetSection("Authentication:AzureAd").Get<AuthenticationOptions>();
 
-            services.AddAuthentication(Constants.OrganizationalAuthenticationScheme)
-                .AddJwtBearer(Constants.OrganizationalAuthenticationScheme, options =>
-                {
-                    options.Authority = authOptions.Authority;
-                    options.Audience = authOptions.Audience;
-
-                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                    {
-                        ValidIssuers = authOptions.ValidIssuersAsArray
-                    };
-                });
+            services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.TokenValidationParameters.ValidIssuers = authOptions.ValidIssuersAsArray;
+            });
         }
 
         public static void AddB2CAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var authOptions = configuration.GetSection("Authentication:AzureAd:B2C").Get<B2CAuthenticationOptions>();
 
-            services.AddAuthentication(Constants.CustomerAuthenticationScheme)
-                .AddJwtBearer(Constants.CustomerAuthenticationScheme, options =>
+            services.AddAuthentication(BookFast.Api.Authentication.Constants.CustomerAuthenticationScheme)
+                .AddJwtBearer(BookFast.Api.Authentication.Constants.CustomerAuthenticationScheme, options =>
                 {
                     options.MetadataAddress = $"{authOptions.Authority}/.well-known/openid-configuration?p={authOptions.Policy}";
                     options.Audience = authOptions.Audience;

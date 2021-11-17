@@ -1,13 +1,6 @@
 # Book Fast (Docker)
 A sample demonstrating how to implement a containerized multitenant facility management and accommodation booking application. It uses microservices architecture and relies on a bunch of Azure services.
 
-## Running locally in Docker Compose
-
-```
-docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi build
-docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi up -d --no-build --force-recreate --remove-orphans
-```
-
 ## Features
 
 ### Architecture
@@ -35,6 +28,13 @@ docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no
 - Azure Search
 - Application Insights
 - Azure KeyVault
+
+## Running locally in Docker Compose
+
+```
+docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi build
+docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi up -d --no-build --force-recreate --remove-orphans
+```
 
 ## Configuration
 

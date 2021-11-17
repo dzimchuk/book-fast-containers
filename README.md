@@ -6,7 +6,7 @@ A sample demonstrating how to implement a containerized multitenant facility man
 ### Architecture
 - 4 bounded contexts
 - CQRS and DDD (with [reliable domain events](https://dzimchuk.net/reliable-domain-events/))
-- ASP.NET Core 5, Blazor, gRPC
+- ASP.NET Core 6, Blazor, gRPC
 - Kubernetes and Docker Compose
 
 ### Build and deployment
@@ -28,6 +28,13 @@ A sample demonstrating how to implement a containerized multitenant facility man
 - Azure Search
 - Application Insights
 - Azure KeyVault
+
+## Running locally in Docker Compose
+
+```
+docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi build
+docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi up -d --no-build --force-recreate --remove-orphans
+```
 
 ## Configuration
 

@@ -29,12 +29,54 @@ A sample demonstrating how to implement a containerized multitenant facility man
 - Application Insights
 - Azure KeyVault
 
-## Running locally in Docker Compose
+## Running the applicaton
+
+The application can be run locally in Docker Compose to facilitate VS debugging experience. In Staging/Production modes it's supposed to be run in a Kubernetes cluster.
+
+### Running locally in Docker Compose
 
 ```
 docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi build
 docker-compose  -f "docker-compose.yml" -f "docker-compose.development.yml" --no-ansi up -d --no-build --force-recreate --remove-orphans
 ```
+
+### Running in Kubernetes (AKS)
+
+There are [GitHub workflows](/.github/workflows) to build and deploy the application. It is expected that the following variables are set in GitHub secrets:
+
+- `REGISTRY_NAME` - name of the docker registry to push images to (e.g. myregistry.azurecr.io)
+- `REGISTRY_USERNAME` - username to log in to the registry
+- `REGISTRY_PASSWORD` - password to log in to the registry
+- `KEYVAULT_NAME` - name of the KeyVault (see below)
+- `USER_ASSIGNED_CLIENT_ID` - user-assigned managed identity that is configured to access KeyVault (list and get permissions)
+- `ACME_EMAIL` - a valid email address (Let's Encrypt will use this to contact you about expiring certificates and issues related to your account)
+- `DNS_BACKEND` - a URL for the backend API (e.g. backend.51.138.82.127.nip.io)
+- `DNS_FILES` - a URL for the backend API (e.g. files.51.138.82.127.nip.io)
+- `CLUSTER_RESOURCE_GROUP` - resource group name of the AKS cluster
+- `CLUSTER_NAME` - name of the AKS cluster
+- `AZURE_CREDENTIALS` - credentials for the AKS set context action
+
+The credentials can be obtained by creating a new principal:
+
+```
+   az ad sp create-for-rbac --name "myApp" --role contributor \
+                            --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group} \
+                            --sdk-auth
+                            
+  # The command should output a JSON object similar to this:
+ 
+  {
+    "clientId": "<GUID>",
+    "clientSecret": "<STRING>",
+    "subscriptionId": "<GUID>",
+    "tenantId": "<GUID>",
+    "resourceManagerEndpointUrl": "<URL>"
+  }
+  
+```
+
+If you already have a principal you can construct the credentials JSON using appropriate values. For the `resourceManagerEndpointUrl` use `https://management.azure.com/`.
+
 
 ## Configuration
 
@@ -87,6 +129,8 @@ Here's a short description of configuration parameters:
 All services are configured to use the same User Secrets ID for simplicity. So it's enough to configure User Secrets with the settings shown above once to be used in Development environment.
 
 ### Azure KeyVault
+
+Accessing KeyVault depends on how you run the application (in Kubernetes or in Docker Compose).
 
 #### Kubernetes
 

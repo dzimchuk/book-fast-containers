@@ -1,6 +1,7 @@
 using BookFast.Facility.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookFast.Facility.Infrastructure.Configurations
 {
@@ -17,7 +18,12 @@ namespace BookFast.Facility.Infrastructure.Configurations
 
             builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(320);
             builder.Property(accommodation => accommodation.Description).IsRequired(false);
-            builder.Property(accommodation => accommodation.Images).IsRequired(false);
+
+            var converter = new ValueConverter<string[], string>(
+                array => array.ToJson(),
+                json => json.ToStringArray());
+
+            builder.Property(accommodation => accommodation.Images).IsRequired(false).HasConversion(converter);
 
             builder.Property(accommodation => accommodation.RoomCount).IsRequired(true);
 

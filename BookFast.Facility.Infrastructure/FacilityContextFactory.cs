@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace BookFast.Facility.Infrastructure
 {
-    /// dotnet ef migrations add FacilityService_XXX
+    /// dotnet ef migrations add Facility_XXX
     /// dotnet ef migrations script -i -o ../facility.sql
     internal class FacilityContextFactory : IDesignTimeDbContextFactory<FacilityContext>
     {

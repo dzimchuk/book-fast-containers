@@ -1,9 +1,9 @@
+using BookFast.SeedWork.Modeling;
+
 namespace BookFast.Facility.Core.Models
 {
-    public class Accommodation
+    public class Accommodation : Entity<int>
     {
-        public int Id { get; set; }
-
         public int FacilityId { get; private set; }
 
         public string Name { get; private set; }

@@ -5,6 +5,7 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BAF7F301-9D43-4578-A086-1D42B205A466}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -24,8 +25,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.DistributedMutex", "Common\BookFast.DistributedMutex\BookFast.DistributedMutex.csproj", "{D4D8916A-C24F-4319-8A08-CF4A0BC6A7F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.QueryStack", "BookFast.Facility.QueryStack\BookFast.Facility.QueryStack.csproj", "{CD7C1CDE-990B-4920-8FC9-3E300C8B4FEC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Data", "BookFast.Facility.Data\BookFast.Facility.Data.csproj", "{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility", "BookFast.Facility\BookFast.Facility.csproj", "{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}"
 EndProject
@@ -63,7 +62,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Hosting", "Common\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Rpc", "BookFast.Facility.Rpc\BookFast.Facility.Rpc.csproj", "{596BC3E6-2AFB-43C2-8D73-B6A7D26EE585}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Facility.Core", "BookFast.Facility.Core\BookFast.Facility.Core.csproj", "{2D25C782-6A74-46F4-9C24-1613322BF774}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Core", "BookFast.Facility.Core\BookFast.Facility.Core.csproj", "{2D25C782-6A74-46F4-9C24-1613322BF774}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.SeedWork.Core", "Common\BookFast.SeedWork.Core\BookFast.SeedWork.Core.csproj", "{17039A10-2A68-4789-B327-094558ED5EEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Infrastructure", "BookFast.Facility.Infrastructure\BookFast.Facility.Infrastructure.csproj", "{3A01D8C1-7FA6-48CA-816C-A3B445954E79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,10 +102,6 @@ Global
 		{CD7C1CDE-990B-4920-8FC9-3E300C8B4FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD7C1CDE-990B-4920-8FC9-3E300C8B4FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD7C1CDE-990B-4920-8FC9-3E300C8B4FEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD97F9E1-DFE9-469C-B6AA-21598384BAA4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED782F32-2FF0-47CC-B3FE-1ED717CB75F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -179,6 +178,14 @@ Global
 		{2D25C782-6A74-46F4-9C24-1613322BF774}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D25C782-6A74-46F4-9C24-1613322BF774}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D25C782-6A74-46F4-9C24-1613322BF774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17039A10-2A68-4789-B327-094558ED5EEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17039A10-2A68-4789-B327-094558ED5EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17039A10-2A68-4789-B327-094558ED5EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17039A10-2A68-4789-B327-094558ED5EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -192,6 +199,7 @@ Global
 		{D4D8916A-C24F-4319-8A08-CF4A0BC6A7F3} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{17039A10-2A68-4789-B327-094558ED5EEC} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

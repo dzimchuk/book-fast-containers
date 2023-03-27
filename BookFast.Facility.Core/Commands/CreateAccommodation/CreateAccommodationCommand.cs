@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.CreateAccommodation
 {
     public class CreateAccommodationCommand : IRequest<int>

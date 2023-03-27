@@ -1,20 +1,17 @@
-using BookFast.Facility.Core.Models;
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.UpdateAccommodation
 {
     public class UpdateAccommodationHandler : IRequestHandler<UpdateAccommodationCommand>
     {
-        private readonly IRepository<Accommodation, int> repository;
+        private readonly IDbContext dbContext;
 
-        public UpdateAccommodationHandler(IRepository<Accommodation, int> repository)
+        public UpdateAccommodationHandler(IDbContext dbContext)
         {
-            this.repository = repository;
+            this.dbContext = dbContext;
         }
 
         public async Task Handle(UpdateAccommodationCommand request, CancellationToken cancellationToken)
         {
-            var accommodation = await repository.FindAsync(request.AccommodationId);
+            var accommodation = await dbContext.Accommodations.FindAsync(request.AccommodationId);
             if (accommodation == null)
             {
                 throw new NotFoundException("Accommodation", request.AccommodationId);
@@ -26,7 +23,7 @@ namespace BookFast.Facility.Core.Commands.UpdateAccommodation
                 request.RoomCount,
                 request.Images);
 
-            await repository.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using MediatR;
-using System.ComponentModel.DataAnnotations;
-
-namespace BookFast.Facility.Core.Commands.CreateFacility
+﻿namespace BookFast.Facility.Core.Commands.CreateFacility
 {
     public class CreateFacilityCommand : IRequest<int>
     {

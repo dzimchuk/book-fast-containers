@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace BookFast.Facility.Core.Commands.UpdateFacility
+﻿namespace BookFast.Facility.Core.Commands.UpdateFacility
 {
     public class UpdateFacilityValidator : AbstractValidator<UpdateFacilityCommand>
     {

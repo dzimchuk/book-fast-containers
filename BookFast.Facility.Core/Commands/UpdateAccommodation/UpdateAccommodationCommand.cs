@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.UpdateAccommodation
 {
     public class UpdateAccommodationCommand : IRequest

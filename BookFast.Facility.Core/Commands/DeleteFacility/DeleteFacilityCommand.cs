@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace BookFast.Facility.Core.Commands.DeleteFacility
+﻿namespace BookFast.Facility.Core.Commands.DeleteFacility
 {
     public class DeleteFacilityCommand : IRequest
     {

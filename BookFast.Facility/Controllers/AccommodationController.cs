@@ -1,7 +1,9 @@
-using BookFast.Facility.CommandStack.Commands;
-using BookFast.Facility.Domain.Exceptions;
-using BookFast.Facility.QueryStack;
-using BookFast.Facility.QueryStack.Representations;
+using BookFast.Facility.Core.Commands.CreateAccommodation;
+using BookFast.Facility.Core.Commands.DeleteAccommodation;
+using BookFast.Facility.Core.Commands.UpdateAccommodation;
+using BookFast.Facility.Core.Queries.GetAccommodation;
+using BookFast.Facility.Core.Queries.ListAccommodations;
+using BookFast.Facility.Core.Queries.Representations;
 using BookFast.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,14 +15,13 @@ using System.Threading.Tasks;
 namespace BookFast.Facility.Controllers
 {
     [Authorize(Policy = AuthorizationPolicies.FacilityWrite)]
-    public class AccommodationController : Controller
+    [ApiController]
+    public class AccommodationController : ControllerBase
     {
-        private readonly IAccommodationQueryDataSource queryDataSource;
         private readonly IMediator mediator;
 
-        public AccommodationController(IAccommodationQueryDataSource queryDataSource, IMediator mediator)
+        public AccommodationController(IMediator mediator)
         {
-            this.queryDataSource = queryDataSource;
             this.mediator = mediator;
         }
 
@@ -36,15 +37,7 @@ namespace BookFast.Facility.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> List(int facilityId)
         {
-            try
-            {
-                var accommodations = await queryDataSource.ListAsync(facilityId);
-                return Ok(accommodations);
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
+            return Ok(await mediator.Send(new ListAccommodationsQuery { FacilityId = facilityId }));
         }
 
         /// <summary>
@@ -59,20 +52,7 @@ namespace BookFast.Facility.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Find(int id)
         {
-            try
-            {
-                var accommodation = await queryDataSource.FindAsync(id);
-                if (accommodation == null)
-                {
-                    throw new AccommodationNotFoundException(id);
-                }
-
-                return Ok(accommodation);
-            }
-            catch (AccommodationNotFoundException)
-            {
-                return NotFound();
-            }
+            return Ok(await mediator.Send(new GetAccommodationQuery { Id = id }));
         }
 
         /// <summary>
@@ -88,21 +68,9 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
         public async Task<IActionResult> Create([FromRoute]int facilityId, [FromBody]CreateAccommodationCommand accommodationData)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    accommodationData.FacilityId = facilityId;
-                    var accommodationId = await mediator.Send(accommodationData);
-                    return CreatedAtAction("Find", new { id = accommodationId }, null);
-                }
-
-                return BadRequest();
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
+            accommodationData.FacilityId = facilityId;
+            var accommodationId = await mediator.Send(accommodationData);
+            return CreatedAtAction("Find", new { id = accommodationId }, null);
         }
 
         /// <summary>
@@ -118,25 +86,9 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found, Accommodation not found")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateAccommodationCommand accommodationData)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    accommodationData.AccommodationId = id;
-                    await mediator.Send(accommodationData);
-                    return NoContent();
-                }
-
-                return BadRequest();
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (AccommodationNotFoundException)
-            {
-                return NotFound();
-            }
+            accommodationData.AccommodationId = id;
+            await mediator.Send(accommodationData);
+            return NoContent();
         }
 
         /// <summary>
@@ -150,15 +102,8 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Accommodation not found")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await mediator.Send(new DeleteAccommodationCommand { AccommodationId = id });
-                return NoContent();
-            }
-            catch (AccommodationNotFoundException)
-            {
-                return NotFound();
-            }
+            await mediator.Send(new DeleteAccommodationCommand { AccommodationId = id });
+            return NoContent();
         }
     }
 }

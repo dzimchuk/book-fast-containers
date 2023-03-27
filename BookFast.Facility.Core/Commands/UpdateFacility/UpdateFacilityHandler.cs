@@ -1,19 +1,17 @@
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.UpdateFacility
 {
     public class UpdateFacilityHandler : IRequestHandler<UpdateFacilityCommand>
     {
-        private readonly IRepository<Models.Facility, int> repository;
+        private readonly IDbContext dbContext;
 
-        public UpdateFacilityHandler(IRepository<Models.Facility, int> repository)
+        public UpdateFacilityHandler(IDbContext dbContext)
         {
-            this.repository = repository;
+            this.dbContext = dbContext;
         }
 
         public async Task Handle(UpdateFacilityCommand request, CancellationToken cancellationToken)
         {
-            var facility = await repository.FindAsync(request.FacilityId);
+            var facility = await dbContext.Facilities.FindAsync(request.FacilityId);
             if (facility == null)
             {
                 throw new NotFoundException("Facility", request.FacilityId);
@@ -27,7 +25,7 @@ namespace BookFast.Facility.Core.Commands.UpdateFacility
                 request.Longitude,
                 request.Images);
 
-            await repository.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

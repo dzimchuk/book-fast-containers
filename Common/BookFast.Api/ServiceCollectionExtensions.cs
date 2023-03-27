@@ -1,5 +1,4 @@
 ﻿using BookFast.Api.Authentication;
-using BookFast.Api.Formatters;
 using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
@@ -11,6 +10,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using BookFast.Api.ErrorHandling;
+using System.Text.Json.Serialization;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -27,11 +28,12 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddControllers(options =>
             {
+                options.Filters.Add(new HttpExceptionFilter());
                 options.OutputFormatters.Insert(0, new BusinessExceptionOutputFormatter());
             })
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
         }
 

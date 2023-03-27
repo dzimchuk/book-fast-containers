@@ -1,28 +1,25 @@
-using BookFast.Facility.Core.Models;
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.DeleteAccommodation
 {
     public class DeleteAccommodationHandler : IRequestHandler<DeleteAccommodationCommand>
     {
-        private readonly IRepository<Accommodation, int> repository;
+        private readonly IDbContext dbContext;
 
-        public DeleteAccommodationHandler(IRepository<Accommodation, int> repository)
+        public DeleteAccommodationHandler(IDbContext dbContext)
         {
-            this.repository = repository;
+            this.dbContext = dbContext;
         }
 
         public async Task Handle(DeleteAccommodationCommand request, CancellationToken cancellationToken)
         {
-            var accommodation = await repository.FindAsync(request.AccommodationId);
+            var accommodation = await dbContext.Accommodations.FindAsync(new object[] { request.AccommodationId }, cancellationToken: cancellationToken);
             if (accommodation == null)
             {
                 throw new NotFoundException("Accommodation", request.AccommodationId);
             }
 
-            repository.Delete(accommodation.Id);
+            dbContext.Accommodations.Remove(accommodation);
 
-            await repository.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

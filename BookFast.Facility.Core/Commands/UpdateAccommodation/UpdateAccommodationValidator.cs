@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace BookFast.Facility.Core.Commands.UpdateAccommodation
+﻿namespace BookFast.Facility.Core.Commands.UpdateAccommodation
 {
     public class UpdateAccommodationValidator : AbstractValidator<UpdateAccommodationCommand>
     {

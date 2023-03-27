@@ -1,5 +1,3 @@
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.UpdateFacility
 {
     public class UpdateFacilityCommand : IRequest

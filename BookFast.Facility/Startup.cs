@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using BookFast.Facility.Integration;
-using BookFast.ReliableEvents;
-using BookFast.SeedWork;
-using BookFast.ServiceBus;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using BookFast.Facility.Core;
+using BookFast.Facility.Infrastructure;
 
 namespace BookFast.Facility
 {
@@ -33,26 +30,13 @@ namespace BookFast.Facility
 
             services.AddApplicationInsightsTelemetry(configuration);
 
-            services.AddCommandContext();
-            services.AddReliableEventsDispatcher(configuration["ServiceBus:Facility:NotificationQueueName"],
-                                                 configuration["ServiceBus:Facility:NotificationQueueConnection"],
-                                                 new DefaultReliableEventMapper(typeof(Domain.Events.FacilityCreatedEvent).Assembly));
+            services.AddApplicationServices();
+            services.AddDbContext(configuration);
 
-            services.AddIntegrationEventPublisher(configuration);
-            services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
+            //services.AddIntegrationEventPublisher(configuration);
+            //services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
 
             services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.Facility.xml");
-
-            var modules = new List<ICompositionModule>
-                          {
-                              new CommandStack.Composition.CompositionModule(),
-                              new Data.Composition.CompositionModule()
-                          };
-
-            foreach (var module in modules)
-            {
-                module.AddServices(services, configuration);
-            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

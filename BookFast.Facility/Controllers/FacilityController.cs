@@ -1,7 +1,9 @@
-﻿using BookFast.Facility.CommandStack.Commands;
-using BookFast.Facility.Domain.Exceptions;
-using BookFast.Facility.QueryStack;
-using BookFast.Facility.QueryStack.Representations;
+﻿using BookFast.Facility.Core.Commands.CreateFacility;
+using BookFast.Facility.Core.Commands.DeleteFacility;
+using BookFast.Facility.Core.Commands.UpdateFacility;
+using BookFast.Facility.Core.Queries.GetFacility;
+using BookFast.Facility.Core.Queries.ListFacilities;
+using BookFast.Facility.Core.Queries.Representations;
 using BookFast.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,14 +15,13 @@ using System.Threading.Tasks;
 namespace BookFast.Facility.Controllers
 {
     [Authorize(Policy = AuthorizationPolicies.FacilityWrite)]
-    public class FacilityController : Controller
+    [ApiController]
+    public class FacilityController : ControllerBase
     {
-        private readonly IFacilityQueryDataSource queryDataSource;
         private readonly IMediator mediator;
 
-        public FacilityController(IFacilityQueryDataSource queryDataSource, IMediator mediator)
+        public FacilityController(IMediator mediator)
         {
-            this.queryDataSource = queryDataSource;
             this.mediator = mediator;
         }
 
@@ -31,9 +32,9 @@ namespace BookFast.Facility.Controllers
         [HttpGet("api/facilities")]
         [SwaggerOperation("list-facilities")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(IEnumerable<FacilityRepresentation>))]
-        public Task<IEnumerable<FacilityRepresentation>> List()
+        public async Task<IActionResult> List()
         {
-            return queryDataSource.ListAsync();
+            return Ok(await mediator.Send(new ListFacilitiesQuery()));
         }
         
         /// <summary>
@@ -48,20 +49,7 @@ namespace BookFast.Facility.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Find(int id)
         {
-            try
-            {
-                var facility = await queryDataSource.FindAsync(id);
-                if (facility == null)
-                {
-                    throw new FacilityNotFoundException(id);
-                }
-
-                return Ok(facility);
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
+            return Ok(await mediator.Send(new GetFacilityQuery { Id = id }));
         }
 
         /// <summary>
@@ -75,13 +63,8 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.BadRequest, Description = "Invalid parameters")]
         public async Task<IActionResult> Create([FromBody]CreateFacilityCommand facilityData)
         {
-            if (ModelState.IsValid)
-            {
-                var facilityId = await mediator.Send(facilityData);
-                return CreatedAtAction("Find", new { id = facilityId }, null);
-            }
-
-            return BadRequest();
+            var facilityId = await mediator.Send(facilityData);
+            return CreatedAtAction("Find", new { id = facilityId }, null);
         }
         
         /// <summary>
@@ -97,22 +80,10 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateFacilityCommand facilityData)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    facilityData.FacilityId = id;
-                    await mediator.Send(facilityData);
+            facilityData.FacilityId = id;
+            await mediator.Send(facilityData);
 
-                    return NoContent();
-                }
-
-                return BadRequest();
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
+            return NoContent();
         }
         
         /// <summary>
@@ -126,15 +97,8 @@ namespace BookFast.Facility.Controllers
         [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await mediator.Send(new DeleteFacilityCommand { FacilityId = id });
-                return NoContent();
-            }
-            catch (FacilityNotFoundException)
-            {
-                return NotFound();
-            }
+            await mediator.Send(new DeleteFacilityCommand { FacilityId = id });
+            return NoContent();
         }
     }
 }

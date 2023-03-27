@@ -1,27 +1,20 @@
-using BookFast.Facility.Core.Models;
-using MediatR;
-
 namespace BookFast.Facility.Core.Commands.CreateAccommodation
 {
     public class CreateAccommodationHandler : IRequestHandler<CreateAccommodationCommand, int>
     {
-        private readonly IRepository<Accommodation, int> accommodationRepository;
-        private readonly IRepository<Models.Facility, int> facilityRepository;
+        private readonly IDbContext dbContext;
 
-        public CreateAccommodationHandler(IRepository<Accommodation, int> accommodationRepository,
-                                          IRepository<Models.Facility, int> facilityRepository)
+        public CreateAccommodationHandler(IDbContext dbContext)
         {
-            this.accommodationRepository = accommodationRepository;
-            this.facilityRepository = facilityRepository;
+            this.dbContext = dbContext;
         }
 
         public async Task<int> Handle(CreateAccommodationCommand request, CancellationToken cancellationToken)
         {
-            if (!await facilityRepository.AnyAsync(request.FacilityId))
+            if (!await dbContext.Facilities.AnyAsync(facility => facility.Id == request.FacilityId, cancellationToken: cancellationToken))
             {
-                throw new BusinessException("Facility not found");
+                throw new NotFoundException("Facility", request.FacilityId);
             }
-
 
             var accommodation = Accommodation.NewAccommodation(
                 request.FacilityId,
@@ -30,9 +23,9 @@ namespace BookFast.Facility.Core.Commands.CreateAccommodation
                 request.RoomCount,
                 request.Images);
 
-            accommodation.Id = await accommodationRepository.AddAsync(accommodation);
+            await dbContext.Accommodations.AddAsync(accommodation, cancellationToken);
 
-            await accommodationRepository.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
 
             return accommodation.Id;
         }

@@ -4,17 +4,17 @@ namespace BookFast.SeedWork
 {
     public class BusinessException : Exception
     {
-        protected BusinessException(string errorCode)
+        public BusinessException(string errorCode)
             : this(errorCode, null, null)
         {
         }
 
-        protected BusinessException(string errorCode, string errorDescription)
+        public BusinessException(string errorCode, string errorDescription)
             : this(errorCode, errorDescription, null)
         {
         }
 
-        protected BusinessException(string errorCode, string errorDescription, Exception innerException)
+        public BusinessException(string errorCode, string errorDescription, Exception innerException)
             : base(FormatMessage(errorCode, errorDescription), innerException)
         {
             ErrorCode = errorCode;

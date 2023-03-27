@@ -1,17 +1,16 @@
 ﻿using BookFast.Security;
-using MediatR;
 
 namespace BookFast.Facility.Core.Commands.CreateFacility
 {
     public class CreateFacilityHandler : IRequestHandler<CreateFacilityCommand, int>
     {
-        private readonly IRepository<Models.Facility, int> repository;
+        private readonly IDbContext dbContext;
         private readonly ISecurityContext securityContext;
 
-        public CreateFacilityHandler(IRepository<Models.Facility, int> repository,
+        public CreateFacilityHandler(IDbContext dbContext,
                                      ISecurityContext securityContext)
         {
-            this.repository = repository;
+            this.dbContext = dbContext;
             this.securityContext = securityContext;
         }
 
@@ -26,11 +25,11 @@ namespace BookFast.Facility.Core.Commands.CreateFacility
                 request.Longitude,
                 request.Images);
 
-            var facilityId = await repository.AddAsync(facility);
+            await dbContext.Facilities.AddAsync(facility, cancellationToken);
 
-            await repository.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
 
-            return facilityId;
+            return facility.Id;
         }
     }
 }

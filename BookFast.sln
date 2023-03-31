@@ -66,6 +66,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.SeedWork.Core", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Facility.Infrastructure", "BookFast.Facility.Infrastructure\BookFast.Facility.Infrastructure.csproj", "{3A01D8C1-7FA6-48CA-816C-A3B445954E79}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Identity.Core", "BookFast.Identity.Core\BookFast.Identity.Core.csproj", "{B995DF06-6279-4540-97BB-0D8FBD768EA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Identity.Infrastructure", "BookFast.Identity.Infrastructure\BookFast.Identity.Infrastructure.csproj", "{99A9B84C-8316-452A-839A-B5F87B667EE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Identity", "BookFast.Identity\BookFast.Identity.csproj", "{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +186,18 @@ Global
 		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A01D8C1-7FA6-48CA-816C-A3B445954E79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B995DF06-6279-4540-97BB-0D8FBD768EA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B995DF06-6279-4540-97BB-0D8FBD768EA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B995DF06-6279-4540-97BB-0D8FBD768EA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B995DF06-6279-4540-97BB-0D8FBD768EA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A9B84C-8316-452A-839A-B5F87B667EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A9B84C-8316-452A-839A-B5F87B667EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A9B84C-8316-452A-839A-B5F87B667EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A9B84C-8316-452A-839A-B5F87B667EE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

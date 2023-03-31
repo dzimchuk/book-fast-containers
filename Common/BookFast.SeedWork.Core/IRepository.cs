@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace BookFast.SeedWork.Core
 {
-    public interface IRepository<TEntity, TKey> where TEntity : Entity<TKey>
+    public interface IRepository<TEntity, TKey> where TEntity : Entity<TKey>, IAggregateRoot
     {
         Task<TKey> AddAsync(TEntity entity);
         

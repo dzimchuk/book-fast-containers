@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -11,7 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\BookFast.SeedWork\BookFast.SeedWork.csproj" />
+    <ProjectReference Include="..\Common\BookFast.Security\BookFast.Security.csproj" />
+    <ProjectReference Include="..\Common\BookFast.SeedWork.Core\BookFast.SeedWork.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -50,6 +50,22 @@ namespace BookFast.Identity.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", "identity");
                 });
 
+            modelBuilder.Entity("BookFast.Identity.Core.Models.Tenant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tenants", "identity");
+                });
+
             modelBuilder.Entity("BookFast.Identity.Core.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -95,6 +111,12 @@ namespace BookFast.Identity.Infrastructure.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("00000000-0000-0000-0000-000000000000");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -111,6 +133,8 @@ namespace BookFast.Identity.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("AspNetUsers", "identity");
                 });
@@ -420,6 +444,15 @@ namespace BookFast.Identity.Infrastructure.Migrations
                     b.HasIndex("ApplicationId", "Status", "Subject", "Type");
 
                     b.ToTable("OpenIddictTokens", "identity");
+                });
+
+            modelBuilder.Entity("BookFast.Identity.Core.Models.User", b =>
+                {
+                    b.HasOne("BookFast.Identity.Core.Models.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

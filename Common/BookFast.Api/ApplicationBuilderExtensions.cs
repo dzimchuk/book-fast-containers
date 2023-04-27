@@ -1,16 +1,12 @@
-﻿using BookFast.Api.SecurityContext;
+﻿using BookFast.Api;
+using Microsoft.AspNetCore.Builder;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
-namespace Microsoft.AspNetCore.Builder
+namespace BookFast.Api
 #pragma warning restore ET002 // Namespace does not match file path or default namespace
 {
     public static class ApplicationBuilderExtensions
     {
-        public static void UseSecurityContext(this IApplicationBuilder builder)
-        {
-            builder.UseMiddleware<SecurityContextMiddleware>();
-        }
-
         public static void UseSwagger(this IApplicationBuilder app, string title, string version)
         {
             app.UseSwagger(options =>

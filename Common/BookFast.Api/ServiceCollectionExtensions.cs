@@ -1,5 +1,4 @@
 ﻿using BookFast.Api.Authentication;
-using BookFast.Api.SecurityContext;
 using BookFast.Api.Swagger;
 using BookFast.Security;
 using Microsoft.Extensions.Configuration;
@@ -12,19 +11,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using BookFast.Api.ErrorHandling;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
+using BookFast.Api;
 
 #pragma warning disable ET002 // Namespace does not match file path or default namespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace BookFast.Api
 #pragma warning restore ET002 // Namespace does not match file path or default namespace
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddSecurityContext(this IServiceCollection services)
-        {
-            services.AddScoped<ISecurityContext, SecurityContextProvider>();
-        }
-
-        public static void AddAndConfigureMvc(this IServiceCollection services)
+        public static void AddAndConfigureControllers(this IServiceCollection services)
         {
             services.AddControllers(options =>
             {
@@ -34,6 +30,8 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
         }
 
@@ -54,13 +52,13 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var authOptions = configuration.GetSection("Authentication:AzureAd:B2C").Get<B2CAuthenticationOptions>();
 
-            services.AddAuthentication(BookFast.Api.Authentication.Constants.CustomerAuthenticationScheme)
-                .AddJwtBearer(BookFast.Api.Authentication.Constants.CustomerAuthenticationScheme, options =>
+            services.AddAuthentication(Authentication.Constants.CustomerAuthenticationScheme)
+                .AddJwtBearer(Authentication.Constants.CustomerAuthenticationScheme, options =>
                 {
                     options.MetadataAddress = $"{authOptions.Authority}/.well-known/openid-configuration?p={authOptions.Policy}";
                     options.Audience = authOptions.Audience;
 
-                    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+                    options.Events = new JwtBearerEvents
                     {
                         OnTokenValidated = ctx =>
                         {

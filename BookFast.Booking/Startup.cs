@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BookFast.Api;
 using BookFast.Booking.Integration;
 using BookFast.ReliableEvents;
 using BookFast.SeedWork;
@@ -28,7 +29,7 @@ namespace BookFast.Booking
             services.AddB2CAuthentication(configuration);
 
             services.AddSecurityContext();
-            services.AddAndConfigureMvc();
+            services.AddAndConfigureControllers();
 
             services.AddApplicationInsightsTelemetry(configuration);
 

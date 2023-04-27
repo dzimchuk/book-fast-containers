@@ -1,4 +1,4 @@
-using BookFast.SeedWork;
+using BookFast.SeedWork.Core;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;

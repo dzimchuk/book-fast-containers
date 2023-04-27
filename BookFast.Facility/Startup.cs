@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BookFast.Facility.Core;
 using BookFast.Facility.Infrastructure;
+using BookFast.Api;
 
 namespace BookFast.Facility
 {
@@ -26,7 +27,7 @@ namespace BookFast.Facility
             services.AddAuthorizationPolicies();
 
             services.AddSecurityContext();
-            services.AddAndConfigureMvc();
+            services.AddAndConfigureControllers();
 
             services.AddApplicationInsightsTelemetry(configuration);
 

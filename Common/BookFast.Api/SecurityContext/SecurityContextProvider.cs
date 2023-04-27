@@ -1,6 +1,7 @@
 ﻿using BookFast.Security;
 using System;
 using System.Security.Claims;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace BookFast.Api.SecurityContext
 {
@@ -10,7 +11,7 @@ namespace BookFast.Api.SecurityContext
 
         public string GetCurrentUser()
         {
-            return FindFirstValue(BookFastClaimTypes.ObjectId);
+            return FindFirstValue(Claims.Subject);
         }
 
         public string GetCurrentTenant()
@@ -21,13 +22,18 @@ namespace BookFast.Api.SecurityContext
         private string FindFirstValue(string claimType)
         {
             if (Principal == null)
+            {
                 throw new Exception("Principal has not been initialized.");
+            }
 
             var claim = Principal.FindFirst(claimType);
             if (claim == null)
+            {
                 throw new Exception($"Claim '{claimType}' was not found.");
+            }
 
             return claim.Value;
         }
     }
+
 }

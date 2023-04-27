@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using BookFast.SeedWork.Core;
+using BookFast.SeedWork.Core.Validation;
 using BookFast.SeedWork;
-using BookFast.SeedWork.Validation;
 
 namespace BookFast.Api.ErrorHandling
 {

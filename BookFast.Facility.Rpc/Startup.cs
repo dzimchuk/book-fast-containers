@@ -1,3 +1,4 @@
+using BookFast.Api;
 using BookFast.SeedWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

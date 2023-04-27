@@ -1,4 +1,7 @@
-﻿using BookFast.Api.Cors;
+﻿using BookFast.Api;
+using BookFast.Api.Cors;
+using BookFast.Api.SecurityContext;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
@@ -21,16 +24,29 @@ namespace BookFast.Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityDbContext(configuration);
+            services.AddApplicationServices();
 
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddRoles<Role>()
-                .AddIdentityStore();
-
+            services.AddSecurityContext();
+                        
             services.AddRazorPages();
-            services.AddControllers();
+            services.AddAndConfigureControllers();
 
             services.AddCorsServices(configuration);
+
+            services.AddIdentityDbContext(configuration);
+
+            services.AddDefaultIdentity<User>(options =>
+                {
+                    // TODO: Place to configure Identity (password rules, registration confirmation, MFA and so on)
+                    options.SignIn.RequireConfirmedAccount = true;
+
+                    if (env.IsDevelopment()) // for testing purposes
+                    {
+                        options.SignIn.RequireConfirmedAccount = false;
+                    }
+                })
+                .AddRoles<Role>()
+                .AddIdentityStore();
 
             // OpenIddict offers native integration with Quartz.NET to perform scheduled tasks
             // (like pruning orphaned authorizations/tokens from the database) at regular intervals.
@@ -75,6 +91,7 @@ namespace BookFast.Identity
                     // See https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html
                     if (env.IsDevelopment())
                     {
+                        // options.AddEphemeralSigningKey();
                         options.AddSigningCertificate(DevSigningCertificate);
                     }
                     else
@@ -89,7 +106,7 @@ namespace BookFast.Identity
                     }
                     else
                     {
-                        options.AddEphemeralEncryptionKey();
+                        options.AddEphemeralEncryptionKey(); // // OpenIddict requires an encryption key to be specified in all cases
 
                         // Disables JWT access token encryption (this option doesn't affect Data Protection tokens).
                         // Disabling encryption is NOT recommended and SHOULD only be done when issuing tokens
@@ -121,6 +138,8 @@ namespace BookFast.Identity
                     options.UseAspNetCore();
                 });
 
+            services.AddAuthorization(options => AuthorizationPolicies.Register(options));
+
             services.AddHostedService<OpenIddictConfiguration>();
         }
 
@@ -146,6 +165,8 @@ namespace BookFast.Identity
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSecurityContext();
 
             app.UseEndpoints(options =>
             {

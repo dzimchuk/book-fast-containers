@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BookFast.Api;
 using BookFast.SeedWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +23,7 @@ namespace BookFast.Search
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAndConfigureMvc();
+            services.AddAndConfigureControllers();
 
             services.AddApplicationInsightsTelemetry(configuration);
 

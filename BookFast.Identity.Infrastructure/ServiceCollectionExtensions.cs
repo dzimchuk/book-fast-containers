@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BookFast.Identity.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,8 @@ namespace BookFast.Identity.Infrastructure
             {
                 options.UseSqlServer(connectionString);
             });
+
+            services.AddScoped<IDbContext>(serviceProvider => serviceProvider.GetRequiredService<IdentityContext>());
         }
 
         public static void AddIdentityStore(this IdentityBuilder builder)

@@ -1,15 +1,18 @@
-﻿using BookFast.Identity.Core.Models;
+﻿using BookFast.Identity.Core;
+using BookFast.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.Identity.Infrastructure
 {
-    internal class IdentityContext : IdentityDbContext<User, Role, string>
+    public class IdentityContext : IdentityDbContext<User, Role, string>, IDbContext
     {
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {
         }
+
+        public DbSet<Tenant> Tenants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -21,6 +24,8 @@ namespace BookFast.Identity.Infrastructure
             builder.UseOpenIddict();
 
             builder.HasDefaultSchema("identity");
+
+            builder.ApplyConfigurationsFromAssembly(typeof(IdentityContext).Assembly);
         }
     }
 }

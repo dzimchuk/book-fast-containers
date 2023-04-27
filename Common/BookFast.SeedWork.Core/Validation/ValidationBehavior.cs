@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
-using ValidationException = BookFast.SeedWork.Validation.ValidationException;
 
-namespace BookFast.SeedWork.Validation
+namespace BookFast.SeedWork.Core.Validation
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
      where TRequest : notnull

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BookFast.Api;
 using BookFast.Files.Controllers;
 using BookFast.Files.Mappers;
 using BookFast.SeedWork;
@@ -28,7 +29,7 @@ namespace BookFast.Files
             services.AddAuthorizationPolicies();
 
             services.AddSecurityContext();
-            services.AddAndConfigureMvc();
+            services.AddAndConfigureControllers();
 
             services.AddApplicationInsightsTelemetry(configuration);
 

@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Abstractions;
-using OpenIddict.Server.AspNetCore;
-using System.Security.Claims;
-using static OpenIddict.Abstractions.OpenIddictConstants;
-using Microsoft.AspNetCore.Identity;
+﻿using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
+using BookFast.Security;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
+using OpenIddict.Server.AspNetCore;
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace BookFast.Identity.Controllers
 {
@@ -22,18 +25,21 @@ namespace BookFast.Identity.Controllers
         private readonly IOpenIddictScopeManager scopeManager;
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
+        private readonly IDbContext dbContext;
 
         public AuthorizationController(IOpenIddictApplicationManager applicationManager,
                                        IOpenIddictAuthorizationManager authorizationManager,
                                        IOpenIddictScopeManager scopeManager,
                                        SignInManager<User> signInManager,
-                                       UserManager<User> userManager)
+                                       UserManager<User> userManager,
+                                       IDbContext dbContext)
         {
             this.applicationManager = applicationManager;
             this.authorizationManager = authorizationManager;
             this.scopeManager = scopeManager;
             this.signInManager = signInManager;
             this.userManager = userManager;
+            this.dbContext = dbContext;
         }
 
         [HttpGet("~/connect/authorize")]
@@ -41,8 +47,7 @@ namespace BookFast.Identity.Controllers
         [IgnoreAntiforgeryToken]
         public async Task<IActionResult> Authorize()
         {
-            var request = HttpContext.GetOpenIddictServerRequest() ??
-                throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
+            var request = AcquireOpenIddictServerRequest();
 
             // Try to retrieve the user principal stored in the authentication cookie and redirect
             // the user agent to the login page (or to an external provider) in the following cases:
@@ -59,13 +64,7 @@ namespace BookFast.Identity.Controllers
                 // return an error indicating that the user is not logged in.
                 if (request.HasPrompt(Prompts.None))
                 {
-                    return Forbid(
-                        authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                        properties: new AuthenticationProperties(new Dictionary<string, string>
-                        {
-                            [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.LoginRequired,
-                            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The user is not logged in."
-                        }));
+                    return Forbid(Errors.LoginRequired, "The user is not logged in.");
                 }
 
                 // To avoid endless login -> authorization redirects, the prompt=login flag
@@ -112,7 +111,8 @@ namespace BookFast.Identity.Controllers
             identity.SetClaim(Claims.Subject, await userManager.GetUserIdAsync(user))
                     .SetClaim(Claims.Email, await userManager.GetEmailAsync(user))
                     .SetClaim(Claims.Name, await userManager.GetUserNameAsync(user))
-                    .SetClaims(Claims.Role, (await userManager.GetRolesAsync(user)).ToImmutableArray());
+                    .SetClaims(Claims.Role, (await userManager.GetRolesAsync(user)).ToImmutableArray())
+                    .SetClaim(BookFastClaimTypes.TenantId, user.TenantId);
 
             // Note: in this sample, the granted scopes match the requested scope
             // but you may want to allow the user to uncheck specific scopes.
@@ -159,8 +159,7 @@ namespace BookFast.Identity.Controllers
         [HttpPost("~/connect/token")]
         public async Task<IActionResult> ExchangeAsync()
         {
-            var request = HttpContext.GetOpenIddictServerRequest() ??
-                          throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
+            var request = AcquireOpenIddictServerRequest();
 
             ClaimsIdentity identity = null;
 
@@ -269,7 +268,7 @@ namespace BookFast.Identity.Controllers
 
         [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
         [HttpGet("~/connect/userinfo")]
-        public async Task<IActionResult> Userinfo()
+        public async Task<IActionResult> UserInfo()
         {
             var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             var user = result.Succeeded
@@ -281,12 +280,15 @@ namespace BookFast.Identity.Controllers
                 return Forbid(Errors.InvalidGrant, "The token is no longer valid.");
             }
 
+            var tenant = await dbContext.Tenants.AsNoTracking().FirstOrDefaultAsync(tenant => tenant.Id == user.TenantId);
+
             return Ok(new
             {
                 sub = await userManager.GetUserIdAsync(user),
                 email = await userManager.GetEmailAsync(user),
                 name = await userManager.GetUserNameAsync(user),
-                role = (await userManager.GetRolesAsync(user)).ToImmutableArray()
+                role = (await userManager.GetRolesAsync(user)).ToImmutableArray(),
+                tenant = tenant.Name
             });
         }
 
@@ -303,5 +305,8 @@ namespace BookFast.Identity.Controllers
                 )
             );
         }
+        
+        private OpenIddictRequest AcquireOpenIddictServerRequest() => 
+            HttpContext.GetOpenIddictServerRequest() ?? throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
     }
 }

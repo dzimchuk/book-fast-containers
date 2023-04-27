@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using BookFast.SeedWork.Core.Exceptions;
 using BookFast.SeedWork;
+using BookFast.SeedWork.Validation;
 
 namespace BookFast.Api.ErrorHandling
 {
@@ -34,6 +34,11 @@ namespace BookFast.Api.ErrorHandling
             {
                 HandleBusinessException(context);
             }
+
+            if (type.IsSubclassOf(typeof(NotFoundException)))
+            {
+                HandleNotFoundException(context);
+            }
         }
 
         private void HandleBusinessException(ExceptionContext context)
@@ -43,11 +48,13 @@ namespace BookFast.Api.ErrorHandling
             var details = new ValidationProblemDetails()
             {
                 Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
-                Title = "Business rule violation",
-                Detail = exception.Message
+                Title = "One or more application errors have occured."
             };
 
-            details.Errors.Add("code", new[] { exception.ErrorCode }); ;
+            foreach (var error in exception.Errors)
+            {
+                details.Errors.Add(error.Code, new[] { error.Description });
+            }
 
             context.Result = new BadRequestObjectResult(details);
 

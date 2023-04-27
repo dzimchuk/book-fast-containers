@@ -29,7 +29,7 @@ namespace BookFast.Api.ErrorHandling
             var options = context.HttpContext.RequestServices.GetService(typeof(IOptions<JsonOptions>)) as IOptions<JsonOptions>;
 
             var exception = (BusinessException)context.Object;
-            var payload = JsonSerializer.Serialize(new { error = exception.ErrorCode, error_description = exception.ErrorDescription }, options.Value.JsonSerializerOptions);
+            var payload = JsonSerializer.Serialize(new { errors = exception.Errors }, options.Value.JsonSerializerOptions);
 
             return context.HttpContext.Response.WriteAsync(payload);
         }

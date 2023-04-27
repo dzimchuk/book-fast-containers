@@ -1,4 +1,4 @@
-﻿namespace BookFast.SeedWork.Core.Exceptions
+﻿namespace BookFast.SeedWork
 {
     public class NotFoundException : Exception
     {

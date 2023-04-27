@@ -1,4 +1,4 @@
-﻿using BookFast.SeedWork.Core.Behaviors;
+﻿using BookFast.SeedWork.Validation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

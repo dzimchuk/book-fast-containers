@@ -1,5 +1,5 @@
-﻿using BookFast.SeedWork.Swagger;
-using BookFast.SeedWork.Validation;
+﻿using BookFast.Booking.CommandStack.Validation;
+using BookFast.SeedWork;
 using MediatR;
 using System;
 using System.ComponentModel.DataAnnotations;

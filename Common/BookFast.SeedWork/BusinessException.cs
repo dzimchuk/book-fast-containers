@@ -1,7 +1,7 @@
-using System;
-
 namespace BookFast.SeedWork
 {
+    public record BusinessError(string Code, string Description);
+
     public class BusinessException : Exception
     {
         public BusinessException(string errorCode)
@@ -14,21 +14,22 @@ namespace BookFast.SeedWork
         {
         }
 
+        public BusinessException(IEnumerable<BusinessError> errors)
+            : this(errors, null)
+        {
+        }
+
         public BusinessException(string errorCode, string errorDescription, Exception innerException)
-            : base(FormatMessage(errorCode, errorDescription), innerException)
+            : this(new[] { new BusinessError(errorCode, errorDescription) }, innerException)
         {
-            ErrorCode = errorCode;
-            ErrorDescription = errorDescription;
         }
 
-        public string ErrorCode { get; }
-        public string ErrorDescription { get; }
-
-        private static string FormatMessage(string errorCode, string errorDescription)
+        public BusinessException(IEnumerable<BusinessError> errors, Exception innerException)
+            : base("Application error(s) occured.", innerException)
         {
-            return !string.IsNullOrEmpty(errorDescription)
-                ? $"{errorCode}: {errorDescription}"
-                : errorCode;
+            Errors = errors.ToArray();
         }
+
+        public BusinessError[] Errors { get; }
     }
 }

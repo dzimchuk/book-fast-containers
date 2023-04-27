@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BookFast.SeedWork.Validation
+namespace BookFast.Booking.CommandStack.Validation
 {
     public interface IDateRange
     {

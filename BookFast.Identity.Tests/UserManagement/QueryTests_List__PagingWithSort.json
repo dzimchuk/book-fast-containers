@@ -1,0 +1,12 @@
+{
+  "pageNumber": 2,
+  "totalPages": 2,
+  "totalRecords": 3,
+  "records": [
+    {
+      "userId": "9a8c2b03-1457-440d-97b2-d985ea543740",
+      "userName": "test3@gmail.com",
+      "role": "tenant-user"
+    }
+  ]
+}

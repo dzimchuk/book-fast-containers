@@ -1,0 +1,6 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "title": "The specified resource was not found.",
+  "status": 404,
+  "detail": "Specified user was not found."
+}

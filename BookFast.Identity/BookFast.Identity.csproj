@@ -24,4 +24,8 @@
     <ProjectReference Include="..\Common\BookFast.Api\BookFast.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="BookFast.Identity.Tests" />
+  </ItemGroup>
+
 </Project>

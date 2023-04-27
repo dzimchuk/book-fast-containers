@@ -1,0 +1,10 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more application errors have occured.",
+  "status": 400,
+  "errors": {
+    "I003": [
+      "User cannot change her role."
+    ]
+  }
+}

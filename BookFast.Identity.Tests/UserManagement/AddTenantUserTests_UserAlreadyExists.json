@@ -1,0 +1,10 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "One or more application errors have occured.",
+  "status": 400,
+  "errors": {
+    "DuplicateUserName": [
+      "Username 'test2@test.com' is already taken."
+    ]
+  }
+}

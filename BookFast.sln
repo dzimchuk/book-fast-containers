@@ -72,6 +72,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Identity.Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Identity", "BookFast.Identity\BookFast.Identity.csproj", "{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.TestInfrastructure", "Common\BookFast.TestInfrastructure\BookFast.TestInfrastructure.csproj", "{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -198,6 +200,10 @@ Global
 		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84616FA4-85E3-4060-8C2F-E0BD72A4DA65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -212,6 +218,7 @@ Global
 		{1AD04B4F-83E5-4D27-9EBB-4EBAACAC86FD} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{1ADA5937-C8EA-4749-8CF1-0081A616DC88} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{17039A10-2A68-4789-B327-094558ED5EEC} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

@@ -16,7 +16,7 @@ namespace BookFast.ReliableEvents.CommandStack
         {
             var isOwner = context.AcquireOwnership();
 
-            var events = entity.CollectEvents() ?? new List<Event>();
+            var events = entity.Events ?? new List<Event>();
 
             var integrationEvents = events.OfType<IntegrationEvent>().ToList();
             if (integrationEvents.Any())
@@ -25,7 +25,7 @@ namespace BookFast.ReliableEvents.CommandStack
                 context.NotifyWhenDone();
             }
             
-            foreach (var @event in events.Except(integrationEvents).OrderBy(evt => evt.OccurredAt))
+            foreach (var @event in events.Except(integrationEvents))
             {
                 await context.Mediator.Publish(@event);
             }

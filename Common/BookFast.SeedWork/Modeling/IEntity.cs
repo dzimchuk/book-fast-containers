@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace BookFast.SeedWork.Modeling
+﻿namespace BookFast.SeedWork.Modeling
 {
     public interface IEntity
     {
-        IEnumerable<Event> CollectEvents();
+        IReadOnlyCollection<Event> Events { get; }
     }
 }

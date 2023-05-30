@@ -1,9 +1,7 @@
 ﻿using BookFast.Api;
 using Microsoft.AspNetCore.Builder;
 
-#pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace BookFast.Api
-#pragma warning restore ET002 // Namespace does not match file path or default namespace
 {
     public static class ApplicationBuilderExtensions
     {

@@ -14,9 +14,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using BookFast.Api;
 
-#pragma warning disable ET002 // Namespace does not match file path or default namespace
 namespace BookFast.Api
-#pragma warning restore ET002 // Namespace does not match file path or default namespace
 {
     public static class ServiceCollectionExtensions
     {

@@ -23,9 +23,9 @@ namespace BookFast.PropertyManagement.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.HasDefaultSchema("facility");
+            modelBuilder.HasDefaultSchema("prop");
 
-            modelBuilder.HasSequence(FacilityConfiguration.SequenceName).IncrementsBy(1);
+            modelBuilder.HasSequence(PropertyConfiguration.SequenceName).IncrementsBy(1);
             modelBuilder.HasSequence(AccommodationConfiguration.SequenceName).IncrementsBy(1);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(FacilityContext).Assembly);

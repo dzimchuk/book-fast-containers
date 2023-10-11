@@ -16,8 +16,8 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
             builder.HasKey(accommodation => accommodation.Id);
             builder.Property(accommodation => accommodation.Id).UseHiLo(SequenceName);
 
-            builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(320);
-            builder.Property(accommodation => accommodation.Description).IsRequired(false);
+            builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(100);
+            builder.Property(accommodation => accommodation.Description).IsRequired(false).HasMaxLength(1000);
 
             var converter = new ValueConverter<string[], string>(
                 array => array.ToJson(),
@@ -27,7 +27,7 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
 
             builder.Property(accommodation => accommodation.RoomCount).IsRequired(true);
 
-            builder.HasOne<Core.Models.Property>()
+            builder.HasOne<Property>()
                 .WithMany()
                 .HasForeignKey(accommodation => accommodation.PropertyId)
                 .IsRequired(true)

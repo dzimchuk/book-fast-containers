@@ -77,7 +77,7 @@ namespace BookFast.Api
             services.AddAuthorization(
                 options =>
                 {
-                    options.AddPolicy(AuthorizationPolicies.FacilityWrite, config =>
+                    options.AddPolicy(AuthorizationPolicies.PropertyWrite, config =>
                     {
                         config.RequireRole(InteractorRole.FacilityProvider.ToString(), InteractorRole.ImporterProcess.ToString());
                     });

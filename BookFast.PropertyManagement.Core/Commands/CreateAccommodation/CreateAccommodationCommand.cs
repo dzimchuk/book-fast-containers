@@ -3,7 +3,7 @@ namespace BookFast.PropertyManagement.Core.Commands.CreateAccommodation
     public class CreateAccommodationCommand : IRequest<int>
     {
         [SwaggerIgnore]
-        public int FacilityId { get; set; }
+        public int PropertyId { get; set; }
 
         public string Name { get; set; }
 
@@ -12,5 +12,8 @@ namespace BookFast.PropertyManagement.Core.Commands.CreateAccommodation
         public int RoomCount { get; set; }
 
         public string[] Images { get; set; }
+
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 }

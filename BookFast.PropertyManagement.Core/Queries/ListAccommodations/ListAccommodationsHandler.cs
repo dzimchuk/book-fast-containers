@@ -13,7 +13,9 @@ namespace BookFast.PropertyManagement.Core.Queries.ListAccommodations
 
         public async Task<IEnumerable<AccommodationRepresentation>> Handle(ListAccommodationsQuery request, CancellationToken cancellationToken)
         {
-            var accommodations = await dbContext.Accommodations.AsNoTracking().Where(item => item.PropertyId == request.FacilityId).ToListAsync();
+            var accommodations = await dbContext.Accommodations.AsNoTracking().Where(item => item.PropertyId == request.PropertyId)
+                .ToListAsync(cancellationToken: cancellationToken);
+
             return accommodations.Select(item => item.ToRepresentation()).ToList();
         }
     }

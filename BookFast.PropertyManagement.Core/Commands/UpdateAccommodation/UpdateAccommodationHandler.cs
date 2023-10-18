@@ -21,7 +21,9 @@ namespace BookFast.PropertyManagement.Core.Commands.UpdateAccommodation
                 request.Name,
                 request.Description,
                 request.RoomCount,
-                request.Images);
+                request.Images,
+                request.Quantity,
+                request.Price);
 
             await dbContext.SaveChangesAsync(cancellationToken);
         }

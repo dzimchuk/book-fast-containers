@@ -1,5 +1,3 @@
-using BookFast.PropertyManagement.Core.Models;
-
 namespace BookFast.PropertyManagement.Core.Commands.CreateAccommodation
 {
     public class CreateAccommodationHandler : IRequestHandler<CreateAccommodationCommand, int>
@@ -13,17 +11,19 @@ namespace BookFast.PropertyManagement.Core.Commands.CreateAccommodation
 
         public async Task<int> Handle(CreateAccommodationCommand request, CancellationToken cancellationToken)
         {
-            if (!await dbContext.Properties.AnyAsync(facility => facility.Id == request.FacilityId, cancellationToken: cancellationToken))
+            if (!await dbContext.Properties.AnyAsync(facility => facility.Id == request.PropertyId, cancellationToken: cancellationToken))
             {
-                throw new NotFoundException("Facility", request.FacilityId);
+                throw new NotFoundException("Facility", request.PropertyId);
             }
 
             var accommodation = Accommodation.NewAccommodation(
-                request.FacilityId,
+                request.PropertyId,
                 request.Name,
                 request.Description,
                 request.RoomCount,
-                request.Images);
+                request.Images,
+                request.Quantity,
+                request.Price);
 
             await dbContext.Accommodations.AddAsync(accommodation, cancellationToken);
 

@@ -2,44 +2,41 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookFast.PropertyManagement.Core.Queries.Representations
 {
-    public class FacilityRepresentation
+    public class PropertyRepresentation
     {
         /// <summary>
-        /// Facility ID
+        /// Property ID
         /// </summary>
         [Required]
         public int Id { get; set; }
 
         /// <summary>
-        /// Facility name
+        /// Property name
         /// </summary>
         [Required]
         public string Name { get; set; }
 
         /// <summary>
-        /// Facility description
+        /// Property description
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        /// Facility street address
+        /// Property address
         /// </summary>
         [Required]
-        public string StreetAddress { get; set; }
+        public AddressRepresentation Address { get; set; }
 
         /// <summary>
-        /// Latitude
+        /// Property location
         /// </summary>
-        public double? Longitude { get; set; }
+        public LocationRepresentation Location { get; set; }
 
         /// <summary>
-        /// Longitude
-        /// </summary>
-        public double? Latitude { get; set; }
-
-        /// <summary>
-        /// Facility images
+        /// Property images
         /// </summary>
         public string[] Images { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

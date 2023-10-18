@@ -2,7 +2,7 @@
 
 namespace BookFast.PropertyManagement.Core.Queries.ListFacilities
 {
-    public class ListFacilitiesQuery : IRequest<IEnumerable<FacilityRepresentation>>
+    public class ListPropertiesQuery : IRequest<IEnumerable<PropertyRepresentation>>
     {
     }
 }

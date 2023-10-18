@@ -2,6 +2,6 @@
 {
     public static class AuthorizationPolicies
     {
-        public const string FacilityWrite = "Facility.Write";
+        public const string PropertyWrite = "Facility.Write";
     }
 }

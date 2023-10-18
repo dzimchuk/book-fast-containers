@@ -2,6 +2,7 @@
 using BookFast.PropertyManagement.Core.Commands.DeleteFacility;
 using BookFast.PropertyManagement.Core.Commands.UpdateFacility;
 using BookFast.PropertyManagement.Core.Queries.GetFacility;
+using BookFast.PropertyManagement.Core.Queries.GetProperty;
 using BookFast.PropertyManagement.Core.Queries.ListFacilities;
 using BookFast.PropertyManagement.Core.Queries.Representations;
 using BookFast.Security;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BookFast.PropertyManagement.Controllers
 {
-    [Authorize(Policy = AuthorizationPolicies.FacilityWrite)]
+    [Authorize(Policy = AuthorizationPolicies.PropertyWrite)]
     [ApiController]
     public class PropertyController : ControllerBase
     {
@@ -26,75 +27,75 @@ namespace BookFast.PropertyManagement.Controllers
         }
 
         /// <summary>
-        /// List facilities by owner
+        /// List properties by owner
         /// </summary>
         /// <returns></returns>
-        [HttpGet("api/facilities")]
-        [SwaggerOperation("list-facilities")]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(IEnumerable<FacilityRepresentation>))]
+        [HttpGet("api/properties")]
+        [SwaggerOperation("list-properties")]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(IEnumerable<PropertyRepresentation>))]
         public async Task<IActionResult> List()
         {
-            return Ok(await mediator.Send(new ListFacilitiesQuery()));
+            return Ok(await mediator.Send(new ListPropertiesQuery()));
         }
 
         /// <summary>
-        /// Find facility by ID
+        /// Find property by ID
         /// </summary>
-        /// <param name="id">Facility ID</param>
+        /// <param name="id">Property ID</param>
         /// <returns></returns>
-        [HttpGet("/api/facilities/{id}")]
-        [SwaggerOperation("find-facility")]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(FacilityRepresentation))]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
+        [HttpGet("/api/properties/{id}")]
+        [SwaggerOperation("find-property")]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(PropertyRepresentation))]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found")]
         [AllowAnonymous]
         public async Task<IActionResult> Find(int id)
         {
-            return Ok(await mediator.Send(new GetFacilityQuery { Id = id }));
+            return Ok(await mediator.Send(new GetPropertyQuery { Id = id }));
         }
 
         /// <summary>
-        /// Create new facility
+        /// Create new property
         /// </summary>
-        /// <param name="facilityData">Facility details</param>
+        /// <param name="propertyData">Property details</param>
         /// <returns></returns>
-        [HttpPost("api/facilities")]
-        [SwaggerOperation("create-facility")]
+        [HttpPost("api/properties")]
+        [SwaggerOperation("create-property")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.Created)]
         [SwaggerResponse((int)System.Net.HttpStatusCode.BadRequest, Description = "Invalid parameters")]
-        public async Task<IActionResult> Create([FromBody] CreatePropertyCommand facilityData)
+        public async Task<IActionResult> Create([FromBody] CreatePropertyCommand propertyData)
         {
-            var facilityId = await mediator.Send(facilityData);
+            var facilityId = await mediator.Send(propertyData);
             return CreatedAtAction("Find", new { id = facilityId }, null);
         }
 
         /// <summary>
-        /// Update facility
+        /// Update property
         /// </summary>
-        /// <param name="id">Facility ID</param>
-        /// <param name="facilityData">Facility details</param>
+        /// <param name="id">Property ID</param>
+        /// <param name="propertyData">Property details</param>
         /// <returns></returns>
-        [HttpPut("api/facilities/{id}")]
-        [SwaggerOperation("update-facility")]
+        [HttpPut("api/properties/{id}")]
+        [SwaggerOperation("update-property")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.NoContent)]
         [SwaggerResponse((int)System.Net.HttpStatusCode.BadRequest, Description = "Invalid parameters")]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdatePropertyCommand facilityData)
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdatePropertyCommand propertyData)
         {
-            facilityData.PropertyId = id;
-            await mediator.Send(facilityData);
+            propertyData.PropertyId = id;
+            await mediator.Send(propertyData);
 
             return NoContent();
         }
 
         /// <summary>
-        /// Delete facility
+        /// Delete property
         /// </summary>
-        /// <param name="id">Facility ID</param>
+        /// <param name="id">Property ID</param>
         /// <returns></returns>
-        [HttpDelete("api/facilities/{id}")]
-        [SwaggerOperation("delete-facility")]
+        [HttpDelete("api/properties/{id}")]
+        [SwaggerOperation("delete-property")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.NoContent)]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found")]
         public async Task<IActionResult> Delete(int id)
         {
             await mediator.Send(new DeletePropertyCommand { PropertyId = id });

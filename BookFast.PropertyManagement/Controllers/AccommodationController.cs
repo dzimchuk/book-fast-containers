@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace BookFast.PropertyManagement.Controllers
 {
-    [Authorize(Policy = AuthorizationPolicies.FacilityWrite)]
+    [Authorize(Policy = AuthorizationPolicies.PropertyWrite)]
     [ApiController]
     public class AccommodationController : ControllerBase
     {
@@ -26,18 +26,18 @@ namespace BookFast.PropertyManagement.Controllers
         }
 
         /// <summary>
-        /// List accommodations by facility
+        /// List accommodations by property
         /// </summary>
-        /// <param name="facilityId">Facility ID</param>
+        /// <param name="propertyId">Property ID</param>
         /// <returns></returns>
-        [HttpGet("api/facilities/{facilityId}/accommodations")]
+        [HttpGet("api/properties/{propertyId}/accommodations")]
         [SwaggerOperation("list-accommodations")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.OK, Type = typeof(IEnumerable<AccommodationRepresentation>))]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found")]
         [AllowAnonymous]
-        public async Task<IActionResult> List(int facilityId)
+        public async Task<IActionResult> List(int propertyId)
         {
-            return Ok(await mediator.Send(new ListAccommodationsQuery { FacilityId = facilityId }));
+            return Ok(await mediator.Send(new ListAccommodationsQuery { PropertyId = propertyId }));
         }
 
         /// <summary>
@@ -58,17 +58,17 @@ namespace BookFast.PropertyManagement.Controllers
         /// <summary>
         /// Create new accommodation
         /// </summary>
-        /// <param name="facilityId">Facility ID</param>
+        /// <param name="propertyId">Property ID</param>
         /// <param name="accommodationData">Accommodation details</param>
         /// <returns></returns>
-        [HttpPost("api/facilities/{facilityId}/accommodations")]
+        [HttpPost("api/properties/{propertyId}/accommodations")]
         [SwaggerOperation("create-accommodation")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.Created)]
         [SwaggerResponse((int)System.Net.HttpStatusCode.BadRequest, Description = "Invalid parameters")]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found")]
-        public async Task<IActionResult> Create([FromRoute] int facilityId, [FromBody] CreateAccommodationCommand accommodationData)
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found")]
+        public async Task<IActionResult> Create([FromRoute] int propertyId, [FromBody] CreateAccommodationCommand accommodationData)
         {
-            accommodationData.FacilityId = facilityId;
+            accommodationData.PropertyId = propertyId;
             var accommodationId = await mediator.Send(accommodationData);
             return CreatedAtAction("Find", new { id = accommodationId }, null);
         }
@@ -83,7 +83,7 @@ namespace BookFast.PropertyManagement.Controllers
         [SwaggerOperation("update-accommodation")]
         [SwaggerResponse((int)System.Net.HttpStatusCode.NoContent)]
         [SwaggerResponse((int)System.Net.HttpStatusCode.BadRequest, Description = "Invalid parameters")]
-        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Facility not found, Accommodation not found")]
+        [SwaggerResponse((int)System.Net.HttpStatusCode.NotFound, Description = "Property not found, Accommodation not found")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateAccommodationCommand accommodationData)
         {
             accommodationData.AccommodationId = id;

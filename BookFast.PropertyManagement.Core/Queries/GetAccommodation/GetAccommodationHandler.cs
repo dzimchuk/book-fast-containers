@@ -14,7 +14,9 @@ namespace BookFast.PropertyManagement.Core.Queries.GetAccommodation
         public async Task<AccommodationRepresentation> Handle(GetAccommodationQuery request, CancellationToken cancellationToken)
         {
             var accommodation = await dbContext.Accommodations.AsNoTracking().FirstOrDefaultAsync(item => item.Id == request.Id);
-            return accommodation?.ToRepresentation();
+            return accommodation == null
+                ? throw new NotFoundException("Property", request.Id)
+                : accommodation.ToRepresentation();
         }
     }
 }

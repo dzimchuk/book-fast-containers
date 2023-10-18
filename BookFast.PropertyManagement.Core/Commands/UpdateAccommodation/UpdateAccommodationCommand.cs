@@ -12,5 +12,8 @@ namespace BookFast.PropertyManagement.Core.Commands.UpdateAccommodation
         public int RoomCount { get; set; }
 
         public string[] Images { get; set; }
+
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace BookFast.PropertyManagement.Core.Commands.DeleteFacility
             var property = await dbContext.Properties.FindAsync(request.PropertyId);
             if (property == null)
             {
-                throw new NotFoundException("Facility", request.PropertyId);
+                throw new NotFoundException("Property", request.PropertyId);
             }
 
             if (await dbContext.Accommodations.AnyAsync(accommodation => accommodation.PropertyId == request.PropertyId, cancellationToken: cancellationToken))

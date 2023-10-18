@@ -2,6 +2,6 @@
 {
     public static class ErrorCodes
     {
-        public const string PropertyNotEmpty = "F001";
+        public const string PropertyNotEmpty = "P001";
     }
 }

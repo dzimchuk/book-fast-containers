@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Core.Queries.ListAccommodations
 {
     public class ListAccommodationsQuery : IRequest<IEnumerable<AccommodationRepresentation>>
     {
-        public int FacilityId { get; set; }
+        public int PropertyId { get; set; }
     }
 }

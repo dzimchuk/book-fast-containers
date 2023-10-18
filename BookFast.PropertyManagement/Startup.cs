@@ -12,7 +12,7 @@ namespace BookFast.PropertyManagement
 {
     public class Startup
     {
-        private const string apiTitle = "Book Fast Facility API";
+        private const string apiTitle = "Book Fast Property API";
         private const string apiVersion = "v1";
 
         private readonly IConfiguration configuration;
@@ -38,7 +38,7 @@ namespace BookFast.PropertyManagement
             //services.AddIntegrationEventPublisher(configuration);
             //services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
 
-            services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.Facility.xml");
+            services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.Property.xml");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

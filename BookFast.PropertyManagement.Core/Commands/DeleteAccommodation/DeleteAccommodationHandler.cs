@@ -1,5 +1,3 @@
-using BookFast.PropertyManagement.Core;
-
 namespace BookFast.PropertyManagement.Core.Commands.DeleteAccommodation
 {
     public class DeleteAccommodationHandler : IRequestHandler<DeleteAccommodationCommand>

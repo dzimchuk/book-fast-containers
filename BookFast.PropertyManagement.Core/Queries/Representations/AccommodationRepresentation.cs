@@ -1,4 +1,3 @@
-using BookFast.PropertyManagement.Core.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookFast.PropertyManagement.Core.Queries.Representations
@@ -12,10 +11,10 @@ namespace BookFast.PropertyManagement.Core.Queries.Representations
         public int Id { get; set; }
 
         /// <summary>
-        /// Facility ID
-        /// </summary>'
+        /// Property ID
+        /// </summary>
         [Required]
-        public int FacilityId { get; set; }
+        public int PropertyId { get; set; }
 
         /// <summary>
         /// Accommodation name
@@ -38,6 +37,20 @@ namespace BookFast.PropertyManagement.Core.Queries.Representations
         /// Accommodation images
         /// </summary>
         public string[] Images { get; set; }
+
+        /// <summary>
+        /// Quantity
+        /// </summary>
+        [Required]
+        public int Quantity { get; set; }
+
+        /// <summary>
+        /// Price
+        /// </summary>
+        [Required]
+        public decimal Price { get; set; }
+
+        public bool IsActive { get; set; }
     }
 
     internal static class Mapper
@@ -46,11 +59,14 @@ namespace BookFast.PropertyManagement.Core.Queries.Representations
             new AccommodationRepresentation
             {
                 Id = model.Id,
-                FacilityId = model.PropertyId,
+                PropertyId = model.PropertyId,
                 Name = model.Name,
                 Description = model.Description,
                 RoomCount = model.RoomCount,
-                Images = model.Images
+                Images = model.Images,
+                Quantity = model.Quantity,
+                Price = model.Price,
+                IsActive = model.IsActive   
             };
     }
 }

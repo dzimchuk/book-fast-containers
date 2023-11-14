@@ -82,6 +82,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Integration", "Com
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Infrastructure", "Common\BookFast.Infrastructure\BookFast.Infrastructure.csproj", "{2A02F21D-9354-497E-95F7-84A3BF959816}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Notifications", "BookFast.Notifications\BookFast.Notifications.csproj", "{FB2BAF39-B164-40E6-BC3E-21D0F3466727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -228,6 +230,10 @@ Global
 		{2A02F21D-9354-497E-95F7-84A3BF959816}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A02F21D-9354-497E-95F7-84A3BF959816}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A02F21D-9354-497E-95F7-84A3BF959816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB2BAF39-B164-40E6-BC3E-21D0F3466727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB2BAF39-B164-40E6-BC3E-21D0F3466727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB2BAF39-B164-40E6-BC3E-21D0F3466727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB2BAF39-B164-40E6-BC3E-21D0F3466727}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

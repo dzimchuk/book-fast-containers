@@ -4,6 +4,7 @@ using BookFast.Api.SecurityContext;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
+using BookFast.Identity.Services;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using System.Security.Cryptography.X509Certificates;
@@ -34,6 +35,9 @@ namespace BookFast.Identity
             services.AddCorsServices(configuration);
 
             services.AddIdentityDbContext(configuration);
+
+            services.AddMassTransit(configuration, env, null);
+            services.AddScoped<TransactionHelper>();
 
             services.AddDefaultIdentity<User>(options =>
                 {
@@ -91,12 +95,11 @@ namespace BookFast.Identity
                     // See https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html
                     if (env.IsDevelopment())
                     {
-                        // options.AddEphemeralSigningKey();
-                        options.AddSigningCertificate(DevSigningCertificate);
+                        options.AddEphemeralSigningKey();
                     }
                     else
                     {
-                        options.AddSigningCertificate(authServerSettings.SigningCertificateThumbprint, StoreName.My, StoreLocation.CurrentUser);
+                        options.AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(authServerSettings.SigningCertificate)));
                     }
 
                     if (authServerSettings.EnableAccessTokenEncryption)
@@ -106,7 +109,7 @@ namespace BookFast.Identity
                     }
                     else
                     {
-                        options.AddEphemeralEncryptionKey(); // // OpenIddict requires an encryption key to be specified in all cases
+                        options.AddEphemeralEncryptionKey(); // OpenIddict requires an encryption key to be specified in all cases
 
                         // Disables JWT access token encryption (this option doesn't affect Data Protection tokens).
                         // Disabling encryption is NOT recommended and SHOULD only be done when issuing tokens
@@ -173,19 +176,6 @@ namespace BookFast.Identity
                 options.MapRazorPages();
                 options.MapControllers();
             });
-        }
-
-        private static X509Certificate2 DevSigningCertificate
-        {
-            get
-            {
-                using var stream = typeof(Startup).Assembly.GetManifestResourceStream("BookFast.Identity.certs.signing-certificate.pfx");
-                using var memoryStream = new MemoryStream();
-
-                stream.CopyTo(memoryStream);
-
-                return new X509Certificate2(memoryStream.ToArray());
-            }
         }
     }
 }

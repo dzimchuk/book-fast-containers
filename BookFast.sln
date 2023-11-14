@@ -78,6 +78,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.PropertyManagement
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.PropertyManagement", "BookFast.PropertyManagement\BookFast.PropertyManagement.csproj", "{C1FF3ADF-7711-4B5B-B6BA-B95DE0D55009}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Integration", "Common\BookFast.Integration\BookFast.Integration.csproj", "{E6360DBC-40FF-4046-B854-753AFB096957}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookFast.Infrastructure", "Common\BookFast.Infrastructure\BookFast.Infrastructure.csproj", "{2A02F21D-9354-497E-95F7-84A3BF959816}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +220,14 @@ Global
 		{C1FF3ADF-7711-4B5B-B6BA-B95DE0D55009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1FF3ADF-7711-4B5B-B6BA-B95DE0D55009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1FF3ADF-7711-4B5B-B6BA-B95DE0D55009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6360DBC-40FF-4046-B854-753AFB096957}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6360DBC-40FF-4046-B854-753AFB096957}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6360DBC-40FF-4046-B854-753AFB096957}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6360DBC-40FF-4046-B854-753AFB096957}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A02F21D-9354-497E-95F7-84A3BF959816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A02F21D-9354-497E-95F7-84A3BF959816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A02F21D-9354-497E-95F7-84A3BF959816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A02F21D-9354-497E-95F7-84A3BF959816}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -233,6 +245,8 @@ Global
 		{DF79E24A-916F-4FFE-8B8D-C4DA6CEF8696} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{8053941C-827E-4C8D-A21B-7C5E0EA22699} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 		{70186493-2200-4D54-A284-A3A87BFFD0FD} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{E6360DBC-40FF-4046-B854-753AFB096957} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
+		{2A02F21D-9354-497E-95F7-84A3BF959816} = {BFA3AD99-B4E9-43F2-8447-455454B81C78}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

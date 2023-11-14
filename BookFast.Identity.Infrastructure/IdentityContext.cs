@@ -1,5 +1,6 @@
 ﻿using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
+using MassTransit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +27,10 @@ namespace BookFast.Identity.Infrastructure
             builder.HasDefaultSchema("identity");
 
             builder.ApplyConfigurationsFromAssembly(typeof(IdentityContext).Assembly);
+
+            builder.AddInboxStateEntity();
+            builder.AddOutboxMessageEntity();
+            builder.AddOutboxStateEntity();
         }
     }
 }

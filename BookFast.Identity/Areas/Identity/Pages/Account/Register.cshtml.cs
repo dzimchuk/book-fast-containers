@@ -4,14 +4,14 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Transactions;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
+using BookFast.Identity.Services;
+using BookFast.Integration;
+using BookFast.Integration.Models;
 using BookFast.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
@@ -20,30 +20,33 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
-        private readonly SignInManager<IdentityUser> signInManager;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly IUserStore<IdentityUser> userStore;
-        private readonly IUserEmailStore<IdentityUser> emailStore;
+        private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
+        private readonly IUserStore<User> userStore;
+        private readonly IUserEmailStore<User> emailStore;
         private readonly ILogger<RegisterModel> logger;
-        private readonly IEmailSender emailSender;
+        private readonly IMailNotificationQueue notificationQueue;
+        private readonly TransactionHelper transactionHelper;
 
         private readonly IDbContext dbContext;
 
         public RegisterModel(
-            UserManager<IdentityUser> userManager,
-            IUserStore<IdentityUser> userStore,
-            SignInManager<IdentityUser> signInManager,
+            UserManager<User> userManager,
+            IUserStore<User> userStore,
+            SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            IDbContext dbContext)
+            IDbContext dbContext, 
+            IMailNotificationQueue notificationQueue, 
+            TransactionHelper transactionHelper)
         {
             this.userManager = userManager;
             this.userStore = userStore;
             emailStore = GetEmailStore();
             this.signInManager = signInManager;
             this.logger = logger;
-            this.emailSender = emailSender;
             this.dbContext = dbContext;
+            this.notificationQueue = notificationQueue;
+            this.transactionHelper = transactionHelper;
         }
 
         /// <summary>
@@ -118,33 +121,63 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             var tenant = new Tenant { Id = Guid.NewGuid().ToString().ToLowerInvariant(), Name = Input.TenantName };
             var user = new User();
 
-            using (var scope = new TransactionScope(
-                    TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
-                    TransactionScopeAsyncFlowOption.Enabled))
+            dbContext.Tenants.Add(tenant);
+            await dbContext.SaveChangesAsync();
+
+            user.TenantId = tenant.Id;
+
+            await userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+            await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+            var result = await userManager.CreateAsync(user, Input.Password);
+
+            if (!result.Succeeded)
             {
-                dbContext.Tenants.Add(tenant);
-                await dbContext.SaveChangesAsync();
+                return (result, null);
+            }
 
-                user.TenantId = tenant.Id;
+            result = await userManager.AddToRoleAsync(user, Roles.TenantAdmin);
 
-                await userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
-                var result = await userManager.CreateAsync(user, Input.Password);
+            if (!result.Succeeded)
+            {
+                return (result, null);
+            }
 
-                if (!result.Succeeded)
+            return (result, user);
+        }
+
+        private async Task<(IdentityResult, User)> RegisterUserAndSendEmailAsync(string returnUrl)
+        {
+            using (var scope = transactionHelper.StartTransaction())
+            {
+                var (result, user) = await CreateTenantAdminAsync();
+
+                if (result.Succeeded)
                 {
-                    return (result, null);
+                    if (userManager.Options.SignIn.RequireConfirmedAccount)
+                    {
+                        var userId = await userManager.GetUserIdAsync(user);
+                        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        var callbackUrl = Url.Page(
+                            "/Account/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Identity", userId, code, returnUrl },
+                            protocol: Request.Scheme);
+
+                        var message = new MailMessage<ConfirmEmail>
+                        {
+                            To = new[] { Input.Email },
+                            Subject = "Registration confirmation",
+                            Model = new ConfirmEmail(callbackUrl)
+                        };
+
+                        await notificationQueue.EnqueueMessageAsync(message);
+                    }
+
+                    logger.LogInformation("User created a new account with password.");
+
+                    scope.Complete();
                 }
-
-                result = await userManager.AddToRoleAsync(user, Roles.TenantAdmin);
-
-                if (!result.Succeeded)
-                {
-                    return (result, null);
-                }
-
-                scope.Complete();
 
                 return (result, user);
             }
@@ -156,24 +189,10 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var (result, user) = await CreateTenantAdminAsync();
+                var (result, user) = await RegisterUserAndSendEmailAsync(returnUrl);
 
                 if (result.Succeeded)
                 {
-                    logger.LogInformation("User created a new account with password.");
-
-                    var userId = await userManager.GetUserIdAsync(user);
-                    var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId, code, returnUrl },
-                        protocol: Request.Scheme);
-
-                    await emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
                     if (userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
@@ -194,13 +213,13 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             return Page();
         }
 
-        private IUserEmailStore<IdentityUser> GetEmailStore()
+        private IUserEmailStore<User> GetEmailStore()
         {
             if (!userManager.SupportsUserEmail)
             {
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
-            return (IUserEmailStore<IdentityUser>)userStore;
+            return (IUserEmailStore<User>)userStore;
         }
     }
 }

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookFast.Identity.Core\BookFast.Identity.Core.csproj" />
+    <ProjectReference Include="..\Common\BookFast.Infrastructure\BookFast.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,8 +1,12 @@
 ﻿using BookFast.Identity.Core;
+using BookFast.Infrastructure;
+using BookFast.Integration;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BookFast.Identity.Infrastructure
 {
@@ -30,6 +34,13 @@ namespace BookFast.Identity.Infrastructure
             // Note: call ReplaceDefaultEntities() to replace the default OpenIddict entities.
             builder.UseEntityFrameworkCore()
                 .UseDbContext<IdentityContext>();
+        }
+
+        public static void AddMassTransit(this IServiceCollection services,
+            IConfiguration configuration, IHostEnvironment env,
+            Action<IBusRegistrationConfigurator, ServiceBusOptions> configureConsumers = null)
+        {
+            services.AddMassTransit<IdentityContext>(configuration, env, configureConsumers);
         }
     }
 }

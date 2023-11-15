@@ -1,7 +1,5 @@
 ﻿using Azure.Identity;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 
 namespace BookFast.Configuration
 {

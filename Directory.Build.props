@@ -1,0 +1,9 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!--<Nullable>enable</Nullable>-->
+    <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    <UserSecretsId>BookFast-d63cc91f-8f96-40b9-866e-cf7b4a603b04</UserSecretsId>
+  </PropertyGroup>
+</Project>

@@ -8,7 +8,7 @@ using System.Text;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Services;
 using BookFast.Integration;
-using BookFast.Integration.Models;
+using BookFast.Integration.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

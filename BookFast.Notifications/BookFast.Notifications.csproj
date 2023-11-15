@@ -3,8 +3,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <EmbeddedResource Include="EmailTemplates\ConfirmEmail.html" />
-    <EmbeddedResource Include="EmailTemplates\ResetPassword.html" />
+    <EmbeddedResource Include="EmailTemplates\Identity_ConfirmEmail.html" />
+    <EmbeddedResource Include="EmailTemplates\Identity_ResetPassword.html" />
   </ItemGroup>
   
   <ItemGroup>

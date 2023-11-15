@@ -8,7 +8,7 @@ using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Services;
 using BookFast.Integration;
-using BookFast.Integration.Models;
+using BookFast.Integration.Models.Identity;
 using BookFast.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;

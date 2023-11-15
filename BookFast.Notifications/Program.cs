@@ -1,5 +1,5 @@
 using BookFast.Integration;
-using BookFast.Integration.Models;
+using BookFast.Integration.Models.Identity;
 using BookFast.Notifications;
 using BookFast.Notifications.Policies;
 using MassTransit;

@@ -7,7 +7,7 @@ using Azure.Core;
 using Fluid;
 using BookFast.Integration;
 using BookFast.Notifications.Policies;
-using BookFast.Integration.Models;
+using BookFast.Integration.Models.Identity;
 
 namespace BookFast.Notifications
 {
@@ -65,8 +65,8 @@ namespace BookFast.Notifications
 
         private static Dictionary<Type, string> templates = new Dictionary<Type, string>
         {
-            { typeof(ConfirmEmail), "ConfirmEmail" },
-            { typeof(ResetPassword), "ResetPassword" }
+            { typeof(ConfirmEmail), "Identity_ConfirmEmail" },
+            { typeof(ResetPassword), "Identity_ResetPassword" }
         };
 
         private static string CreateEmailBody(TModel model)

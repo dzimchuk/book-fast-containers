@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BookFast.Api;
 using BookFast.Api.SecurityContext;
+using BookFast.Api.Swagger;
 using BookFast.PropertyManagement.Core;
 using BookFast.PropertyManagement.Infrastructure;
 
@@ -38,7 +39,8 @@ namespace BookFast.PropertyManagement
             //services.AddIntegrationEventPublisher(configuration);
             //services.AddIntegrationEventReceiver(configuration, new IntegrationEventMapper());
 
-            services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.PropertyManagement.xml");
+            //services.AddSwashbuckle(configuration, apiTitle, apiVersion, "BookFast.PropertyManagement.xml");
+            services.AddSwaggerServices(configuration, xmlDocFileName: "BookFast.PropertyManagement.xml");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -60,7 +62,7 @@ namespace BookFast.PropertyManagement
                 endpoints.MapControllers();
             });
 
-            app.UseSwagger(apiTitle, apiVersion);
+            app.UseSwagger(configuration);
         }
     }
 }

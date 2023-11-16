@@ -3,6 +3,15 @@
   <PropertyGroup>
     <RootNamespace>BookFast.Identity</RootNamespace>
     <AssemblyName>BookFast.Identity</AssemblyName>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net8.0\BookFast.Identity.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\net8.0\BookFast.Identity.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

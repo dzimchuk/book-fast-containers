@@ -111,17 +111,19 @@ namespace BookFast.Identity
                         Type = ClientTypes.Public,
                         PostLogoutRedirectUris =
                         {
-                            new Uri("https://localhost:7144"),
-                            new Uri("https://localhost:7064"),
-                            new Uri("https://localhost:7154"),
-                            new Uri("https://localhost:7264")
+                            new Uri("https://localhost:30408"), // Identity
+                            new Uri("https://localhost:30409"), // PropertyManagement
+                            new Uri("https://localhost:30410"), // Files
+                            new Uri("https://localhost:30411"), // Booking
+                            new Uri("https://localhost:30412")  // Search
                         },
                         RedirectUris =
                         {
-                            new Uri("https://localhost:7144/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:7064/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:7154/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:7264/swagger/oauth2-redirect.html")
+                            new Uri("https://localhost:30408/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:30409/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:30410/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:30411/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:30412/swagger/oauth2-redirect.html")
                         },
                         Permissions =
                         {

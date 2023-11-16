@@ -2,6 +2,7 @@
 using BookFast.Api;
 using BookFast.Api.Cors;
 using BookFast.Api.SecurityContext;
+using BookFast.Api.Swagger;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
@@ -200,6 +201,8 @@ namespace BookFast.Identity
 
             services.AddAuthorization(options => AuthorizationPolicies.Register(options));
 
+            services.AddSwaggerServices(configuration, xmlDocFileName: "BookFast.Identity.xml");
+
             if (env.IsDevelopment())
             {
                 services.AddHostedService<OpenIddictConfiguration>(); 
@@ -240,6 +243,8 @@ namespace BookFast.Identity
                 options.MapRazorPages();
                 options.MapControllers();
             });
+
+            app.UseSwagger(configuration);
         }
     }
 }

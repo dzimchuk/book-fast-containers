@@ -7,9 +7,12 @@ namespace BookFast.Api.Swagger;
 
 public static class ApplicationBuilderExtensions
 {
-    public static void UseSwaggerMiddlewareAndUI(this IApplicationBuilder app, IConfiguration configuration, string configKey = "Auth")
+    public static void UseSwagger(this IApplicationBuilder app, IConfiguration configuration, string configKey = "Auth")
     {
-        app.UseSwagger();
+        app.UseSwagger(options =>
+        {
+            //options.RouteTemplate = "api-docs/{documentName}/swagger.json";
+        });
 
         var authSettings = configuration.GetAuthSettings(configKey);
 
@@ -19,6 +22,10 @@ public static class ApplicationBuilderExtensions
             options.OAuthClientId(authSettings.Swagger.ClientId);
             options.OAuthUsePkce();
             options.InjectStyles();
+
+            //options.SwaggerEndpoint($"/api-docs/{version}/swagger.json", $"{title} {version}");
+            //options.RoutePrefix = "api-docs";
+            //options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
         });
     }
 

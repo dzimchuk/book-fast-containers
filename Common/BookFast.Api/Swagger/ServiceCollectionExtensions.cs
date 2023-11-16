@@ -6,7 +6,10 @@ namespace BookFast.Api.Swagger
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddSwaggerServices(this IServiceCollection services, IConfiguration configuration, string configKey = "Auth")
+        public static void AddSwaggerServices(this IServiceCollection services, 
+            IConfiguration configuration, 
+            string configKey = "Auth",
+            string xmlDocFileName = null)
         {
             services.AddEndpointsApiExplorer();
 
@@ -14,6 +17,18 @@ namespace BookFast.Api.Swagger
 
             services.AddSwaggerGen(options =>
             {
+                //options.SwaggerDoc(version, new OpenApiInfo
+                //{
+                //    Title = title,
+                //    Version = version
+                //});
+
+                //options.EnableAnnotations();
+
+                //options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+                //options.SchemaFilter<SwaggerIgnoreSchemaFilter>();
+
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
@@ -46,6 +61,26 @@ namespace BookFast.Api.Swagger
                         new List<string>()
                     }
                 });
+            });
+
+            if (!string.IsNullOrWhiteSpace(xmlDocFileName))
+            {
+                AddXmlComments(services, xmlDocFileName);
+            }
+        }
+
+        private static void AddXmlComments(IServiceCollection services, string xmlDocFileName)
+        {
+            var xmlDoc = Path.Combine(AppContext.BaseDirectory, xmlDocFileName);
+
+            if (!File.Exists(xmlDoc))
+            {
+                return;
+            }
+
+            services.ConfigureSwaggerGen(options =>
+            {
+                options.IncludeXmlComments(xmlDoc);
             });
         }
     }

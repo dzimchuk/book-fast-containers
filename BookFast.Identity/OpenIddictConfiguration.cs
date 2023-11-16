@@ -23,7 +23,7 @@ namespace BookFast.Identity
             {
                 var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-                if (await manager.FindByClientIdAsync("bookfast-client") is null)
+                if (await manager.FindByClientIdAsync("bookfast-client", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictApplicationDescriptor
                     {
@@ -53,7 +53,7 @@ namespace BookFast.Identity
                             Permissions.Scopes.Email,
                             Permissions.Scopes.Profile,
                             Permissions.Scopes.Roles,
-                            Permissions.Prefixes.Scope + "booking"
+                            Permissions.Prefixes.Scope + "client"
                         },
                         Requirements =
                         {
@@ -62,7 +62,7 @@ namespace BookFast.Identity
                     }, cancellationToken);
                 }
 
-                if (await manager.FindByClientIdAsync("bookfast-admin") is null)
+                if (await manager.FindByClientIdAsync("bookfast-admin", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictApplicationDescriptor
                     {
@@ -92,7 +92,7 @@ namespace BookFast.Identity
                             Permissions.Scopes.Email,
                             Permissions.Scopes.Profile,
                             Permissions.Scopes.Roles,
-                            Permissions.Prefixes.Scope + "all"
+                            Permissions.Prefixes.Scope + "admin"
                         },
                         Requirements =
                         {
@@ -101,7 +101,56 @@ namespace BookFast.Identity
                     }, cancellationToken);
                 }
 
-                if (await manager.FindByClientIdAsync("postman") is null)
+                if (await manager.FindByClientIdAsync("swagger-ui", cancellationToken) is null)
+                {
+                    await manager.CreateAsync(new OpenIddictApplicationDescriptor
+                    {
+                        ClientId = "swagger-ui",
+                        ConsentType = ConsentTypes.Implicit,
+                        DisplayName = "Swagger UI client",
+                        Type = ClientTypes.Public,
+                        PostLogoutRedirectUris =
+                        {
+                            new Uri("https://localhost:7144"),
+                            new Uri("https://localhost:7064"),
+                            new Uri("https://localhost:7154"),
+                            new Uri("https://localhost:7264")
+                        },
+                        RedirectUris =
+                        {
+                            new Uri("https://localhost:7144/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:7064/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:7154/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:7264/swagger/oauth2-redirect.html")
+                        },
+                        Permissions =
+                        {
+                            Permissions.Endpoints.Authorization,
+                            Permissions.Endpoints.Logout,
+                            Permissions.Endpoints.Token,
+
+                            Permissions.GrantTypes.AuthorizationCode,
+                            Permissions.GrantTypes.RefreshToken,
+
+                            Permissions.ResponseTypes.Code,
+
+                            Permissions.Scopes.Email,
+                            Permissions.Scopes.Profile,
+                            Permissions.Scopes.Roles,
+                            Permissions.Prefixes.Scope + "identity",
+                            Permissions.Prefixes.Scope + "booking",
+                            Permissions.Prefixes.Scope + "property-management",
+                            Permissions.Prefixes.Scope + "files",
+                            Permissions.Prefixes.Scope + "search"
+                        },
+                        Requirements =
+                        {
+                            Requirements.Features.ProofKeyForCodeExchange
+                        }
+                    });
+                }
+
+                if (await manager.FindByClientIdAsync("postman", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictApplicationDescriptor
                     {
@@ -127,9 +176,8 @@ namespace BookFast.Identity
                             Permissions.Scopes.Email,
                             Permissions.Scopes.Profile,
                             Permissions.Scopes.Roles,
-                            Permissions.Prefixes.Scope + "all",
-                            Permissions.Prefixes.Scope + "booking",
-                            Permissions.Prefixes.Scope + "facility"
+                            Permissions.Prefixes.Scope + "admin",
+                            Permissions.Prefixes.Scope + "client"
                         },
                         Requirements =
                         {
@@ -143,7 +191,7 @@ namespace BookFast.Identity
                     await manager.CreateAsync(new OpenIddictApplicationDescriptor
                     {
                         ClientId = "service-client",
-                        ClientSecret = "service-client-secret", // TODO: generate proper secret
+                        ClientSecret = "service-client-secret",
                         DisplayName = "Backend service client",
                         Permissions =
                         {
@@ -151,8 +199,9 @@ namespace BookFast.Identity
 
                             Permissions.GrantTypes.ClientCredentials,
 
-                            Permissions.Prefixes.Scope + "booking",
-                            Permissions.Prefixes.Scope + "facility",
+                            Permissions.Prefixes.Scope + "client",
+                            Permissions.Prefixes.Scope + "property-management",
+                            Permissions.Prefixes.Scope + "files",
 
                             Permissions.ResponseTypes.Token
                         }
@@ -164,39 +213,91 @@ namespace BookFast.Identity
             {
                 var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
 
-                if (await manager.FindByNameAsync("all") is null)
+                if (await manager.FindByNameAsync("admin", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictScopeDescriptor
                     {
-                        Name = "all",
+                        Name = "admin",
                         Resources =
                         {
-                            "booking-api",
-                            "facility-api"
+                            "Identity",
+                            "Booking",
+                            "PropertyManagement",
+                            "Files",
+                            "Search"
                         }
                     }, cancellationToken);
                 }
 
-                if (await manager.FindByNameAsync("booking") is null)
+                if (await manager.FindByNameAsync("client", cancellationToken) is null)
+                {
+                    await manager.CreateAsync(new OpenIddictScopeDescriptor
+                    {
+                        Name = "client",
+                        Resources =
+                        {
+                            "Booking",
+                            "Search"
+                        }
+                    }, cancellationToken);
+                }
+
+                if (await manager.FindByNameAsync("identity", cancellationToken) is null)
+                {
+                    await manager.CreateAsync(new OpenIddictScopeDescriptor
+                    {
+                        Name = "identity",
+                        Resources =
+                        {
+                            "Identity"
+                        }
+                    }, cancellationToken);
+                }
+
+                if (await manager.FindByNameAsync("booking", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictScopeDescriptor
                     {
                         Name = "booking",
                         Resources =
                         {
-                            "booking-api"
+                            "Booking"
                         }
                     }, cancellationToken);
                 }
 
-                if (await manager.FindByNameAsync("facility") is null)
+                if (await manager.FindByNameAsync("property-management", cancellationToken) is null)
                 {
                     await manager.CreateAsync(new OpenIddictScopeDescriptor
                     {
-                        Name = "facility",
+                        Name = "property-management",
                         Resources =
                         {
-                            "facility-api"
+                            "PropertyManagement"
+                        }
+                    }, cancellationToken);
+                }
+
+                if (await manager.FindByNameAsync("files", cancellationToken) is null)
+                {
+                    await manager.CreateAsync(new OpenIddictScopeDescriptor
+                    {
+                        Name = "files",
+                        Resources =
+                        {
+                            "Files"
+                        }
+                    }, cancellationToken);
+                }
+
+                if (await manager.FindByNameAsync("search", cancellationToken) is null)
+                {
+                    await manager.CreateAsync(new OpenIddictScopeDescriptor
+                    {
+                        Name = "search",
+                        Resources =
+                        {
+                            "Search"
                         }
                     }, cancellationToken);
                 }

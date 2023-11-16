@@ -1,10 +1,8 @@
 using BookFast.SeedWork.Core;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Linq;
 
-namespace BookFast.Api.Swagger
+namespace BookFast.Api.Swagger.Filters
 {
     internal class SwaggerIgnoreSchemaFilter : ISchemaFilter
     {

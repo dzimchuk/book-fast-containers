@@ -1,5 +1,4 @@
 ﻿using BookFast.Api.Authentication;
-using BookFast.Api.Swagger;
 using BookFast.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
@@ -13,6 +12,7 @@ using BookFast.Api.ErrorHandling;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using BookFast.Api;
+using BookFast.Api.Swagger.Filters;
 
 namespace BookFast.Api
 {

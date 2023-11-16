@@ -2,9 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
 
-namespace BookFast.Api.Swagger
+namespace BookFast.Api.Swagger.Filters
 {
     internal class SecurityRequirementsOperationFilter : IOperationFilter
     {

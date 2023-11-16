@@ -1,14 +1,17 @@
-﻿using BookFast.Api;
+﻿using Azure.Storage.Blobs;
+using BookFast.Api;
 using BookFast.Api.Cors;
 using BookFast.Api.SecurityContext;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
 using BookFast.Identity.Services;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Quartz;
 using System.Security.Cryptography.X509Certificates;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace BookFast.Identity
 {
@@ -39,18 +42,75 @@ namespace BookFast.Identity
             services.AddMassTransit(configuration, env, null);
             services.AddScoped<TransactionHelper>();
 
-            services.AddDefaultIdentity<User>(options =>
-                {
-                    // TODO: Place to configure Identity (password rules, registration confirmation, MFA and so on)
-                    options.SignIn.RequireConfirmedAccount = true;
+            services.AddApplicationInsightsTelemetry();
 
-                    if (env.IsDevelopment()) // for testing purposes
-                    {
-                        options.SignIn.RequireConfirmedAccount = false;
-                    }
-                })
-                .AddRoles<Role>()
-                .AddIdentityStore();
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
+
+            services.AddTransient<CustomPasswordResetTokenProvider<User>>();
+            services.AddTransient<CustomEmailConfirmationTokenProvider<User>>();
+
+            services.AddDefaultIdentity<User>(options =>
+             {
+                 options.SignIn.RequireConfirmedAccount = true;
+
+                 options.Password.RequiredLength = 8;
+                 options.Password.RequireDigit = true;
+                 options.Password.RequireUppercase = true;
+                 options.Password.RequireLowercase = true;
+                 options.Password.RequireNonAlphanumeric = false;
+
+                 // Default token lifespan of the Identity user tokens is one day
+                 // https://github.com/dotnet/aspnetcore/blob/v8.0.0/src/Identity/Extensions.Core/src/TokenOptions.cs
+                 // https://github.com/dotnet/aspnetcore/blob/v8.0.0/src/Identity/Core/src/DataProtectionTokenProviderOptions.cs
+                 // https://github.com/dotnet/aspnetcore/blob/v8.0.0/src/Identity/Core/src/DataProtectorTokenProvider.cs
+                 options.Tokens.ProviderMap.Add("CustomPasswordReset",
+                     new TokenProviderDescriptor(typeof(CustomPasswordResetTokenProvider<User>)));
+                 options.Tokens.PasswordResetTokenProvider = "CustomPasswordReset";
+
+                 options.Tokens.ProviderMap.Add("CustomEmailConfirmation",
+                     new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<User>)));
+                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+
+                 // Default Lockout settings.
+                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                 options.Lockout.MaxFailedAccessAttempts = 5;
+                 options.Lockout.AllowedForNewUsers = true;
+             })
+             .AddErrorDescriber<CustomIdentityErrorDescriber>()
+             .AddPasswordValidator<CustomPasswordValidator>()
+             .AddRoles<Role>()
+             .AddIdentityStore();
+
+            var authServerSettings = configuration.GetAuthServerSettings();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.IsEssential = true;
+                options.Cookie.HttpOnly = true;
+
+                // these are set automatically based on 'Remember Me' flag
+                //options.ExpireTimeSpan = TimeSpan.FromMinutes(authServerSettings.CookieLifetimeInMinutes);
+                //options.Cookie.MaxAge = TimeSpan.FromMinutes(authServerSettings.CookieLifetimeInMinutes);
+
+                options.SlidingExpiration = authServerSettings.CookieSlidingExpiration;
+            });
+
+            var dataProtectionSettings = configuration.GetDataProtectionSettings();
+            if (!string.IsNullOrWhiteSpace(dataProtectionSettings.StorageConnectionString))
+            {
+                var container = new BlobContainerClient(dataProtectionSettings.StorageConnectionString, "data-protection");
+                container.CreateIfNotExistsAsync().GetAwaiter().GetResult();
+
+                var blob = container.GetBlobClient("identity-keys.xml");
+
+                services.AddDataProtection()
+                    .SetApplicationName("BookFast")
+                    .PersistKeysToAzureBlobStorage(blob);
+            }
 
             // OpenIddict offers native integration with Quartz.NET to perform scheduled tasks
             // (like pruning orphaned authorizations/tokens from the database) at regular intervals.
@@ -77,11 +137,9 @@ namespace BookFast.Identity
                 // Register the OpenIddict server components.
                 .AddServer(options =>
                 {
-                    var authServerSettings = configuration.GetAuthServerSettings();
-
                     options
                         .AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange()
-                        //.AllowClientCredentialsFlow()
+                        .AllowClientCredentialsFlow()
                         .AllowRefreshTokenFlow();
 
                     options
@@ -117,7 +175,7 @@ namespace BookFast.Identity
                     }
 
                     // Register scopes (permissions)
-                    options.RegisterScopes(Scopes.Email, Scopes.Profile, Scopes.Roles, "all", "booking", "facility");
+                    options.RegisterScopes(authServerSettings.Scopes);
 
                     // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
                     // Note that if pass-through is not enabled for some endpoints OpenIddict will handle will handle these requests automatically.
@@ -142,11 +200,18 @@ namespace BookFast.Identity
 
             services.AddAuthorization(options => AuthorizationPolicies.Register(options));
 
-            services.AddHostedService<OpenIddictConfiguration>();
+            if (env.IsDevelopment())
+            {
+                services.AddHostedService<OpenIddictConfiguration>(); 
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // make sure to set ASPNETCORE_FORWARDEDHEADERS_ENABLED to true
+            // see https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer
+            app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

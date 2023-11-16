@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace BookFast.SeedWork.Core.Validation
+namespace BookFast.SeedWork.Validation
 {
     public class ValidationException : Exception
     {

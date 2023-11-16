@@ -1,4 +1,4 @@
-﻿using BookFast.SeedWork.Core.Queries;
+﻿using BookFast.SeedWork.Queries;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

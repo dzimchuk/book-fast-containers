@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace BookFast.SeedWork.Core.Queries
+namespace BookFast.SeedWork.Queries
 {
     public abstract class ListQueryHandler<TQuery, TRepresentation> : IRequestHandler<TQuery, ListQueryResult<TRepresentation>>
         where TQuery : ListQuery<TRepresentation>

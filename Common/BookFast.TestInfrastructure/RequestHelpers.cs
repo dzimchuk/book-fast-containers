@@ -1,5 +1,4 @@
-﻿using BookFast.TestInfrastructure;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System.Globalization;
 
 namespace BookFast.TestInfrastructure

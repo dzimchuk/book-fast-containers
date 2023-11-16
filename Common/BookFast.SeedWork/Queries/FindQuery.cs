@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace BookFast.SeedWork.Core.Queries
+namespace BookFast.SeedWork.Queries
 {
     public class FindQuery<TKey, TRepresentation> : IRequest<TRepresentation>
     {

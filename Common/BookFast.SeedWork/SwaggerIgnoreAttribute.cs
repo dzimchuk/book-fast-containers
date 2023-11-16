@@ -1,4 +1,4 @@
-namespace BookFast.SeedWork.Core
+namespace BookFast.SeedWork
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class SwaggerIgnoreAttribute : Attribute

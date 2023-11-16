@@ -1,4 +1,4 @@
-﻿using BookFast.SeedWork.Core.Queries;
+﻿using BookFast.SeedWork.Queries;
 
 namespace BookFast.Identity.Core.Queries.ListTenantUsers
 {

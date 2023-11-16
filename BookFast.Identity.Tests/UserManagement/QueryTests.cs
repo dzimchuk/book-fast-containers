@@ -1,6 +1,6 @@
 ﻿using BookFast.Identity.Core.Queries.ListTenantUsers;
 using BookFast.Identity.Infrastructure;
-using BookFast.SeedWork.Core.Queries;
+using BookFast.SeedWork.Queries;
 using BookFast.TestInfrastructure;
 using BookFast.TestInfrastructure.IntegrationTest;
 using Newtonsoft.Json.Linq;

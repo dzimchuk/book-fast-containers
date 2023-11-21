@@ -4,12 +4,10 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Services;
 using BookFast.Integration;
 using BookFast.Integration.Models.Identity;
-using BookFast.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,14 +26,11 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
         private readonly IMailNotificationQueue notificationQueue;
         private readonly TransactionHelper transactionHelper;
 
-        private readonly IDbContext dbContext;
-
         public RegisterModel(
             UserManager<User> userManager,
             IUserStore<User> userStore,
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
-            IDbContext dbContext, 
             IMailNotificationQueue notificationQueue, 
             TransactionHelper transactionHelper)
         {
@@ -44,7 +39,6 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             emailStore = GetEmailStore();
             this.signInManager = signInManager;
             this.logger = logger;
-            this.dbContext = dbContext;
             this.notificationQueue = notificationQueue;
             this.transactionHelper = transactionHelper;
         }
@@ -101,12 +95,6 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-            [Required]
-            [DataType(DataType.Text)]
-            [StringLength(256, ErrorMessage = "{0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
-            [Display(Name = "Tenant name")]
-            public string TenantName { get; set; }
         }
 
 
@@ -116,26 +104,13 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        private async Task<(IdentityResult, User)> CreateTenantAdminAsync()
+        private async Task<(IdentityResult, User)> CreateNewUserAsync()
         {
-            var tenant = new Tenant { Id = Guid.NewGuid().ToString().ToLowerInvariant(), Name = Input.TenantName };
             var user = new User();
-
-            dbContext.Tenants.Add(tenant);
-            await dbContext.SaveChangesAsync();
-
-            user.TenantId = tenant.Id;
 
             await userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
             await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
             var result = await userManager.CreateAsync(user, Input.Password);
-
-            if (!result.Succeeded)
-            {
-                return (result, null);
-            }
-
-            result = await userManager.AddToRoleAsync(user, Roles.TenantAdmin);
 
             if (!result.Succeeded)
             {
@@ -149,7 +124,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
         {
             using (var scope = transactionHelper.StartTransaction())
             {
-                var (result, user) = await CreateTenantAdminAsync();
+                var (result, user) = await CreateNewUserAsync();
 
                 if (result.Succeeded)
                 {

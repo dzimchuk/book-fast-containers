@@ -1,8 +1,8 @@
-﻿using BookFast.Identity.Core.Commands.AddTenantUser;
-using BookFast.Identity.Core.Commands.ChangeRole;
-using BookFast.Identity.Core.Commands.RemoveTenantUser;
-using BookFast.Identity.Core.Queries.FindTenantUser;
-using BookFast.Identity.Core.Queries.ListTenantUsers;
+﻿using BookFast.Identity.Core.Tenants.AddTenantUser;
+using BookFast.Identity.Core.Tenants.ChangeRole;
+using BookFast.Identity.Core.Tenants.FindTenantUser;
+using BookFast.Identity.Core.Tenants.ListTenantUsers;
+using BookFast.Identity.Core.Tenants.RemoveTenantUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +13,11 @@ namespace BookFast.Identity.Controllers
 {
     [ApiController]
     [Authorize(Policy = AuthorizationPolicies.TenantAdmin)]
-    public class UserController : ControllerBase
+    public class TenantUserController : ControllerBase
     {
         private readonly IMediator mediator;
 
-        public UserController(IMediator mediator)
+        public TenantUserController(IMediator mediator)
         {
             this.mediator = mediator;
         }

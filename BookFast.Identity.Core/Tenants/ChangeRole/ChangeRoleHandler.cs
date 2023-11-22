@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Transactions;
 
-namespace BookFast.Identity.Core.Commands.ChangeRole
+namespace BookFast.Identity.Core.Tenants.ChangeRole
 {
     public class ChangeRoleHandler : IRequestHandler<ChangeRoleCommand>
     {

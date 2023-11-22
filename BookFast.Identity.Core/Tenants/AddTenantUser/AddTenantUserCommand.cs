@@ -1,4 +1,4 @@
-﻿namespace BookFast.Identity.Core.Commands.AddTenantUser
+﻿namespace BookFast.Identity.Core.Tenants.AddTenantUser
 {
     public record AddTenantUserCommand(string UserName, string Role) : IRequest<string>;
 

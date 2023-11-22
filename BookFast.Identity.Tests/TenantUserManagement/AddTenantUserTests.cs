@@ -1,4 +1,4 @@
-﻿using BookFast.Identity.Core.Commands.AddTenantUser;
+﻿using BookFast.Identity.Core.Tenants.AddTenantUser;
 using BookFast.Identity.Infrastructure;
 using BookFast.Security;
 using BookFast.TestInfrastructure;
@@ -8,7 +8,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Xunit;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     public class AddTenantUserTests : IClassFixture<ApiFixture<Program, IdentityContext>>
     {

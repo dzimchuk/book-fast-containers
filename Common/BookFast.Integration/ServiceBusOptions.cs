@@ -40,7 +40,7 @@ namespace BookFast.Integration
     {
         public static ServiceBusOptions GetServiceBusOptions(this IConfiguration configuration, IHostEnvironment env)
         {
-            var options = configuration.GetSection("ServiceBus").Get<ServiceBusOptions>();
+            var options = configuration.GetSection("ServiceBus").Get<ServiceBusOptions>() ?? new ServiceBusOptions();
             options.SetIsLocalRun(env.IsDevelopment());
 
             return options;

@@ -1,4 +1,4 @@
-﻿using BookFast.Identity.Core.Commands.ChangeRole;
+﻿using BookFast.Identity.Core.Tenants.ChangeRole;
 using BookFast.Identity.Infrastructure;
 using BookFast.Security;
 using BookFast.TestInfrastructure;
@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using Xunit;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     public class ChangeRoleTests : IClassFixture<ApiFixture<Program, IdentityContext>>
     {

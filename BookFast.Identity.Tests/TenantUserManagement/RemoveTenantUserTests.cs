@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using Xunit;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     public class RemoveTenantUserTests : IClassFixture<ApiFixture<Program, IdentityContext>>
     {

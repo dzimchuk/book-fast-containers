@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BookFast.Identity.Core.Commands
+namespace BookFast.Identity.Core.Tenants
 {
     internal static class Extensions
     {

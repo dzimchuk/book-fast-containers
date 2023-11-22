@@ -1,6 +1,6 @@
 ﻿using BookFast.SeedWork.Queries;
 
-namespace BookFast.Identity.Core.Queries.ListTenantUsers
+namespace BookFast.Identity.Core.Tenants.ListTenantUsers
 {
     public class ListTenantUsersQuery : ListQuery<TenantUserRepresentation>
     {

@@ -1,4 +1,4 @@
-﻿namespace BookFast.Identity.Core.Commands.ChangeRole
+﻿namespace BookFast.Identity.Core.Tenants.ChangeRole
 {
     public class ChangeRoleCommand : IRequest
     {

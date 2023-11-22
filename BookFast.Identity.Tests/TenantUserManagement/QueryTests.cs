@@ -1,4 +1,4 @@
-﻿using BookFast.Identity.Core.Queries.ListTenantUsers;
+﻿using BookFast.Identity.Core.Tenants.ListTenantUsers;
 using BookFast.Identity.Infrastructure;
 using BookFast.SeedWork.Queries;
 using BookFast.TestInfrastructure;
@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using Xunit;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     public class QueryTests : IClassFixture<ApiFixture<Program, IdentityContext>>
     {

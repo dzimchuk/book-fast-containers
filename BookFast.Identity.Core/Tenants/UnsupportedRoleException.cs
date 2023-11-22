@@ -1,4 +1,4 @@
-﻿namespace BookFast.Identity.Core.Commands
+﻿namespace BookFast.Identity.Core.Tenants
 {
     public class UnsupportedRoleException : BusinessException
     {

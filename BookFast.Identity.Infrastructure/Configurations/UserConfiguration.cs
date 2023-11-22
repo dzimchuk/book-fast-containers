@@ -8,12 +8,12 @@ namespace BookFast.Identity.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
-            builder.Property(user => user.TenantId).HasDefaultValue(Guid.Empty.ToString().ToLowerInvariant());
+            builder.Property(user => user.TenantId).IsRequired(false);
 
             builder.HasOne<Tenant>()
                 .WithMany()
                 .HasForeignKey(user => user.TenantId)
-                .IsRequired(true)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

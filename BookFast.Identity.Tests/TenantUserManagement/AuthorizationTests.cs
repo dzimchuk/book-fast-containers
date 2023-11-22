@@ -4,7 +4,7 @@ using BookFast.TestInfrastructure.IntegrationTest;
 using System.Net;
 using Xunit;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     public class AuthorizationTests : IClassFixture<ApiFixture<Program, IdentityContext>>
     {

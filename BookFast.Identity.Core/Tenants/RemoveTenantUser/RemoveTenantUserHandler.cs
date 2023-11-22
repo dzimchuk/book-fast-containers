@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BookFast.Identity.Core.Commands.RemoveTenantUser
+namespace BookFast.Identity.Core.Tenants.RemoveTenantUser
 {
     public class RemoveTenantUserHandler : IRequestHandler<RemoveTenantUserCommand>
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace BookFast.Identity.Core.Queries.FindTenantUser
+namespace BookFast.Identity.Core.Tenants.FindTenantUser
 {
     public class FindTenantUserHandler : IRequestHandler<FindTenantUserQuery, TenantUserRepresentation>
     {

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace BookFast.Identity.Core.Queries.ListTenantUsers
+namespace BookFast.Identity.Core.Tenants.ListTenantUsers
 {
     public class ListTenantUsersHandler : ListQueryHandler<ListTenantUsersQuery, TenantUserRepresentation>
     {

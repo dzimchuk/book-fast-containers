@@ -1,4 +1,4 @@
-﻿namespace BookFast.Identity.Core.Commands.RemoveTenantUser
+﻿namespace BookFast.Identity.Core.Tenants.RemoveTenantUser
 {
     public record RemoveTenantUserCommand(string UserId) : IRequest;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Transactions;
 
-namespace BookFast.Identity.Core.Commands.AddTenantUser
+namespace BookFast.Identity.Core.Tenants.AddTenantUser
 {
     public class AddTenantUserHandler : IRequestHandler<AddTenantUserCommand, string>
     {

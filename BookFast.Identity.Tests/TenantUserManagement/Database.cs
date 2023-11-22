@@ -6,7 +6,7 @@ using BookFast.TestInfrastructure.IntegrationTest;
 using Microsoft.AspNetCore.Identity;
 using Quartz;
 
-namespace BookFast.Identity.Tests.UserManagement
+namespace BookFast.Identity.Tests.TenantUserManagement
 {
     internal static class Database
     {

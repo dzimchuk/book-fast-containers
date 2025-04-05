@@ -1,9 +1,13 @@
 ﻿<Project>
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <!--<Nullable>enable</Nullable>-->
     <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+    <!--<AnalysisLevel>latest</AnalysisLevel>-->
+    <!--<AnalysisMode>All</AnalysisMode>-->
+    <!--<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>-->
+    <!--<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->
     <UserSecretsId>BookFast-d63cc91f-8f96-40b9-866e-cf7b4a603b04</UserSecretsId>
   </PropertyGroup>
 </Project>

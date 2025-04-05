@@ -42,6 +42,8 @@ namespace BookFast.Common.Api.Swagger
                 });
 
                 options.CustomSchemaIds(t => t.FullName.Replace("+", ".", StringComparison.OrdinalIgnoreCase));
+
+                options.SchemaFilter<SwaggerIgnoreSchemaFilter>();
             });
         }
 

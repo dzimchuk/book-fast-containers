@@ -16,6 +16,7 @@
     <PackageVersion Include="MediatR.Contracts" Version="2.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Identity.Stores" Version="9.0.3" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="OpenIddict.Validation.AspNetCore" Version="6.2.0" />
     <PackageVersion Include="OpenIddict.Validation.SystemNetHttp" Version="6.2.0" />

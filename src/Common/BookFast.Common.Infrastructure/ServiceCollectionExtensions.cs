@@ -5,7 +5,6 @@ using BookFast.Common.Infrastructure.Clock;
 using BookFast.Common.Infrastructure.Filters;
 using BookFast.Common.Infrastructure.Integration;
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,27 +18,15 @@ namespace BookFast.Common.Infrastructure
             services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
         }
 
-        public static void AddMassTransit<TDbContext>(this IServiceCollection services,
-            EventBusOptions eventBusOptions,
-            Action<IBusRegistrationConfigurator, EventBusOptions> configureConsumers)
-            where TDbContext : DbContext
+        public static void AddMassTransit(this IServiceCollection services,
+            IConfiguration configuration,
+            Action<IBusRegistrationConfigurator> configureConsumers)
         {
-            services.AddMailNotificationQueue(eventBusOptions);
+            services.TryAddTransient<IMailNotificationQueue, MailNotificationQueue>();
 
             services.AddMassTransit(config =>
             {
-                configureConsumers?.Invoke(config, eventBusOptions);
-
-                config.AddEntityFrameworkOutbox<TDbContext>(outboxOptions =>
-                {
-                    outboxOptions.QueryDelay = TimeSpan.FromMinutes(1);
-
-                    outboxOptions.UsePostgres();
-                    outboxOptions.UseBusOutbox(cfg =>
-                    {
-                        //cfg.DisableDeliveryService();
-                    });
-                });
+                configureConsumers?.Invoke(config);
 
                 config.UsingInMemory((context, cfg) =>
                 {
@@ -50,13 +37,5 @@ namespace BookFast.Common.Infrastructure
                 });
             });
         }
-
-        private static IServiceCollection AddMailNotificationQueue(this IServiceCollection services, EventBusOptions eventBusOptions)
-        {
-            EndpointConvention.Map<MailMessage<object>>(new Uri($"queue:{eventBusOptions.GetMailSenderQueueName()}"));
-
-            return services.AddTransient<IMailNotificationQueue, MailNotificationQueue>();
-        }
-
     }
 }

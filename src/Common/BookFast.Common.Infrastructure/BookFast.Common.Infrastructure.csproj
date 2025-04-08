@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="MassTransit.EntityFrameworkCore" />
+    <PackageReference Include="Azure.Communication.Email" />
+    <PackageReference Include="Fluid.Core" />
+    <PackageReference Include="MassTransit" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BookFast.Common.Application\BookFast.Common.Application.csproj" />

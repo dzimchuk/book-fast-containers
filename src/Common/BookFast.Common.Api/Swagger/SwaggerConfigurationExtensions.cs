@@ -47,16 +47,20 @@ namespace BookFast.Common.Api.Swagger
             });
         }
 
-        public static void UseSwaggerDefaults(this IApplicationBuilder app)
+        public static void UseSwaggerDefaults(this IApplicationBuilder app, IConfiguration configuration)
         {
+            var identityClient = configuration.GetSection("Authentication:Swagger").Get<SwaggerIdentityClient>();
+
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.OAuthClientId("swagger-ui");
-                options.OAuthScopes("openid", "email", "profile", "roles", "offline_access", "ims.api");
+                options.OAuthClientId(identityClient.ClientId);
+                options.OAuthScopes(identityClient.Scopes);
                 options.OAuthUsePkce();
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
             });
         }
+
+        private record SwaggerIdentityClient(string ClientId, string[] Scopes);
     }
 }

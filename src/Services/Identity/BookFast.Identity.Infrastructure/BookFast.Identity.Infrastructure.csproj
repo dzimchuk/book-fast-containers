@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" />
+  </ItemGroup>
+  
+    <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\BookFast.Common.Infrastructure\BookFast.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\BookFast.Identity.Core\BookFast.Identity.Core.csproj" />
+  </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Email\Templates\ConfirmEmail.html" />
+        <EmbeddedResource Include="Email\Templates\ResetPassword.html" />
+    </ItemGroup>
+    
+</Project>

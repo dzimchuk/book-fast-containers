@@ -1,4 +1,5 @@
-﻿using OpenIddict.Abstractions;
+﻿using BookFast.Identity.Infrastructure;
+using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace BookFast.Identity
@@ -14,10 +15,18 @@ namespace BookFast.Identity
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            ApplyMigrations();
+
             using var scope = serviceProvider.CreateScope();
 
             await CreateApplicationAsync(scope, cancellationToken);
             await CreateScopesAsync(scope, cancellationToken);
+
+            void ApplyMigrations()
+            {
+                using var scope = serviceProvider.CreateScope();
+                MigrationExtensions.ApplyMigration(scope);
+            }
 
             static async Task CreateApplicationAsync(IServiceScope scope, CancellationToken cancellationToken)
             {

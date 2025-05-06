@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.Identity.Infrastructure.Database
 {
-    public class IdentityContext : IdentityDbContext<User, Role, string>, IDbContext
+    internal class IdentityContext : IdentityDbContext<User, Role, string>, IDbContext
     {
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)

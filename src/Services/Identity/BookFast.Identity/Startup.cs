@@ -176,7 +176,7 @@ namespace BookFast.Identity
                     }
                     else if (!string.IsNullOrWhiteSpace(authServerSettings.SigningCertificate))
                     {
-                        options.AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(authServerSettings.SigningCertificate)));
+                        options.AddSigningCertificate(X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(authServerSettings.SigningCertificate), string.Empty));
                     }
                     else
                     {

@@ -1,4 +1,5 @@
 ﻿using BookFast.Common.Presentation.Authorization;
+using BookFast.Common.Presentation.Results;
 using BookFast.Identity.Core.Tenants.AddTenant;
 using BookFast.Identity.Core.Tenants.FindTenant;
 using MediatR;
@@ -27,7 +28,7 @@ namespace BookFast.Identity.Controllers
         public async Task<IActionResult> Find(string id)
         {
             var result = await sender.Send(new FindTenantQuery() { TenantId = id });
-            return Ok(result);
+            return result.Map(tenant => MvcResults.Ok(tenant), MvcResults.Problem);
         }
 
         [HttpPost("tenants")]
@@ -36,8 +37,8 @@ namespace BookFast.Identity.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Add([FromBody] AddTenantCommand command)
         {
-            var id = await sender.Send(command);
-            return CreatedAtAction(nameof(Find), new { id }, null);
+            var result = await sender.Send(command);
+            return result.Map(id => MvcResults.CreatedAtAction(nameof(Find), new { id }, null), MvcResults.Problem);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace BookFast.Common.Presentation.Results;
 
 public static class ResultExtensions
 {
-    public static TOut Match<TOut>(
+    public static TOut Map<TOut>(
         this Result result,
         Func<TOut> onSuccess,
         Func<Result, TOut> onFailure)
@@ -13,7 +13,7 @@ public static class ResultExtensions
         return result.IsSuccess ? onSuccess() : onFailure(result);
     }
 
-    public static TOut Match<TIn, TOut>(
+    public static TOut Map<TIn, TOut>(
         this Result<TIn> result,
         Func<TIn, TOut> onSuccess,
         Func<Result<TIn>, TOut> onFailure)
@@ -61,16 +61,13 @@ public static class ResultExtensions
             _ => StatusCodes.Status500InternalServerError
         };
 
-    public static Dictionary<string, object> GetErrors(this Result result)
+    public static Dictionary<string, object> GetExtensions(this Result result)
     {
         if (result.Error is not IErrorCollection errorCollection)
         {
             return null;
         }
 
-        return new Dictionary<string, object>
-            {
-                { "errors", errorCollection.Errors }
-            };
+        return errorCollection.Errors.DistinctBy(e => e.Code).ToDictionary(e => e.Code, e => (object)e.Description);
     }
 }

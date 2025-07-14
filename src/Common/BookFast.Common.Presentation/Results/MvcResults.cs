@@ -1,16 +1,17 @@
 ﻿using BookFast.Common.SeedWork;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace BookFast.Common.Presentation.Results
 {
     public static class MvcResults
     {
+        public static IActionResult Ok() => new OkResult();
+        public static IActionResult Ok(object value) => new OkObjectResult(value);
+        public static IActionResult CreatedAtAction(string actionName, object routeValues, object value)
+            => new CreatedAtActionResult(actionName, controllerName: null, routeValues: routeValues, value: value);
+        public static IActionResult NoContent() => new NoContentResult();
+
         public static IActionResult Problem(Result result)
         {
             if (result.IsSuccess)
@@ -24,15 +25,8 @@ namespace BookFast.Common.Presentation.Results
                 Detail = result.Error.GetDetail(),
                 Type = result.Error.GetErrorType(),
                 Status = result.Error.GetStatusCode(),
+                Extensions = result.GetExtensions()
             };
-
-            if (extensions is not null)
-            {
-                foreach (var extension in extensions)
-                {
-                    problemDetails.Extensions.Add(extension);
-                }
-            }
 
             return new ObjectResult(details)
             {

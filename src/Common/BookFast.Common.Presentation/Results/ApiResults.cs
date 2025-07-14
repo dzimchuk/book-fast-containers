@@ -17,19 +17,6 @@ public static class ApiResults
             detail: result.Error.GetDetail(),
             type: result.Error.GetErrorType(),
             statusCode: result.Error.GetStatusCode(),
-            extensions: GetErrors(result));
-
-        static Dictionary<string, object> GetErrors(Result result)
-        {
-            if (result.Error is not IErrorCollection errorCollection)
-            {
-                return null;
-            }
-
-            return new Dictionary<string, object>
-            {
-                { "errors", errorCollection.Errors }
-            };
-        }
+            extensions: result.GetExtensions());
     }
 }

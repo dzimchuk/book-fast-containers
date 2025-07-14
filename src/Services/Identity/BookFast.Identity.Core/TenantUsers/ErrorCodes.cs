@@ -2,7 +2,7 @@
 
 namespace BookFast.Identity.Core.TenantUsers
 {
-    public static class ErrorCodes
+    internal static class ErrorCodes
     {
         public static Error UnsupportedRole =>
             Error.Problem("TenantUser.UnsupportedRole", "Unsupported role.");

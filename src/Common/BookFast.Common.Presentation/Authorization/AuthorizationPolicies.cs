@@ -5,7 +5,7 @@ namespace BookFast.Common.Presentation.Authorization
 {
     public static class AuthorizationPolicies
     {
-        public const string GlobalAdmin = "SuperAdmin";
+        public const string GlobalAdmin = "GlobalAdmin";
 
         public const string TenantAdmin = "TenantAdmin";
         public const string TenantUser = "TenantUser";

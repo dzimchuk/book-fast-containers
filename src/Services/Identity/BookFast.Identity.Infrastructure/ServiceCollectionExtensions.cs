@@ -8,6 +8,7 @@ using BookFast.Identity.Infrastructure.Email;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace BookFast.Identity.Infrastructure
                     connectionString, 
                     sqlServerOptions => sqlServerOptions
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Identity))
+                        .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
                     .UseSnakeCaseNamingConvention();
             });
 

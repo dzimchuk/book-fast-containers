@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Identity", "src\Se
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookFast.Identity.Tests", "src\Services\Identity\BookFast.Identity.Tests\BookFast.Identity.Tests.csproj", "{6513E68F-79D4-4C87-8463-C17A8C055B60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6513E68F-79D4-4C87-8463-C17A8C055B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6513E68F-79D4-4C87-8463-C17A8C055B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6513E68F-79D4-4C87-8463-C17A8C055B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6513E68F-79D4-4C87-8463-C17A8C055B60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +116,7 @@ Global
 		{44ED4ECF-1AFF-0B9E-738E-EF537CF4D588} = {A1E34F40-3F00-4417-A9D9-C65EAFED6995}
 		{00CB473B-4AAF-3B50-8B10-AD18CC6911C8} = {A1E34F40-3F00-4417-A9D9-C65EAFED6995}
 		{D80B4ED6-4732-26AB-678F-0459A8F19261} = {A1E34F40-3F00-4417-A9D9-C65EAFED6995}
+		{6513E68F-79D4-4C87-8463-C17A8C055B60} = {A1E34F40-3F00-4417-A9D9-C65EAFED6995}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3FFBC74-2956-4EB0-B0D5-B4F47ADD1262}

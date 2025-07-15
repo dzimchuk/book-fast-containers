@@ -10,15 +10,11 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
     {
         protected readonly TestWebApplicationFactory<TProgram> factory;
 
-        //private readonly PostgreSqlContainer dbContainer = new PostgreSqlBuilder()
-        //    .WithImage("timescale/timescaledb-ha:pg16")
-        //    .WithDatabase("ims")
-        //    .WithUsername("postgres")
-        //    .WithPassword("postgres")
-        //    .WithEnvironment("POSTGRES_INITDB_ARGS", "--encoding=UTF-8 --lc-collate=en_US.utf8")
-        //    .Build();
-
-        private readonly MsSqlContainer dbContainer = new MsSqlBuilder().Build();
+        private readonly MsSqlContainer dbContainer = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .WithPassword("P@ssw0rd")
+            .WithEnvironment("MSSQL_PID", "Developer")
+            .Build();
 
         public ApiFixture()
         {
@@ -45,7 +41,7 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
         {
             await dbContainer.StartAsync();
 
-            Environment.SetEnvironmentVariable($"ConnectionStrings:IdentitySqlConnection", dbContainer.GetConnectionString());
+            Environment.SetEnvironmentVariable($"ConnectionStrings:Sql", dbContainer.GetConnectionString());
         }
 
         public async Task DisposeAsync()

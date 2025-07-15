@@ -1,0 +1,56 @@
+﻿using BookFast.Common.Application.Security;
+using BookFast.Common.TestInfrastructure.IntegrationTest;
+using BookFast.Identity.Core.Models;
+using BookFast.Identity.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BookFast.Identity.Tests
+{
+    public class TenantsFixture : IAsyncLifetime
+    {
+        public const string TestTenantId = "2dc7fa73-48a3-408e-a5a0-c13c32610151";
+
+        private readonly HttpClient httpClient;
+        private readonly IServiceScope scope;
+        private readonly IdentityContext dbContext;
+
+        public HttpClient HttpClient => httpClient;
+
+        public TenantsFixture(ApiFixture<Program> fixture)
+        {
+            httpClient = fixture.CreateHttpClient(services =>
+            {
+                services.AddSingleton(new TestSecurityContext
+                {
+                    UserId = Constants.UserId,
+                    Role = Roles.GlobalAdmin
+                });
+            });
+
+            scope = fixture.ServiceProvider.CreateScope();
+            dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
+        }
+
+        public async Task InitializeAsync()
+        {
+            dbContext.Tenants.AddRange(
+                [
+                    new Tenant
+                    {
+                        Id = TestTenantId,
+                        Name = "Test tenant"
+                    }
+                ]);
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task DisposeAsync()
+        {
+            await dbContext.Tenants.Where(t => t.Id == TestTenantId).ExecuteDeleteAsync();
+           
+            scope.Dispose();
+        }
+    }
+}

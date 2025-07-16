@@ -6,5 +6,8 @@ namespace BookFast.Identity.Core.Tenants
     {
         public static Error TenantNotFound =>
             Error.NotFound("Tenants.TenantNotFound", "Tenant not found.");
+
+        public static Error TenantAlreadyExists(string name) =>
+            Error.Problem("Tenants.Duplicate", $"Tenant '{name}' already exists.");
     }
 }

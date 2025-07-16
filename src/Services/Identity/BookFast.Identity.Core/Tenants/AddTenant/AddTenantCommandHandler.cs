@@ -19,6 +19,12 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
                     new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                     TransactionScopeAsyncFlowOption.Enabled))
             {
+                var upperTenantName = request.Name?.ToUpperInvariant();
+                if (dbContext.Tenants.Any(t => t.Name.ToUpper() == upperTenantName))
+                {
+                    return ErrorCodes.TenantAlreadyExists(request.Name);
+                }
+
                 var tenant = new Tenant
                 {
                     Id = Guid.CreateVersion7().ToString(),

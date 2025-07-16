@@ -1,10 +1,10 @@
 ﻿using BookFast.Common.TestInfrastructure;
 using System.Net;
 
-namespace BookFast.Identity.Tests
+namespace BookFast.Identity.Tests.Tenants
 {
     [Collection(nameof(IntegrationTestCollection))]
-    public class TenantsTests(TenantsFixture fixture) : IClassFixture<TenantsFixture>
+    public class TenantsQueryTests(TenantsFixture fixture) : IClassFixture<TenantsFixture>
     {
         [Fact]
         public async Task FindTenant_NotFound()

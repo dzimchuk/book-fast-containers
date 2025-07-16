@@ -1,21 +1,25 @@
 ﻿using BookFast.Common.Application.Security;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookFast.Identity.Tests
+namespace BookFast.Identity.Tests.Tenants
 {
     public class TenantsFixture : IAsyncLifetime
     {
         public const string TestTenantId = "2dc7fa73-48a3-408e-a5a0-c13c32610151";
+        public const string TestTenantName = "Test tenant";
 
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly IdentityContext dbContext;
 
         public HttpClient HttpClient => httpClient;
+
+        public IDbContext DbContext => dbContext;
 
         public TenantsFixture(ApiFixture<Program> fixture)
         {
@@ -39,7 +43,7 @@ namespace BookFast.Identity.Tests
                     new Tenant
                     {
                         Id = TestTenantId,
-                        Name = "Test tenant"
+                        Name = TestTenantName
                     }
                 ]);
 

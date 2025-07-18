@@ -47,11 +47,14 @@ namespace BookFast.Identity.Tests.Tenants
                     }
                 ]);
 
+            dbContext.Users.Add(new User { Id = "2710da43-aedd-4fd1-b7f2-7094c2018dbc", Email = "user@test.com", UserName = "user@test.com", TenantId = TestTenantId, NormalizedUserName = "USER@TEST.COM" });
+
             await dbContext.SaveChangesAsync();
         }
 
         public async Task DisposeAsync()
         {
+            await dbContext.Users.Where(u => u.TenantId == TestTenantId).ExecuteDeleteAsync();
             await dbContext.Tenants.Where(t => t.Id == TestTenantId).ExecuteDeleteAsync();
            
             scope.Dispose();

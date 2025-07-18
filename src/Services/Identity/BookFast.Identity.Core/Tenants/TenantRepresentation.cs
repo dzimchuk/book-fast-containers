@@ -1,4 +1,8 @@
 ﻿namespace BookFast.Identity.Core.Tenants
 {
-    public record TenantRepresentation(string TenantId, string TenantName);
+    public record TenantRepresentation
+    {
+        public string TenantId { get; set; }
+        public string TenantName { get; set; }
+    }
 }

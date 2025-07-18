@@ -22,7 +22,12 @@ namespace BookFast.Identity.Core.TenantUsers.FindTenantUser
                                     where user.Id == request.UserId && user.TenantId == securityContext.GetCurrentTenant()
                                     join userRole in dbContext.UserRoles.AsNoTracking() on user.Id equals userRole.UserId
                                     join role in dbContext.Roles.AsNoTracking() on userRole.RoleId equals role.Id
-                                    select new TenantUserRepresentation(user.Id, user.UserName, role.Name)).FirstOrDefaultAsync(cancellationToken);
+                                    select new TenantUserRepresentation
+                                    {
+                                        UserId = user.Id,
+                                        UserName = user.UserName,
+                                        Role = role.Name
+                                    }).FirstOrDefaultAsync(cancellationToken);
 
 
             if (tenantUser == null)

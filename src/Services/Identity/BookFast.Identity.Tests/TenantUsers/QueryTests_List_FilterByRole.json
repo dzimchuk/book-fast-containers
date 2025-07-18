@@ -1,0 +1,15 @@
+{
+  "totalRecords": 2,
+  "records": [
+    {
+      "userId": "dbb3eaec-20ac-49e1-8f82-c35ee195be25",
+      "userName": "user2@test1.com",
+      "role": "tenant_user"
+    },
+    {
+      "userId": "eeed345a-d18e-4e8f-a40f-9aafbc0e1305",
+      "userName": "user1@test1.com",
+      "role": "tenant_user"
+    }
+  ]
+}

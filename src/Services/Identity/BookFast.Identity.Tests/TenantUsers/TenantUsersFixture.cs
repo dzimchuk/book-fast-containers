@@ -69,7 +69,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             dbContext.Users.AddRange(
                 new User { Id = Tenant1Admin, Email = "admin@test1.com", UserName = "admin@test1.com", TenantId = TestTenant1Id, NormalizedUserName = "ADMIN@TEST1.COM" },
                 new User { Id = Tenant2Admin, Email = "admin@test2.com", UserName = "admin@test2.com", TenantId = TestTenant2Id, NormalizedUserName = "ADMIN@TEST2.COM" },
-                new User { Id = Tenant1User, Email = "user1@test1.com", UserName = "user1@test1.com", TenantId = TestTenant1Id, NormalizedUserName = "USER1@TEST1.COM" },
+                new User { Id = Tenant1User, Email = "user1@test1.com", UserName = "user1@test1.com", TenantId = TestTenant1Id, NormalizedUserName = "USER1@TEST1.COM", SecurityStamp = "test" },
                 new User { Id = "dbb3eaec-20ac-49e1-8f82-c35ee195be25", Email = "user2@test1.com", UserName = "user2@test1.com", TenantId = TestTenant1Id, NormalizedUserName = "USER2@TEST1.COM" },
                 new User { Id = "12899f34-7d73-42be-8cc6-2d503dbe40f6", Email = "test@test2.com", UserName = "test@test2.com", TenantId = TestTenant2Id, NormalizedUserName = "TEST@TEST2.COM" }
                 );

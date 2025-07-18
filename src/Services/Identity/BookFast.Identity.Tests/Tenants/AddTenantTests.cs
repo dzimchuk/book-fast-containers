@@ -33,7 +33,17 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task TenantAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "test@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "user@test.com"));
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+            await response.ShouldBeEquivalentToFile();
+        }
+
+        [Fact]
+        public async Task UserAlreadyExists()
+        {
+            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "user@test.com"));
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 

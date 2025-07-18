@@ -10,7 +10,11 @@ namespace BookFast.Identity.Core.Tenants.FindTenant
         {
             var result = await (from tenant in dbContext.Tenants.AsNoTracking()
                                 where tenant.Id == request.TenantId
-                                select new TenantRepresentation(tenant.Id, tenant.Name)).FirstOrDefaultAsync(cancellationToken);
+                                select new TenantRepresentation
+                                {
+                                    TenantId = tenant.Id,
+                                    TenantName = tenant.Name
+                                }).FirstOrDefaultAsync(cancellationToken);
 
 
             if (result == null)

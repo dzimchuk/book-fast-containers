@@ -1,0 +1,6 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "title": "TenantUsers.UserNotFound",
+  "status": 404,
+  "detail": "User not found."
+}

@@ -53,7 +53,7 @@ namespace BookFast.Identity.Controllers
             return result.Map(id => MvcResults.CreatedAtAction(nameof(Find), new { id }, null), MvcResults.Problem);
         }
 
-        [HttpPut("users/{id}")]
+        [HttpPut("users/{id}/role")]
         [SwaggerOperation("change-tenant-user-role")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]

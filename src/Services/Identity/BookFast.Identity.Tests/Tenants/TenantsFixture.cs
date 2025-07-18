@@ -10,7 +10,7 @@ namespace BookFast.Identity.Tests.Tenants
 {
     public class TenantsFixture : IAsyncLifetime
     {
-        public const string TestTenantId = "2dc7fa73-48a3-408e-a5a0-c13c32610151";
+        public const string TestTenantId = Constants.CallerTenant;
         public const string TestTenantName = "Test tenant";
 
         private readonly HttpClient httpClient;

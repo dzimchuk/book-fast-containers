@@ -5,6 +5,7 @@ using BookFast.Common.Api.Swagger;
 using BookFast.Common.Application;
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Presentation.Authorization;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
 using BookFast.Identity.Services;
@@ -58,6 +59,8 @@ namespace BookFast.Identity
             services.AddRazorPages();
 
             services.AddScoped<TransactionHelper>();
+
+            services.AddScoped<IEmailConfirmationSender, EmailConfirmationSender>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {

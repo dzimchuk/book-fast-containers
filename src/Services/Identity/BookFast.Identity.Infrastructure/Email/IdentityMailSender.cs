@@ -6,8 +6,8 @@ using System.Reflection;
 
 namespace BookFast.Identity.Infrastructure.Email
 {
-    internal class IdentityMailSender<TModel>(IOptions<CommunicationServiceOptions> options, ILogger<IdentityMailSender<TModel>> logger) 
-        : MailSender<TModel>(options, logger)
+    internal class IdentityMailSender(IOptions<CommunicationServiceOptions> options, ILogger<IdentityMailSender> logger) 
+        : MailSender(options, logger)
     {
         private static Dictionary<Type, string> templates = new()
         {
@@ -15,11 +15,11 @@ namespace BookFast.Identity.Infrastructure.Email
             { typeof(ResetPassword), "ResetPassword" }
         };
 
-        protected override string LoadTemplate()
+        protected override string LoadTemplate(Type payloadType)
         {
-            if (!templates.TryGetValue(typeof(TModel), out var templateName))
+            if (!templates.TryGetValue(payloadType, out var templateName))
             {
-                logger.LogError($"Unknown email model type: {typeof(TModel)}");
+                logger.LogError($"Unknown email model type: {payloadType}");
 
                 return null;
             }

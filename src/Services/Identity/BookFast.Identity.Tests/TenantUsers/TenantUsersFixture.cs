@@ -1,4 +1,5 @@
-﻿using BookFast.Common.Application.Security;
+﻿using BookFast.Common.Application.Integration;
+using BookFast.Common.Application.Security;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
@@ -6,6 +7,7 @@ using BookFast.Identity.Infrastructure.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace BookFast.Identity.Tests.TenantUsers
 {
@@ -44,6 +46,8 @@ namespace BookFast.Identity.Tests.TenantUsers
                     Role = Roles.TenantAdmin,
                     TenantId = TestTenant1Id
                 });
+
+                services.AddSingleton(Mock.Of<IMailNotificationQueue>());
             });
 
             scope = fixture.ServiceProvider.CreateScope();

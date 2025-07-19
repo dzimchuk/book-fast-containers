@@ -9,7 +9,8 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
 {
     internal class AddTenantCommandHandler(IDbContext dbContext,
                                            UserManager<User> userManager,
-                                           IUserStore<User> userStore)
+                                           IUserStore<User> userStore,
+                                           IEmailConfirmationSender confirmationSender)
         : ICommandHandler<AddTenantCommand, string>
     {
         public async Task<Result<string>> Handle(AddTenantCommand request, CancellationToken cancellationToken)
@@ -60,6 +61,8 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
                 {
                     return Result.Failure<string>(new ErrorCollection([.. result.Errors.Select(e => Error.Problem(e.Code, e.Description))]));
                 }
+
+                await confirmationSender.SendAsync(user);
 
                 scope.Complete();
 

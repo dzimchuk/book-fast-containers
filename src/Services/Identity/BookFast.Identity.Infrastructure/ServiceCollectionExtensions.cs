@@ -2,7 +2,6 @@
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Infrastructure.Integration;
 using BookFast.Identity.Core;
-using BookFast.Identity.Core.Email;
 using BookFast.Identity.Infrastructure.Database;
 using BookFast.Identity.Infrastructure.Email;
 using MassTransit;
@@ -57,18 +56,15 @@ namespace BookFast.Identity.Infrastructure
             var endpointNameFormatter = new KebabCaseEndpointNameFormatter(prefix: null, includeNamespace: false);
             config.SetEndpointNameFormatter(endpointNameFormatter);
 
-            config.AddConsumer<IdentityMailSender<ConfirmEmail>>();
-            config.AddConsumer<IdentityMailSender<ResetPassword>>();
+            config.AddConsumer<IdentityMailSender>();
 
-            EndpointConvention.Map<MailMessage<ConfirmEmail>>(new Uri($"queue:{endpointNameFormatter.Consumer<IdentityMailSender<ConfirmEmail>>()}"));
-            EndpointConvention.Map<MailMessage<ResetPassword>>(new Uri($"queue:{endpointNameFormatter.Consumer<IdentityMailSender<ResetPassword>>()}"));
+            EndpointConvention.Map<IMailMessage>(new Uri($"queue:{endpointNameFormatter.Consumer<IdentityMailSender>()}"));
 
             config.AddConfigureEndpointsCallback((name, endpointConfig) =>
             {
                 endpointConfig.UseMessageRetry(r => r.Intervals(500, 1000));
 
-                endpointConfig.ConfigureMessageTopology<MailMessage<ConfirmEmail>>(false);
-                endpointConfig.ConfigureMessageTopology<MailMessage<ResetPassword>>(false);
+                endpointConfig.ConfigureMessageTopology<IMailMessage>(false);
             });
         }
     }

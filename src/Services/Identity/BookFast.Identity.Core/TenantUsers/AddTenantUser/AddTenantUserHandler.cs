@@ -13,16 +13,19 @@ namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
         private readonly IUserStore<User> userStore;
         private readonly RoleManager<Role> roleManager;
         private readonly ISecurityContext securityContext;
+        private readonly IEmailConfirmationSender confirmationSender;
 
         public AddTenantUserHandler(UserManager<User> userManager,
                                     IUserStore<User> userStore,
                                     RoleManager<Role> roleManager,
-                                    ISecurityContext securityContext)
+                                    ISecurityContext securityContext,
+                                    IEmailConfirmationSender confirmationSender)
         {
             this.userManager = userManager;
             this.userStore = userStore;
             this.roleManager = roleManager;
             this.securityContext = securityContext;
+            this.confirmationSender = confirmationSender;
         }
 
         public async Task<Result<string>> Handle(AddTenantUserCommand request, CancellationToken cancellationToken)
@@ -62,6 +65,8 @@ namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
                 {
                     return Result.Failure<string>(new ErrorCollection([.. result.Errors.Select(e => Error.Problem(e.Code, e.Description))]));
                 }
+
+                await confirmationSender.SendAsync(user);
 
                 scope.Complete();
 

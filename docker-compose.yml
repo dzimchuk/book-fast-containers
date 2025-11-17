@@ -6,6 +6,8 @@ services:
       dockerfile: src/Services/Identity/BookFast.Identity/Dockerfile
     ports:
       - 5001:8081
+    depends_on:
+      - bookfast.database
 
   bookfast.database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"

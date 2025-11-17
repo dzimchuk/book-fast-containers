@@ -5,8 +5,8 @@
         public IEnumerable<string> To { get; }
         public string Subject { get; }
 
-        object GetPayload();
-        Type GetPayloadType();
+        object Payload { get; }
+        Type PayloadType { get; }
     }
 
     public record MailMessage<TModel> : IMailMessage
@@ -15,8 +15,8 @@
         public string Subject { get; init; }
         public TModel Model { get; init; }
 
-        public object GetPayload() => Model;
+        public object Payload => Model;
 
-        public Type GetPayloadType() => typeof(TModel);
+        public Type PayloadType => typeof(TModel);
     }
 }

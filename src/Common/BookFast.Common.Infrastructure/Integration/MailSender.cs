@@ -65,7 +65,7 @@ namespace BookFast.Common.Infrastructure.Integration
 
         private string CreateEmailBody(IMailMessage meesage)
         {
-            var markup = LoadTemplate(meesage.GetPayloadType());
+            var markup = LoadTemplate(meesage.PayloadType);
             if (markup == null)
             {
                 return null;
@@ -78,7 +78,7 @@ namespace BookFast.Common.Infrastructure.Integration
                 logger.LogError($"Cannot render email template. {error}");
             }
 
-            var context = new TemplateContext(meesage.GetPayload());
+            var context = new TemplateContext(meesage.Payload);
             var email = template.Render(context);
 
             return email;

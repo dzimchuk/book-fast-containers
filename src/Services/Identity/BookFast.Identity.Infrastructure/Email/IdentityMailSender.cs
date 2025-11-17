@@ -9,13 +9,13 @@ namespace BookFast.Identity.Infrastructure.Email
     internal class IdentityMailSender(IOptions<CommunicationServiceOptions> options, ILogger<IdentityMailSender> logger) 
         : MailSender(options, logger)
     {
-        private static Dictionary<Type, string> templates = new()
+        private static Dictionary<string, string> templates = new()
         {
-            { typeof(ConfirmEmail), "ConfirmEmail" },
-            { typeof(ResetPassword), "ResetPassword" }
+            { typeof(ConfirmEmail).Name, "ConfirmEmail" },
+            { typeof(ResetPassword).Name, "ResetPassword" }
         };
 
-        protected override string LoadTemplate(Type payloadType)
+        protected override string LoadTemplate(string payloadType)
         {
             if (!templates.TryGetValue(payloadType, out var templateName))
             {

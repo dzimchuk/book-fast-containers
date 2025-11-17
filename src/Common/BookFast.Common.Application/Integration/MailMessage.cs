@@ -6,7 +6,7 @@
         public string Subject { get; }
 
         object Payload { get; }
-        Type PayloadType { get; }
+        string PayloadType { get; }
     }
 
     public record MailMessage<TModel> : IMailMessage
@@ -17,6 +17,6 @@
 
         public object Payload => Model;
 
-        public Type PayloadType => typeof(TModel);
+        public string PayloadType => typeof(TModel).Name;
     }
 }

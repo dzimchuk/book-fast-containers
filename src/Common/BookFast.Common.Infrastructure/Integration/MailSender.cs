@@ -63,9 +63,9 @@ namespace BookFast.Common.Infrastructure.Integration
             }
         }
 
-        private string CreateEmailBody(IMailMessage meesage)
+        private string CreateEmailBody(IMailMessage message)
         {
-            var markup = LoadTemplate(meesage.PayloadType);
+            var markup = LoadTemplate(message.PayloadType);
             if (markup == null)
             {
                 return null;
@@ -78,13 +78,13 @@ namespace BookFast.Common.Infrastructure.Integration
                 logger.LogError($"Cannot render email template. {error}");
             }
 
-            var context = new TemplateContext(meesage.Payload);
+            var context = new TemplateContext(message.Payload);
             var email = template.Render(context);
 
             return email;
         }
 
-        protected abstract string LoadTemplate(Type payloadType);
+        protected abstract string LoadTemplate(string payloadType);
     }
 
     // see https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-csharp

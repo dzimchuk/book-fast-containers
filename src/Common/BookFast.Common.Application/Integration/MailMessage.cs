@@ -5,7 +5,7 @@
         public IEnumerable<string> To { get; }
         public string Subject { get; }
 
-        object Payload { get; }
+        string PayloadJson { get; }
         string PayloadType { get; }
     }
 
@@ -15,7 +15,7 @@
         public string Subject { get; init; }
         public TModel Model { get; init; }
 
-        public object Payload => Model;
+        public string PayloadJson => System.Text.Json.JsonSerializer.Serialize(Model);
 
         public string PayloadType => typeof(TModel).Name;
     }

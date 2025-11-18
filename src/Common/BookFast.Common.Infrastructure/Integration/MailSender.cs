@@ -78,13 +78,15 @@ namespace BookFast.Common.Infrastructure.Integration
                 logger.LogError($"Cannot render email template. {error}");
             }
 
-            var context = new TemplateContext(message.Payload);
+            var payloadObject = DeserializePayload(message.PayloadJson, message.PayloadType);
+            var context = new TemplateContext(payloadObject);
             var email = template.Render(context);
 
             return email;
         }
 
         protected abstract string LoadTemplate(string payloadType);
+        protected abstract object DeserializePayload(string payloadJson, string payloadType);
     }
 
     // see https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-csharp

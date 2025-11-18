@@ -247,7 +247,8 @@ namespace BookFast.Identity
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+            //    app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Error"); // required for exception handlers, e.g. GlobalExceptionHandler
 
                 app.UseSwaggerDefaults(configuration);
             }

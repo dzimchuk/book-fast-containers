@@ -370,7 +370,7 @@ namespace BookFast.Identity.Controllers
                 email = await userManager.GetEmailAsync(user),
                 name = await userManager.GetUserNameAsync(user),
                 role = (await userManager.GetRolesAsync(user)).ToImmutableArray(),
-                tenant = tenant.Name
+                tenant = tenant?.Name
             });
         }
 

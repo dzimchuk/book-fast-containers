@@ -5,6 +5,7 @@ using BookFast.Common.Api.Swagger;
 using BookFast.Common.Application;
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Presentation.Authorization;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
 using BookFast.Identity.Services;
@@ -58,6 +59,8 @@ namespace BookFast.Identity
             services.AddRazorPages();
 
             services.AddScoped<TransactionHelper>();
+
+            services.AddScoped<IEmailConfirmationSender, EmailConfirmationSender>();
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -176,7 +179,7 @@ namespace BookFast.Identity
                     }
                     else if (!string.IsNullOrWhiteSpace(authServerSettings.SigningCertificate))
                     {
-                        options.AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(authServerSettings.SigningCertificate)));
+                        options.AddSigningCertificate(X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(authServerSettings.SigningCertificate), string.Empty));
                     }
                     else
                     {
@@ -244,7 +247,8 @@ namespace BookFast.Identity
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+            //    app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Error"); // required for exception handlers, e.g. GlobalExceptionHandler
 
                 app.UseSwaggerDefaults(configuration);
             }

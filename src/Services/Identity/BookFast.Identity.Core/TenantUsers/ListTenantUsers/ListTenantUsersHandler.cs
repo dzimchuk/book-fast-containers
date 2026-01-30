@@ -26,18 +26,23 @@ namespace BookFast.Identity.Core.TenantUsers.ListTenantUsers
                         where user.TenantId == securityContext.GetCurrentTenant()
                         join userRole in dbContext.UserRoles.AsNoTracking() on user.Id equals userRole.UserId
                         join role in dbContext.Roles.AsNoTracking() on userRole.RoleId equals role.Id
-                        select new TenantUserRepresentation(user.Id, user.UserName, role.Name);
+                        select new TenantUserRepresentation
+                        {
+                            UserId = user.Id,
+                            UserName = user.UserName,
+                            Role = role.Name
+                        };
 
             if (!string.IsNullOrWhiteSpace(request.UserName))
             {
                 var userName = request.UserName.ToLowerInvariant();
-                query = query.Where(i => i.UserName.ToLower().Contains(userName));
+                query = query.Where(u => u.UserName.ToLower().Contains(userName));
             }
 
             if (!string.IsNullOrWhiteSpace(request.Role))
             {
                 var role = request.Role.ToLowerInvariant();
-                query = query.Where(i => i.Role.ToLower().Contains(role));
+                query = query.Where(u => u.Role.ToLower().Contains(role));
             }
 
             return query;

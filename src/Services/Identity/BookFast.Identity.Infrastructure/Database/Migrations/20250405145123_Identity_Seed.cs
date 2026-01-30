@@ -27,7 +27,7 @@ VALUES('01960677-b45b-7c7d-9203-199c657cc7ff', 'tenant_user', 'TENANT_USER', nul
 /*Password: P@ssw0rd*/
 INSERT INTO [identity].[users]
 (id, tenant_id, user_name, normalized_user_name, email, normalized_email, email_confirmed, password_hash, security_stamp, concurrency_stamp, phone_number, phone_number_confirmed, two_factor_enabled, lockout_end, lockout_enabled, access_failed_count)
-VALUES('01960679-7f18-7e91-845e-45f8328972c8', null, 'admin@bookfast.com', 'ADMIN@BOOKFAST.COM', 'admin@bookfast.com', 'ADMIN@BOOKFAST.COM', 1, 'AQAAAAIAAYagAAAAEI5pZqeR1Jm+6ILQMsltRi2jTwvUAR0kOcxjAyLM8P5O94rsg0x2O25L76lg4J/tEw==', null, null, null, 0, 0, null, 0, 0);
+VALUES('01960679-7f18-7e91-845e-45f8328972c8', null, 'admin@bookfast.com', 'ADMIN@BOOKFAST.COM', 'admin@bookfast.com', 'ADMIN@BOOKFAST.COM', 1, 'AQAAAAIAAYagAAAAEI5pZqeR1Jm+6ILQMsltRi2jTwvUAR0kOcxjAyLM8P5O94rsg0x2O25L76lg4J/tEw==', 'test', null, null, 0, 0, null, 0, 0);
 
 INSERT INTO [identity].[user_roles]
 (user_id, role_id)

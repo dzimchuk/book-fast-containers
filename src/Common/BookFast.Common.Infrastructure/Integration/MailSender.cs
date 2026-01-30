@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace BookFast.Common.Infrastructure.Integration
 {
-    public abstract class MailSender<TModel> : IConsumer<MailMessage<TModel>>
+    public abstract class MailSender : IConsumer<IMailMessage>
     {
         private readonly CommunicationServiceOptions options;
         private readonly ILogger logger;
@@ -22,7 +22,7 @@ namespace BookFast.Common.Infrastructure.Integration
         }
 
         // see https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email?pivots=programming-language-csharp&tabs=linux%2Cconnection-string%2Csend-email-and-get-status-async%2Csync-client
-        public async Task Consume(ConsumeContext<MailMessage<TModel>> context)
+        public async Task Consume(ConsumeContext<IMailMessage> context)
         {
             var emailClientOptions = new EmailClientOptions();
             emailClientOptions.AddPolicy(new Catch429Policy(), HttpPipelinePosition.PerRetry);
@@ -35,7 +35,7 @@ namespace BookFast.Common.Infrastructure.Integration
 
             var recipients = mailMessage.To.Select(emailAddress => new EmailAddress(emailAddress)).ToList();
             var subject = mailMessage.Subject;
-            var htmlContent = CreateEmailBody(mailMessage.Model);
+            var htmlContent = CreateEmailBody(mailMessage);
 
             if (htmlContent == null)
             {
@@ -63,9 +63,9 @@ namespace BookFast.Common.Infrastructure.Integration
             }
         }
 
-        private string CreateEmailBody(TModel model)
+        private string CreateEmailBody(IMailMessage message)
         {
-            var markup = LoadTemplate();
+            var markup = LoadTemplate(message.PayloadType);
             if (markup == null)
             {
                 return null;
@@ -78,13 +78,15 @@ namespace BookFast.Common.Infrastructure.Integration
                 logger.LogError($"Cannot render email template. {error}");
             }
 
-            var context = new TemplateContext(model);
+            var payloadObject = DeserializePayload(message.PayloadJson, message.PayloadType);
+            var context = new TemplateContext(payloadObject);
             var email = template.Render(context);
 
             return email;
         }
 
-        protected abstract string LoadTemplate();
+        protected abstract string LoadTemplate(string payloadType);
+        protected abstract object DeserializePayload(string payloadJson, string payloadType);
     }
 
     // see https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-advanced/throw-exception-when-tier-limit-reached?pivots=programming-language-csharp

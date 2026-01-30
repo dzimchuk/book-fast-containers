@@ -21,5 +21,9 @@
         <EmbeddedResource Include="Email\Templates\ConfirmEmail.html" />
         <EmbeddedResource Include="Email\Templates\ResetPassword.html" />
     </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="BookFast.Identity.Tests" />
+    </ItemGroup>
     
 </Project>

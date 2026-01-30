@@ -1,4 +1,5 @@
 ﻿using BookFast.Common.Presentation.Authorization;
+using BookFast.Common.Presentation.Results;
 using BookFast.Identity.Core.TenantUsers.AddTenantUser;
 using BookFast.Identity.Core.TenantUsers.ChangeRole;
 using BookFast.Identity.Core.TenantUsers.FindTenantUser;
@@ -30,7 +31,7 @@ namespace BookFast.Identity.Controllers
         public async Task<IActionResult> Find(string id)
         {
             var result = await sender.Send(new FindTenantUserQuery() { UserId = id });
-            return Ok(result);
+            return result.Map(user => MvcResults.Ok(user), MvcResults.Problem);
         }
 
         [HttpGet("users")]
@@ -39,7 +40,7 @@ namespace BookFast.Identity.Controllers
         public async Task<IActionResult> Get([FromQuery] ListTenantUsersQuery query)
         {
             var result = await sender.Send(query);
-            return Ok(result);
+            return result.Map(userList => MvcResults.Ok(userList), MvcResults.Problem);
         }
 
         [HttpPost("users")]
@@ -48,11 +49,11 @@ namespace BookFast.Identity.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Add([FromBody] AddTenantUserCommand command)
         {
-            var id = await sender.Send(command);
-            return CreatedAtAction(nameof(Find), new { id }, null);
+            var result = await sender.Send(command);
+            return result.Map(id => MvcResults.CreatedAtAction(nameof(Find), new { id }, null), MvcResults.Problem);
         }
 
-        [HttpPut("users/{id}")]
+        [HttpPut("users/{id}/role")]
         [SwaggerOperation("change-tenant-user-role")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -60,9 +61,9 @@ namespace BookFast.Identity.Controllers
         public async Task<IActionResult> ChangeRole(string id, [FromBody] ChangeRoleCommand command)
         {
             command.UserId = id;
-            await sender.Send(command);
+            var result = await sender.Send(command);
 
-            return NoContent();
+            return result.Map(MvcResults.NoContent, MvcResults.Problem);
         }
 
         [HttpDelete("users/{id}")]
@@ -72,9 +73,9 @@ namespace BookFast.Identity.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Remove(string id)
         {
-            await sender.Send(new RemoveTenantUserCommand { UserId = id });
+            var result = await sender.Send(new RemoveTenantUserCommand { UserId = id });
 
-            return NoContent();
+            return result.Map(MvcResults.NoContent, MvcResults.Problem);
         }
     }
 }

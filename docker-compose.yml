@@ -1,45 +1,24 @@
-version: '3.4'
-
 services:
-  bookfast-facility:
-    image: ${DOCKER_REGISTRY-}bookfast-facility
+  bookfast.identity:
+    image: ${DOCKER_REGISTRY-}bookfast-identity
     build:
       context: .
-      dockerfile: BookFast.Facility/Dockerfile
-
-  bookfast-facility-rpc:
-    image: ${DOCKER_REGISTRY-}bookfast-facility-rpc
-    build:
-      context: .
-      dockerfile: BookFast.Facility.Rpc/Dockerfile
-
-  bookfast-files:
-    image: ${DOCKER_REGISTRY-}bookfast-files
-    build:
-      context: .
-      dockerfile: BookFast.Files/Dockerfile
+      dockerfile: src/Services/Identity/BookFast.Identity/Dockerfile
+    ports:
+      - 5001:8081
     depends_on:
-      - bookfast-facility
+      - bookfast.database
 
-  bookfast-booking:
-    image: ${DOCKER_REGISTRY-}bookfast-booking
-    build:
-      context: .
-      dockerfile: BookFast.Booking/Dockerfile
-    depends_on:
-      - bookfast-facility
-
-  bookfast-search-indexer:
-    image: ${DOCKER_REGISTRY-}bookfast-search-indexer
-    build:
-      context: .
-      dockerfile: BookFast.Search.Indexer/Dockerfile
-    depends_on:
-      - bookfast-facility
-
-  bookfast-search:
-    image: ${DOCKER_REGISTRY-}bookfast-search
-    build:
-      context: .
-      dockerfile: BookFast.Search/Dockerfile
-      
+  bookfast.database:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: bookfast.database
+    environment:
+      - MSSQL_SA_PASSWORD=P@ssw0rd
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    volumes:
+      - ./.containers/database/data:/var/opt/mssql/data
+      - ./.containers/database/log:/var/opt/mssql/log
+      - ./.containers/database/secrets:/var/opt/mssql/secrets
+    ports:
+      - "5433:1433"

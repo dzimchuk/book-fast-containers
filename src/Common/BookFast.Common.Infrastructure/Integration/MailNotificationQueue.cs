@@ -14,7 +14,7 @@ namespace BookFast.Common.Infrastructure.Integration
 
         public async Task EnqueueMessageAsync<TModel>(MailMessage<TModel> message, CancellationToken cancellationToken = default)
         {
-            if (EndpointConvention.TryGetDestinationAddress<MailMessage<object>>(out var destinationAddress))
+            if (EndpointConvention.TryGetDestinationAddress<IMailMessage>(out var destinationAddress))
             {
                 var endpoint = await sendEndpointProvider.GetSendEndpoint(destinationAddress);
                 await endpoint.Send(message, cancellationToken);

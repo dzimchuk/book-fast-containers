@@ -1,12 +1,12 @@
 ﻿using BookFast.Common.Application.Messaging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace BookFast.Common.Api.Swagger
 {
     internal class SwaggerIgnoreSchemaFilter : ISchemaFilter
     {
-        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+        public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
         {
             var properties = context.Type.GetProperties();
             foreach (var property in properties)

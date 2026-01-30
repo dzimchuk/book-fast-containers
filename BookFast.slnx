@@ -1,0 +1,29 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Common/">
+    <Project Path="src/Common/BookFast.Common.Api/BookFast.Common.Api.csproj" />
+    <Project Path="src/Common/BookFast.Common.Application/BookFast.Common.Application.csproj" />
+    <Project Path="src/Common/BookFast.Common.Domain/BookFast.Common.Domain.csproj" />
+    <Project Path="src/Common/BookFast.Common.Infrastructure/BookFast.Common.Infrastructure.csproj" />
+    <Project Path="src/Common/BookFast.Common.Presentation/BookFast.Common.Presentation.csproj" />
+    <Project Path="src/Common/BookFast.Common.SeedWork/BookFast.Common.SeedWork.csproj" />
+    <Project Path="src/Common/BookFast.Common.TestInfrastructure/BookFast.Common.TestInfrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/BookFast.Identity.Core/BookFast.Identity.Core.csproj" />
+    <Project Path="src/Services/Identity/BookFast.Identity.Infrastructure/BookFast.Identity.Infrastructure.csproj" />
+    <Project Path="src/Services/Identity/BookFast.Identity.Tests/BookFast.Identity.Tests.csproj" />
+    <Project Path="src/Services/Identity/BookFast.Identity/BookFast.Identity.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

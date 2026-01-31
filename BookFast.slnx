@@ -23,6 +23,10 @@
     <Project Path="src/Services/Identity/BookFast.Identity.Tests/BookFast.Identity.Tests.csproj" />
     <Project Path="src/Services/Identity/BookFast.Identity/BookFast.Identity.csproj" />
   </Folder>
+  <Folder Name="/src/Services/PropertyManagement/">
+    <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Core/BookFast.PropertyManagement.Core.csproj" />
+    <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Domain/BookFast.PropertyManagement.Domain.csproj" Id="80473881-e575-46e5-b64c-fb6635d49b19" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>

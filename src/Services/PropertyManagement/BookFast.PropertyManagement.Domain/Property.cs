@@ -4,7 +4,7 @@ namespace BookFast.PropertyManagement.Domain
 {
     public class Property : Entity<int>
     {
-        public string Owner { get; private set; }
+        public string TenantId { get; private set; }
 
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -15,7 +15,7 @@ namespace BookFast.PropertyManagement.Domain
 
         public bool IsActive { get; private set; }
 
-        public static Property NewProperty(string owner,
+        public static Property NewProperty(string tenantId,
             string name,
             string description,
             Address address,
@@ -24,7 +24,7 @@ namespace BookFast.PropertyManagement.Domain
         {
             var facility = new Property
             {
-                Owner = owner ?? throw new ArgumentNullException(nameof(owner)),
+                TenantId = tenantId ?? throw new ArgumentNullException(nameof(tenantId)),
                 Name = name ?? throw new ArgumentNullException(nameof(name)),
                 Description = description,
                 Address = address,

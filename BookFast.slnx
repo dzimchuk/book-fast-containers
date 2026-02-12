@@ -26,6 +26,7 @@
   <Folder Name="/src/Services/PropertyManagement/">
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Application/BookFast.PropertyManagement.Application.csproj" />
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Domain/BookFast.PropertyManagement.Domain.csproj" Id="80473881-e575-46e5-b64c-fb6635d49b19" />
+    <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Infrastructure/BookFast.PropertyManagement.Infrastructure.csproj" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />

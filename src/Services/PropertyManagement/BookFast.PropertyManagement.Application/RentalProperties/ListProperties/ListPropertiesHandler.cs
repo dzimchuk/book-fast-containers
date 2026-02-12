@@ -23,7 +23,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.ListPropertie
         protected override IQueryable<PropertyRepresentation> FilterAndProject(ListPropertiesQuery request)
         {
             var query = from item in dbContext.Properties.AsNoTracking()
-                        where item.Owner == securityContext.GetCurrentTenant()
+                        where item.TenantId == securityContext.GetCurrentTenant()
                         select new PropertyRepresentation
                         {
                             Id = item.Id,

@@ -10,7 +10,7 @@ namespace BookFast.Identity.Infrastructure.Database
     /// We don't need a connection string to add/remove migrations and generate SQL script.
     /// 
     /// dotnet ef migrations add _Name_ -o Database/Migrations
-    /// dotnet ef migrations script -i -o ../identity.sql
+    /// dotnet ef migrations script -i -o ../Identity.sql
     /// </summary>
     internal class IdentityContextFactory : IDesignTimeDbContextFactory<IdentityContext>
     {

@@ -43,16 +43,16 @@ namespace BookFast.Identity
                         PostLogoutRedirectUris =
                         {
                             new Uri("https://localhost:5001"), // Identity
-                            new Uri("https://localhost:5101"), // PropertyManagement
-                            new Uri("https://localhost:5201"), // Search
-                            new Uri("https://localhost:5301"), // Booking
+                            new Uri("https://localhost:5002"), // PropertyManagement
+                            new Uri("https://localhost:5003"), // Search
+                            new Uri("https://localhost:5004"), // Booking
                         },
                         RedirectUris =
                         {
                             new Uri("https://localhost:5001/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:5101/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:5201/swagger/oauth2-redirect.html"),
-                            new Uri("https://localhost:5301/swagger/oauth2-redirect.html")
+                            new Uri("https://localhost:5002/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:5003/swagger/oauth2-redirect.html"),
+                            new Uri("https://localhost:5004/swagger/oauth2-redirect.html")
                         },
                         Permissions =
                         {

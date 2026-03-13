@@ -10,7 +10,7 @@ namespace BookFast.PropertyManagement.Infrastructure
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration, string connectionStringKey = "Sql")
+        public static IServiceCollection AddPropertyManagementInfrastructure(this IServiceCollection services, IConfiguration configuration, string connectionStringKey = "Sql")
         {
             var connectionString = configuration.GetConnectionString(connectionStringKey)
                 ?? throw new InvalidOperationException($"Connection string '{connectionStringKey}' not found.");

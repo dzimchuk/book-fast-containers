@@ -1,6 +1,7 @@
 services:
   bookfast.identity:
     image: ${DOCKER_REGISTRY-}bookfast-identity
+    container_name: identity
     build:
       context: .
       dockerfile: src/Services/Identity/BookFast.Identity/Dockerfile
@@ -8,10 +9,23 @@ services:
       - 5001:8081
     depends_on:
       - bookfast.database
+      - bookfast.telemetry-dashboard
+
+  bookfast.property-management:
+    image: ${DOCKER_REGISTRY-}bookfast-property-management
+    container_name: property-management
+    build:
+      context: .
+      dockerfile: src/Services/PropertyManagement/BookFast.PropertyManagement/Dockerfile
+    ports:
+      - 5002:8081
+    depends_on:
+      - bookfast.database
+      - bookfast.telemetry-dashboard
 
   bookfast.database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
-    container_name: bookfast.database
+    container_name: database
     environment:
       - MSSQL_SA_PASSWORD=P@ssw0rd
       - ACCEPT_EULA=Y
@@ -22,3 +36,12 @@ services:
       - ./.containers/database/secrets:/var/opt/mssql/secrets
     ports:
       - "5433:1433"
+      
+  bookfast.telemetry-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    container_name: telemetry-dashboard
+    environment:
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
+    ports:
+      - 18889:18889
+      - 18888:18888

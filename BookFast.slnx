@@ -28,6 +28,7 @@
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Domain/BookFast.PropertyManagement.Domain.csproj" Id="80473881-e575-46e5-b64c-fb6635d49b19" />
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Infrastructure/BookFast.PropertyManagement.Infrastructure.csproj" />
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement.Presentation/BookFast.PropertyManagement.Presentation.csproj" Id="09dfc80a-88db-4ec1-81a3-96c93008ba64" />
+    <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement/BookFast.PropertyManagement.csproj" Id="773aacee-1266-47ea-a96d-3c7e0694d7cf" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />

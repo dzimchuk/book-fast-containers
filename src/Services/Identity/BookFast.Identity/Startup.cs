@@ -17,6 +17,7 @@ using OpenIddict.Validation.AspNetCore;
 using Quartz;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
+using static BookFast.Common.Api.Authentication.ConfigurationExtensions;
 
 namespace BookFast.Identity
 {
@@ -229,6 +230,9 @@ namespace BookFast.Identity
 
                     // Register the ASP.NET Core host.
                     options.UseAspNetCore();
+
+                    var authSettings = configuration.GetAuthSettings("Authentication");
+                    options.AddAudiences(authSettings.Audiences ?? Array.Empty<string>());
                 });
 
             services.AddAuthorization(options => AuthorizationPolicies.Register(options, OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme));

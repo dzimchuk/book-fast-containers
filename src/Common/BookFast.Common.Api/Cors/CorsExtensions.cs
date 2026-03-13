@@ -10,13 +10,13 @@ namespace BookFast.Common.Api.Cors
             var corsOptions = new CorsOptions();
             configuration.GetSection("CORS").Bind(corsOptions);
 
-            if (corsOptions.AllowOrigins == null || !corsOptions.AllowOrigins.Any())
-            {
-                return;
-            }
-
             services.AddCors(options =>
             {
+                if (corsOptions.AllowOrigins == null || !corsOptions.AllowOrigins.Any())
+                {
+                    return;
+                }
+
                 options.AddDefaultPolicy(policy =>
                 {
                     policy.WithOrigins(corsOptions.AllowOrigins)

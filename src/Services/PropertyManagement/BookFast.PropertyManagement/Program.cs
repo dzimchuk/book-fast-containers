@@ -71,7 +71,7 @@ app.UseAuthorization();
 
 app.UseSecurityContext();
 
-app.MapEndpoints();
+app.MapEndpoints(app.MapGroup("api"));
 
 app.Run();
 

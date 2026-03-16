@@ -6,7 +6,7 @@ namespace BookFast.Identity.Tests.TenantUsers
     [Collection(nameof(IntegrationTestCollection))]
     public class RemoveTenantUserTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
-        private const string baseUrl = "/users";
+        private const string baseUrl = "/api/users";
 
         [Fact]
         public async Task UserNotFound()

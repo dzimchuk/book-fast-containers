@@ -23,7 +23,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, AddTenantCommand command)
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", command);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -33,7 +33,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task TenantAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "user@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "user@test.com"));
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -43,7 +43,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task UserAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "user@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "user@test.com"));
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -53,7 +53,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "test@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "test@test.com"));
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 

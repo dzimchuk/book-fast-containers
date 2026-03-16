@@ -5,6 +5,7 @@ using BookFast.Common.Api.Swagger;
 using BookFast.Common.Application;
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Presentation.Authorization;
+using BookFast.Common.Presentation.Endpoints;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
@@ -51,7 +52,7 @@ namespace BookFast.Identity
             services.AddIdentityInfrastructure(configuration);
 
             services
-                .AddControllersWithViews()
+                .AddControllersWithViews(options => options.Conventions.Add(new ApiPrefixConvention("api")))
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;

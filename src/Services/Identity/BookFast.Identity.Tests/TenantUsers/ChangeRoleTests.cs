@@ -9,7 +9,7 @@ namespace BookFast.Identity.Tests.TenantUsers
     [Collection(nameof(IntegrationTestCollection))]
     public class ChangeRoleTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
-        private const string baseUrl = "/users";
+        private const string baseUrl = "/api/users";
 
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, ChangeRoleCommand command)

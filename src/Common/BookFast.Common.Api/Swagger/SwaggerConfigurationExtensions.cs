@@ -9,6 +9,8 @@ namespace BookFast.Common.Api.Swagger
     {
         public static void AddSwaggerServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var identityClient = configuration.GetSection("Authentication:Swagger").Get<SwaggerIdentityClient>();
+
             services.AddEndpointsApiExplorer();
 
             services.AddSwaggerGen(options =>
@@ -21,13 +23,9 @@ namespace BookFast.Common.Api.Swagger
                     {
                         AuthorizationCode = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri($"{configuration.GetSection("Authentication:Issuer").Get<string>()}connect/authorize"),
-                            TokenUrl = new Uri($"{configuration.GetSection("Authentication:Issuer").Get<string>()}connect/token"),
-                            Scopes = new Dictionary<string, string>
-                            {
-                                ["provider"] = "Access API as a facility provider",
-                                ["customer"] = "Access API as a customer"
-                            }
+                            AuthorizationUrl = new Uri(new Uri(identityClient.Issuer), "connect/authorize"),
+                            TokenUrl = new Uri(new Uri(identityClient.Issuer), "connect/token"),
+                            Scopes = identityClient.ScopeDefinitions
                         },
                     },
                     Type = SecuritySchemeType.OAuth2
@@ -35,12 +33,17 @@ namespace BookFast.Common.Api.Swagger
 
                 options.AddSecurityRequirement(document => new OpenApiSecurityRequirement()
                 {
-                    [new OpenApiSecuritySchemeReference("oauth2", document)] = ["provider", "customer"]
+                    [new OpenApiSecuritySchemeReference("OAuth", document)] = ["provider", "customer"]
                 });
 
                 options.CustomSchemaIds(t => t.FullName.Replace("+", ".", StringComparison.OrdinalIgnoreCase));
 
                 options.SchemaFilter<SwaggerIgnoreSchemaFilter>();
+
+                options.ResolveConflictingActions(apiDescriptions =>
+                {
+                    return apiDescriptions.First();
+                });
             });
         }
 
@@ -62,6 +65,6 @@ namespace BookFast.Common.Api.Swagger
             });
         }
 
-        private record SwaggerIdentityClient(string ClientId, string[] Scopes);
+        private record SwaggerIdentityClient(string Issuer, string ClientId, string[] Scopes, Dictionary<string, string> ScopeDefinitions);
     }
 }

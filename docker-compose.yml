@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: src/Services/PropertyManagement/BookFast.PropertyManagement/Dockerfile
     ports:
-      - 5002:8081
+      - 5101:8081
     depends_on:
       - bookfast.database
       - bookfast.telemetry-dashboard

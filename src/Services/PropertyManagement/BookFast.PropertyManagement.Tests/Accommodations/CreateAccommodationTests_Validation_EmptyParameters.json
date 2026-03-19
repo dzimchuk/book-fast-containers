@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "General.Validation",
+  "status": 400,
+  "detail": "One or more validation errors occurred",
+  "NotEmptyValidator": "'Name' must not be empty.",
+  "GreaterThanOrEqualValidator": "'Room Count' must be greater than or equal to '1'."
+}

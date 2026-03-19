@@ -1,0 +1,9 @@
+{
+  "id": 10021,
+  "propertyId": 10011,
+  "name": "Standard Room",
+  "roomCount": 1,
+  "quantity": 5,
+  "price": "100",
+  "isActive": true
+}

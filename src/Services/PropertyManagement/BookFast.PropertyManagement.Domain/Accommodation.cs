@@ -4,6 +4,8 @@ namespace BookFast.PropertyManagement.Domain
 {
     public class Accommodation : Entity<int>
     {
+        public string TenantId { get; private set; }
+
         public int PropertyId { get; private set; }
 
         public string Name { get; private set; }
@@ -18,6 +20,7 @@ namespace BookFast.PropertyManagement.Domain
         public bool IsActive { get; private set; }
 
         public static Accommodation NewAccommodation(
+            string tenantId,
             int propertyId,
             string name,
             string description,
@@ -28,6 +31,7 @@ namespace BookFast.PropertyManagement.Domain
         {
             var accommodation = new Accommodation
             {
+                TenantId = tenantId ?? throw new ArgumentNullException(nameof(tenantId)),
                 PropertyId = propertyId,
                 Name = name ?? throw new ArgumentNullException(nameof(name)),
                 Description = description,

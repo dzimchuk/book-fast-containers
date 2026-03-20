@@ -1,4 +1,5 @@
 using BookFast.Common.TestInfrastructure;
+using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -72,6 +73,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.NotNull(accommodation);
             Assert.Equal("Deluxe Suite", accommodation.Name);
             Assert.Equal("A spacious deluxe suite", accommodation.Description);
+            Assert.Equal(Constants.CallerTenant, accommodation.TenantId);
             Assert.Equal(fixture.PropertyId, accommodation.PropertyId);
             Assert.True(accommodation.IsActive);
         }

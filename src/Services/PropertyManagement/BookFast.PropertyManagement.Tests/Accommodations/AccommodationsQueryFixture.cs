@@ -49,10 +49,10 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
-            var accommodation1 = Accommodation.NewAccommodation(PropertyId, "Standard Room", null, 1, null, 5, 100m);
+            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, 100m);
             accommodation1.Id = Accommodation1Id;
 
-            var accommodation2 = Accommodation.NewAccommodation(PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, 250.5m);
+            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, 250.5m);
             accommodation2.Id = Accommodation2Id;
 
             dbContext.Accommodations.AddRange(accommodation1, accommodation2);

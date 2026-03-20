@@ -81,7 +81,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Property2Id = property2.Id;
             PropertyWithAccommodationId = propertyWithAccommodation.Id;
 
-            var accommodation = Accommodation.NewAccommodation(PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, 100m);
+            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, 100m);
             dbContext.Accommodations.Add(accommodation);
             await dbContext.SaveChangesAsync();
         }

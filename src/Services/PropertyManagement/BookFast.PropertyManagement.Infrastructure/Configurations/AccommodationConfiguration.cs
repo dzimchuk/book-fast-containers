@@ -14,6 +14,8 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
             builder.HasKey(accommodation => accommodation.Id);
             builder.Property(accommodation => accommodation.Id).UseHiLo(SequenceName);
 
+            builder.Property(accommodation => accommodation.TenantId).IsRequired(true).HasMaxLength(36);
+
             builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(100);
             builder.Property(accommodation => accommodation.Description).IsRequired(false).HasMaxLength(1000);
 

@@ -1,4 +1,5 @@
 ﻿using BookFast.Common.Application.Queries;
+using BookFast.Common.Application.Security;
 using BookFast.PropertyManagement.Application.RentalProperties;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -12,16 +13,18 @@ namespace BookFast.PropertyManagement.Application.Accommodations.ListAccommodati
         private const string isActiveFieldName = nameof(PropertyRepresentation.IsActive);
 
         private readonly IDbContext dbContext;
+        private readonly ISecurityContext securityContext;
 
-        public ListAccommodationsHandler(IDbContext dbContext)
+        public ListAccommodationsHandler(IDbContext dbContext, ISecurityContext securityContext)
         {
             this.dbContext = dbContext;
+            this.securityContext = securityContext;
         }
 
         protected override IQueryable<AccommodationRepresentation> FilterAndProject(ListAccommodationsQuery request)
         {
-            var query = from item in dbContext.Accommodations.AsNoTracking().Where(item => item.PropertyId == request.PropertyId)
-                        where item.PropertyId == request.PropertyId
+            var query = from item in dbContext.Accommodations.AsNoTracking()
+                        where item.PropertyId == request.PropertyId && item.TenantId == securityContext.GetCurrentTenant()
                         select new AccommodationRepresentation
                         {
                             Id = item.Id,

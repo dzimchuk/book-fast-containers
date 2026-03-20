@@ -20,9 +20,9 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
         public IDbContext DbContext => dbContext;
 
-        public int Property1Id { get; private set; }
-        public int Property2Id { get; private set; }
-        public int PropertyWithAccommodationId { get; private set; }
+        public Guid Property1Id { get; private set; }
+        public Guid Property2Id { get; private set; }
+        public Guid PropertyWithAccommodationId { get; private set; }
 
         public RentalPropertiesFixture(ApiFixture<Program> fixture)
         {
@@ -49,6 +49,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("USA", "Colorado", "Denver", "123 Main St", "80203"),
                 new Location(39.7392, -104.9903),
                 null);
+            property1.Id = Guid.CreateVersion7();
 
             var property2 = Property.NewProperty(
                 Constants.CallerTenant,
@@ -57,6 +58,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("USA", "California", "Santa Monica", "456 Ocean Ave", "90401"),
                 new Location(34.0195, -118.4912),
                 null);
+            property2.Id = Guid.CreateVersion7();
 
             var propertyWithAccommodation = Property.NewProperty(
                 Constants.CallerTenant,
@@ -65,6 +67,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("USA", "New York", "New York", "789 Park Ave", "10021"),
                 new Location(40.7128, -74.0060),
                 null);
+            propertyWithAccommodation.Id = Guid.CreateVersion7();
 
             var tenant2Property = Property.NewProperty(
                 Tenant2Id,
@@ -73,6 +76,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("UK", "England", "London", "10 Downing St", "SW1A 2AA"),
                 new Location(51.5074, -0.1278),
                 null);
+            tenant2Property.Id = Guid.CreateVersion7();
 
             dbContext.Properties.AddRange(property1, property2, propertyWithAccommodation, tenant2Property);
             await dbContext.SaveChangesAsync();
@@ -82,6 +86,8 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             PropertyWithAccommodationId = propertyWithAccommodation.Id;
 
             var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, 100m);
+            accommodation.Id = Guid.CreateVersion7();
+
             dbContext.Accommodations.Add(accommodation);
             await dbContext.SaveChangesAsync();
         }

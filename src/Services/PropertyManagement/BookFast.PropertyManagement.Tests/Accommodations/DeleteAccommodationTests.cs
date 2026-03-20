@@ -10,7 +10,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task AccommodationNotFound()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"/api/properties/{fixture.PropertyId}/accommodations/9999");
+            var response = await fixture.HttpClient.DeleteAsync($"/api/properties/{fixture.PropertyId}/accommodations/{Guid.Empty}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

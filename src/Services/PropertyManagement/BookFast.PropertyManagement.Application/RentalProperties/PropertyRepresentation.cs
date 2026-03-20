@@ -8,7 +8,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties
         /// Property ID
         /// </summary>
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Property name

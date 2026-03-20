@@ -7,14 +7,14 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
 {
     internal class AccommodationConfiguration : IEntityTypeConfiguration<Accommodation>
     {
-        public const string SequenceName = "accommodationseq";
-
         public void Configure(EntityTypeBuilder<Accommodation> builder)
         {
             builder.HasKey(accommodation => accommodation.Id);
-            builder.Property(accommodation => accommodation.Id).UseHiLo(SequenceName);
+            builder.Property(accommodation => accommodation.Id).ValueGeneratedNever();
 
             builder.Property(accommodation => accommodation.TenantId).IsRequired(true).HasMaxLength(36);
+
+            builder.HasIndex(accommodation => accommodation.TenantId);
 
             builder.Property(accommodation => accommodation.Name).IsRequired(true).HasMaxLength(100);
             builder.Property(accommodation => accommodation.Description).IsRequired(false).HasMaxLength(1000);

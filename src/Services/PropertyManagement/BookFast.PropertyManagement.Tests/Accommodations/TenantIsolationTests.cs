@@ -21,8 +21,8 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
 
-        private int propertyId;
-        private int accommodationId;
+        private Guid propertyId;
+        private Guid accommodationId;
 
         public TenantIsolationTests(ApiFixture<Program> fixture)
         {
@@ -50,6 +50,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 new Location(30.2672, -97.7431),
                 null);
 
+            property.Id = Guid.CreateVersion7();
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
@@ -65,6 +66,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 5,
                 100m);
 
+            accommodation.Id = Guid.CreateVersion7();
             dbContext.Accommodations.Add(accommodation);
             await dbContext.SaveChangesAsync();
 

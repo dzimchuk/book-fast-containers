@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.DeletePropert
 {
     public class DeletePropertyCommand : ICommand
     {
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
     }
 }

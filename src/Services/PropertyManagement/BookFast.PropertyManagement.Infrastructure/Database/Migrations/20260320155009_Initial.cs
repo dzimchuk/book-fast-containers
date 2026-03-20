@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -13,20 +14,12 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
             migrationBuilder.EnsureSchema(
                 name: "property_management");
 
-            migrationBuilder.CreateSequence(
-                name: "accommodationseq",
-                schema: "property_management");
-
-            migrationBuilder.CreateSequence(
-                name: "propertyseq",
-                schema: "property_management");
-
             migrationBuilder.CreateTable(
                 name: "properties",
                 schema: "property_management",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     tenant_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -50,8 +43,9 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
                 schema: "property_management",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false),
-                    property_id = table.Column<int>(type: "int", nullable: false),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    tenant_id = table.Column<string>(type: "nvarchar(36)", maxLength: 36, nullable: false),
+                    property_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     room_count = table.Column<int>(type: "int", nullable: false),
@@ -88,14 +82,6 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "properties",
-                schema: "property_management");
-
-            migrationBuilder.DropSequence(
-                name: "accommodationseq",
-                schema: "property_management");
-
-            migrationBuilder.DropSequence(
-                name: "propertyseq",
                 schema: "property_management");
         }
     }

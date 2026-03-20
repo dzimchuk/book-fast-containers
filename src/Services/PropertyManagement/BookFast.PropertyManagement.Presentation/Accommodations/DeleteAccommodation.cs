@@ -14,8 +14,8 @@ namespace BookFast.PropertyManagement.Presentation.Accommodations
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapDelete("properties/{propertyId}/accommodations/{accommodationId}", async (
-                int propertyId,
-                int accommodationId,
+                Guid propertyId,
+                Guid accommodationId,
                 ISender sender) =>
             {
                 var result = await sender.Send(new DeleteAccommodationCommand { AccommodationId = accommodationId });

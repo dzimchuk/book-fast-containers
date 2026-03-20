@@ -35,7 +35,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         {
             var command = new UpdatePropertyCommand { Name = "Updated", Address = ValidAddress };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/9999", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{Guid.Empty}", command);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

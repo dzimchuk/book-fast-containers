@@ -9,9 +9,9 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 {
     public class RentalPropertiesQueryFixture : IAsyncLifetime
     {
-        public const int Property1Id = 10001;
-        public const int Property2Id = 10002;
-        public const int Property3Id = 10003;
+        public static readonly Guid Property1Id = new("00000000-0000-0000-0000-000000010001");
+        public static readonly Guid Property2Id = new("00000000-0000-0000-0000-000000010002");
+        public static readonly Guid Property3Id = new("00000000-0000-0000-0000-000000010003");
 
         private const string Tenant2Id = "b3c2d1e0-a9b8-4c7d-8e6f-5a4b3c2d1e0a";
 
@@ -73,6 +73,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("UK", "England", "London", "10 Downing St", "SW1A 2AA"),
                 new Location(51.5074, -0.1278),
                 null);
+            tenant2Property.Id = Guid.CreateVersion7();
 
             dbContext.Properties.AddRange(property1, property2, property3, tenant2Property);
             await dbContext.SaveChangesAsync();

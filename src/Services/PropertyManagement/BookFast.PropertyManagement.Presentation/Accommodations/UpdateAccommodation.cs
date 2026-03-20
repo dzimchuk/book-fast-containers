@@ -14,8 +14,8 @@ namespace BookFast.PropertyManagement.Presentation.Accommodations
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapPut("properties/{propertyId}/accommodations/{accommodationId}", async (
-                int propertyId,
-                int accommodationId,
+                Guid propertyId,
+                Guid accommodationId,
                 UpdateAccommodationCommand request,
                 ISender sender) =>
             {

@@ -13,7 +13,7 @@ namespace BookFast.PropertyManagement.Presentation.RentalProperties
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapDelete("properties/{propertyId}", async (int propertyId, ISender sender) =>
+            app.MapDelete("properties/{propertyId}", async (Guid propertyId, ISender sender) =>
             {
                 var result = await sender.Send(new DeletePropertyCommand { PropertyId = propertyId });
 

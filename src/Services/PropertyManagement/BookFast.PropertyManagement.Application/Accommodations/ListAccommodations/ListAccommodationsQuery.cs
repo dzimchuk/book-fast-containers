@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Application.Accommodations.ListAccommodati
 {
     public class ListAccommodationsQuery : ListQuery<AccommodationRepresentation>
     {
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
     }
 }

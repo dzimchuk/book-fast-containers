@@ -18,8 +18,8 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
 
         public IDbContext DbContext => dbContext;
 
-        public int PropertyId { get; private set; }
-        public int AccommodationId { get; private set; }
+        public Guid PropertyId { get; private set; }
+        public Guid AccommodationId { get; private set; }
 
         public AccommodationsFixture(ApiFixture<Program> fixture)
         {
@@ -47,12 +47,16 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 new Location(30.2672, -97.7431),
                 null);
 
+            property.Id = Guid.CreateVersion7();
+
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
             PropertyId = property.Id;
 
             var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, 100m);
+            accommodation.Id = Guid.CreateVersion7();
+            
             dbContext.Accommodations.Add(accommodation);
             await dbContext.SaveChangesAsync();
 

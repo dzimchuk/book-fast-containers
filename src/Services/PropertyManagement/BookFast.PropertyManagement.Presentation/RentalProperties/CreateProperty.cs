@@ -22,7 +22,7 @@ namespace BookFast.PropertyManagement.Presentation.RentalProperties
                     ApiResults.Problem);
             })
             .RequireAuthorization(AuthorizationPolicies.TenantAdminOrUser)
-            .Produces<int>(StatusCodes.Status201Created)
+            .Produces<Guid>(StatusCodes.Status201Created)
             .WithTags(Tags.Properties);
         }
     }

@@ -14,7 +14,7 @@ namespace BookFast.PropertyManagement.Presentation.Accommodations
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapPost("properties/{propertyId}/accommodations", async (
-                int propertyId,
+                Guid propertyId,
                 CreateAccommodationCommand request,
                 ISender sender) =>
             {
@@ -27,7 +27,7 @@ namespace BookFast.PropertyManagement.Presentation.Accommodations
                     ApiResults.Problem);
             })
             .RequireAuthorization(AuthorizationPolicies.TenantAdminOrUser)
-            .Produces<int>(StatusCodes.Status201Created)
+            .Produces<Guid>(StatusCodes.Status201Created)
             .WithTags(Tags.Accommodations);
         }
     }

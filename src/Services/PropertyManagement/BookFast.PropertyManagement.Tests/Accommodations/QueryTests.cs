@@ -11,7 +11,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task GetAccommodation_NotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{AccommodationsQueryFixture.PropertyId}/accommodations/9999");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{AccommodationsQueryFixture.PropertyId}/accommodations/{Guid.Empty}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

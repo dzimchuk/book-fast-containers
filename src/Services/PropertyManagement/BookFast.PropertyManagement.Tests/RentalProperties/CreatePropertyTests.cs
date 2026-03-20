@@ -14,7 +14,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
     {
         private const string baseUrl = "/api/properties";
 
-        private int? newPropertyId = null;
+        private Guid? newPropertyId = null;
 
         private static readonly Address ValidAddress = new("USA", "Texas", "Austin", "100 Congress Ave", "78701");
 
@@ -49,10 +49,10 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(response.Headers.Location);
 
-            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/properties/(?<id>\d+)");
+            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/properties/(?<id>[0-9a-fA-F-]+)");
             Assert.True(match.Success);
 
-            newPropertyId = int.Parse(match.Groups["id"].Value);
+            newPropertyId = Guid.Parse(match.Groups["id"].Value);
 
             var property = await fixture.DbContext.Properties.FindAsync(newPropertyId.Value);
             Assert.NotNull(property);

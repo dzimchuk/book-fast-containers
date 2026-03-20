@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation
 {
-    public class CreateAccommodationHandler : ICommandHandler<CreateAccommodationCommand, int>
+    public class CreateAccommodationHandler : ICommandHandler<CreateAccommodationCommand, Guid>
     {
         private readonly IDbContext dbContext;
         private readonly ISecurityContext securityContext;
@@ -17,13 +17,13 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
             this.securityContext = securityContext;
         }
 
-        public async Task<Result<int>> Handle(CreateAccommodationCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreateAccommodationCommand request, CancellationToken cancellationToken)
         {
             var tenantId = securityContext.GetCurrentTenant();
 
             if (!await dbContext.Properties.AnyAsync(facility => facility.Id == request.PropertyId && facility.TenantId == tenantId, cancellationToken: cancellationToken))
             {
-                return Result.Failure<int>(ErrorCodes.PropertyNotFound(request.PropertyId));
+                return Result.Failure<Guid>(ErrorCodes.PropertyNotFound(request.PropertyId));
             }
 
             var accommodation = Accommodation.NewAccommodation(
@@ -35,6 +35,8 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                 request.Images,
                 request.Quantity,
                 request.Price);
+
+            accommodation.Id = Guid.CreateVersion7();
 
             await dbContext.Accommodations.AddAsync(accommodation, cancellationToken);
 

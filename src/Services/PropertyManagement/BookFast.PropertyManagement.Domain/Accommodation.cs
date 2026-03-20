@@ -2,11 +2,11 @@ using BookFast.Common.Domain;
 
 namespace BookFast.PropertyManagement.Domain
 {
-    public class Accommodation : Entity<int>
+    public class Accommodation : Entity<Guid>
     {
         public string TenantId { get; private set; }
 
-        public int PropertyId { get; private set; }
+        public Guid PropertyId { get; private set; }
 
         public string Name { get; private set; }
         public string Description { get; private set; }
@@ -21,7 +21,7 @@ namespace BookFast.PropertyManagement.Domain
 
         public static Accommodation NewAccommodation(
             string tenantId,
-            int propertyId,
+            Guid propertyId,
             string name,
             string description,
             int roomCount,

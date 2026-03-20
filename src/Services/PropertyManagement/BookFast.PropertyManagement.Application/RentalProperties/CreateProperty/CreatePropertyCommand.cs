@@ -3,7 +3,7 @@ using BookFast.PropertyManagement.Domain;
 
 namespace BookFast.PropertyManagement.Application.RentalProperties.CreateProperty
 {
-    public class CreatePropertyCommand : ICommand<int>
+    public class CreatePropertyCommand : ICommand<Guid>
     {
         public string Name { get; set; }
         public string Description { get; set; }

@@ -1,6 +1,5 @@
 using BookFast.PropertyManagement.Application;
 using BookFast.PropertyManagement.Domain;
-using BookFast.PropertyManagement.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.PropertyManagement.Infrastructure.Database
@@ -24,9 +23,6 @@ namespace BookFast.PropertyManagement.Infrastructure.Database
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.HasDefaultSchema(Schemas.PropertyManagement);
-
-            modelBuilder.HasSequence(PropertyConfiguration.SequenceName).IncrementsBy(1);
-            modelBuilder.HasSequence(AccommodationConfiguration.SequenceName).IncrementsBy(1);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PropertyManagementContext).Assembly);
         }

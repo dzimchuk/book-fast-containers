@@ -21,7 +21,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
 
-        private int propertyId;
+        private Guid propertyId;
 
         public TenantIsolationTests(ApiFixture<Program> fixture)
         {
@@ -48,6 +48,8 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
                 new Location(30.2672, -97.7431),
                 null);
+
+            property.Id = Guid.CreateVersion7();
 
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();

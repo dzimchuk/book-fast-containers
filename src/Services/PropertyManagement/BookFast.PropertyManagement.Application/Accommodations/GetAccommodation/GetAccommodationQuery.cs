@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Application.Accommodations.GetAccommodatio
 {
     public class GetAccommodationQuery : IQuery<AccommodationRepresentation>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

@@ -2,8 +2,8 @@
   "totalRecords": 2,
   "records": [
     {
-      "id": 10021,
-      "propertyId": 10011,
+      "id": "00000000-0000-0000-0000-000000010021",
+      "propertyId": "00000000-0000-0000-0000-000000010011",
       "name": "Standard Room",
       "roomCount": 1,
       "quantity": 5,
@@ -11,8 +11,8 @@
       "isActive": true
     },
     {
-      "id": 10022,
-      "propertyId": 10011,
+      "id": "00000000-0000-0000-0000-000000010022",
+      "propertyId": "00000000-0000-0000-0000-000000010011",
       "name": "Suite",
       "description": "Luxury suite with ocean view",
       "roomCount": 3,

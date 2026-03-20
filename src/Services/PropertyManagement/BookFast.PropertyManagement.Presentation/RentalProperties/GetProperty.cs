@@ -15,7 +15,7 @@ namespace BookFast.PropertyManagement.Presentation.RentalProperties
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapGet("properties/{propertyId}", async (
-                int propertyId,
+                Guid propertyId,
                 ISender sender) =>
             {
                 var result = await sender.Send(new GetPropertyQuery

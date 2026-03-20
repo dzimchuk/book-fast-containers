@@ -2,7 +2,7 @@
   "totalRecords": 3,
   "records": [
     {
-      "id": 10002,
+      "id": "00000000-0000-0000-0000-000000010002",
       "name": "Beach House",
       "description": "Beautiful beachfront property",
       "address": {
@@ -19,7 +19,7 @@
       "isActive": true
     },
     {
-      "id": 10003,
+      "id": "00000000-0000-0000-0000-000000010003",
       "name": "City Apartment",
       "description": "Modern city apartment",
       "address": {
@@ -36,7 +36,7 @@
       "isActive": true
     },
     {
-      "id": 10001,
+      "id": "00000000-0000-0000-0000-000000010001",
       "name": "Mountain Retreat",
       "description": "A cozy mountain retreat",
       "address": {

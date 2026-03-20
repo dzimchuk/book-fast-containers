@@ -12,7 +12,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task PropertyNotFound()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/9999");
+            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{Guid.Empty}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

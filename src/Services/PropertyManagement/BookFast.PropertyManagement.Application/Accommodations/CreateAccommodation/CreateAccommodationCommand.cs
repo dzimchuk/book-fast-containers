@@ -2,10 +2,10 @@ using BookFast.Common.Application.Messaging;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation
 {
-    public class CreateAccommodationCommand : ICommand<int>
+    public class CreateAccommodationCommand : ICommand<Guid>
     {
         [SwaggerIgnore]
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
 
         public string Name { get; set; }
 

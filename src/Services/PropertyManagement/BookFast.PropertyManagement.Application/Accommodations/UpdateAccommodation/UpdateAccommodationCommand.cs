@@ -5,7 +5,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
     public class UpdateAccommodationCommand : ICommand
     {
         [SwaggerIgnore]
-        public int AccommodationId { get; set; }
+        public Guid AccommodationId { get; set; }
 
         public string Name { get; set; }
 

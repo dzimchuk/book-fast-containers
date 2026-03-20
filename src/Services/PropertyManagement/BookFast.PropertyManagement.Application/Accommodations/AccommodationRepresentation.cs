@@ -8,13 +8,13 @@ namespace BookFast.PropertyManagement.Application.Accommodations
         /// Accommodation ID
         /// </summary>
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Property ID
         /// </summary>
         [Required]
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
 
         /// <summary>
         /// Accommodation name

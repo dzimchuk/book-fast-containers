@@ -30,7 +30,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         {
             var command = new UpdateAccommodationCommand { Name = "Updated Room", RoomCount = 1, Quantity = 1 };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/9999", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{Guid.Empty}", command);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

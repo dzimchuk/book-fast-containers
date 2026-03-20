@@ -2,6 +2,6 @@ namespace BookFast.PropertyManagement.Application.Accommodations.DeleteAccommoda
 {
     public class AccommodationDeletedEvent
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task GetProperty_NotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/9999");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{Guid.Empty}");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 

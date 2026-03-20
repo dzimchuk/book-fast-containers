@@ -7,16 +7,16 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
 {
     internal class PropertyConfiguration : IEntityTypeConfiguration<Property>
     {
-        public const string SequenceName = "propertyseq";
-
         public void Configure(EntityTypeBuilder<Property> builder)
         {
             builder.HasKey(prop => prop.Id);
-            builder.Property(prop => prop.Id).UseHiLo(SequenceName);
+            builder.Property(prop => prop.Id).ValueGeneratedNever();
 
             builder.Property(prop => prop.Name).IsRequired(true).HasMaxLength(100);
             builder.Property(prop => prop.Description).IsRequired(false).HasMaxLength(1000);
             builder.Property(prop => prop.TenantId).IsRequired(true).HasMaxLength(36);
+
+            builder.HasIndex(prop => prop.TenantId);
 
             builder
                 .OwnsOne(p => p.Address, addressBuilder =>

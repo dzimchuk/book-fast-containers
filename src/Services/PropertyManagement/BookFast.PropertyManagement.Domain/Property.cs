@@ -2,7 +2,7 @@ using BookFast.Common.Domain;
 
 namespace BookFast.PropertyManagement.Domain
 {
-    public class Property : Entity<int>
+    public class Property : Entity<Guid>
     {
         public string TenantId { get; private set; }
 

@@ -5,7 +5,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
     public class AccommodationCreatedEvent
     {
         private readonly Accommodation accommodation;
-        private int? id;
+        private Guid? id;
 
         public AccommodationCreatedEvent()
         {
@@ -24,13 +24,13 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
             Price = accommodation.Price;
         }
 
-        public int Id
+        public Guid Id
         {
             get => id ?? accommodation.Id;
             set => id = value;
         }
 
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
 
         public string Name { get; set; }
         public string Description { get; set; }

@@ -5,7 +5,7 @@ using BookFast.PropertyManagement.Domain;
 
 namespace BookFast.PropertyManagement.Application.RentalProperties.CreateProperty
 {
-    public class CreatePropertyHandler : ICommandHandler<CreatePropertyCommand, int>
+    public class CreatePropertyHandler : ICommandHandler<CreatePropertyCommand, Guid>
     {
         private readonly IDbContext dbContext;
         private readonly ISecurityContext securityContext;
@@ -17,7 +17,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.CreatePropert
             this.securityContext = securityContext;
         }
 
-        public async Task<Result<int>> Handle(CreatePropertyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(CreatePropertyCommand request, CancellationToken cancellationToken)
         {
             var property = Property.NewProperty(
                 securityContext.GetCurrentTenant(),
@@ -26,6 +26,8 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.CreatePropert
                 request.Address,
                 request.Location,
                 request.Images);
+
+            property.Id = Guid.CreateVersion7();
 
             await dbContext.Properties.AddAsync(property, cancellationToken);
 

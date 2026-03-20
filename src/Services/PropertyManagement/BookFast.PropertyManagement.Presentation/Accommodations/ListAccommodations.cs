@@ -17,7 +17,7 @@ namespace BookFast.PropertyManagement.Presentation.Accommodations
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapGet("properties/{propertyId}/accommodations", async (
-                int propertyId,
+                Guid propertyId,
                 [FromQuery(Name = "orderBy")] string orderBy,
                 [FromQuery(Name = "orderDirection")] string orderDirection,
                 [FromQuery(Name = "pageNumber")] int? pageNumber,

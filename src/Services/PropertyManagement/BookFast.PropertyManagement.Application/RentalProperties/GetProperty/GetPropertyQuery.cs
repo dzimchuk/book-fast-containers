@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.GetProperty
 {
     public class GetPropertyQuery : IQuery<PropertyRepresentation>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

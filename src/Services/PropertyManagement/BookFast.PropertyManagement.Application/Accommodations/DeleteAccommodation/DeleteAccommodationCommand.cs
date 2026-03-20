@@ -4,6 +4,6 @@ namespace BookFast.PropertyManagement.Application.Accommodations.DeleteAccommoda
 {
     public class DeleteAccommodationCommand : ICommand
     {
-        public int AccommodationId { get; set; }
+        public Guid AccommodationId { get; set; }
     }
 }

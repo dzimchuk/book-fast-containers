@@ -6,7 +6,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.UpdatePropert
     public class UpdatePropertyCommand : ICommand
     {
         [SwaggerIgnore]
-        public int PropertyId { get; set; }
+        public Guid PropertyId { get; set; }
 
         public string Name { get; set; }
         public string Description { get; set; }

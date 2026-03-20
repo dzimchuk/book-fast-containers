@@ -9,9 +9,9 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
 {
     public class AccommodationsQueryFixture : IAsyncLifetime
     {
-        public const int PropertyId = 10011;
-        public const int Accommodation1Id = 10021;
-        public const int Accommodation2Id = 10022;
+        public static readonly Guid PropertyId = new("00000000-0000-0000-0000-000000010011");
+        public static readonly Guid Accommodation1Id = new("00000000-0000-0000-0000-000000010021");
+        public static readonly Guid Accommodation2Id = new("00000000-0000-0000-0000-000000010022");
 
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;

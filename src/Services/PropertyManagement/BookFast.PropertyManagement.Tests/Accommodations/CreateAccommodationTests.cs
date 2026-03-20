@@ -11,7 +11,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
     [Collection(nameof(IntegrationTestCollection))]
     public class CreateAccommodationTests(AccommodationsFixture fixture) : IClassFixture<AccommodationsFixture>, IAsyncLifetime
     {
-        private int? newAccommodationId = null;
+        private Guid? newAccommodationId = null;
 
         public static IEnumerable<object[]> ValidationData =>
         [
@@ -40,7 +40,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 Price = 100m
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync("/api/properties/9999/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{Guid.Empty}/accommodations", command);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -64,10 +64,10 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(response.Headers.Location);
 
-            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>\d+)");
+            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
             Assert.True(match.Success);
 
-            newAccommodationId = int.Parse(match.Groups["id"].Value);
+            newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
             var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
             Assert.NotNull(accommodation);

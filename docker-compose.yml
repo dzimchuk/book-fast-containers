@@ -21,6 +21,7 @@ services:
       - 5101:8081
     depends_on:
       - bookfast.database
+      - bookfast.azurite
       - bookfast.telemetry-dashboard
 
   bookfast.database:
@@ -37,6 +38,15 @@ services:
     ports:
       - "5433:1433"
       
+  bookfast.azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    command: azurite-blob --blobHost 0.0.0.0
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./.containers/azurite:/data
+
   bookfast.telemetry-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
     container_name: telemetry-dashboard

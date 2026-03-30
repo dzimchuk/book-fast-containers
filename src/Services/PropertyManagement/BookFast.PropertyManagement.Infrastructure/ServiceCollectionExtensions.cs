@@ -1,10 +1,14 @@
-﻿using BookFast.PropertyManagement.Application;
+﻿using Azure.Storage.Blobs;
+using BookFast.PropertyManagement.Application;
+using BookFast.PropertyManagement.Application.Files;
 using BookFast.PropertyManagement.Infrastructure.Database;
+using BookFast.PropertyManagement.Infrastructure.Files;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BookFast.PropertyManagement.Infrastructure
 {
@@ -27,6 +31,15 @@ namespace BookFast.PropertyManagement.Infrastructure
             });
 
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<PropertyManagementContext>());
+
+            services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
+            services.AddSingleton(serviceProvider =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<BlobStorageOptions>>().Value;
+                return new BlobContainerClient(options.ConnectionString, options.ContainerName);
+            });
+            services.AddSingleton<IFileTokenIssuer, BlobFileTokenIssuer>();
+            services.AddHostedService<BlobContainerInitializer>();
 
             return services;
         }

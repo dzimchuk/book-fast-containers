@@ -23,6 +23,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.DeletePropert
             var property = await dbContext.Properties.FirstOrDefaultAsync(
                 p => p.Id == request.PropertyId && p.TenantId == tenantId,
                 cancellationToken);
+
             if (property == null)
             {
                 return ErrorCodes.PropertyNotFound(request.PropertyId);

@@ -23,7 +23,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
         private Guid propertyId;
 
-        public TenantIsolationTests(ApiFixture<Program> fixture)
+        public TenantIsolationTests(PropertyManagementApiFixture fixture)
         {
             httpClient = fixture.CreateHttpClient(services =>
             {

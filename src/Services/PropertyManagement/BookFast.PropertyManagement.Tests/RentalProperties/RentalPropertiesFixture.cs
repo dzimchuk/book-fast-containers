@@ -24,7 +24,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         public Guid Property2Id { get; private set; }
         public Guid PropertyWithAccommodationId { get; private set; }
 
-        public RentalPropertiesFixture(ApiFixture<Program> fixture)
+        public RentalPropertiesFixture(PropertyManagementApiFixture fixture)
         {
             httpClient = fixture.CreateHttpClient(services =>
             {

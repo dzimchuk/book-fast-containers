@@ -21,7 +21,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
         public HttpClient HttpClient => httpClient;
 
-        public RentalPropertiesQueryFixture(ApiFixture<Program> fixture)
+        public RentalPropertiesQueryFixture(PropertyManagementApiFixture fixture)
         {
             httpClient = fixture.CreateHttpClient(services =>
             {

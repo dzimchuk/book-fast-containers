@@ -5,21 +5,20 @@ using BookFast.PropertyManagement.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookFast.PropertyManagement.Tests.Accommodations
+namespace BookFast.PropertyManagement.Tests.Files
 {
-    public class AccommodationsQueryFixture : IAsyncLifetime
+    public class FileUploadFixture : IAsyncLifetime
     {
-        public static readonly Guid PropertyId = new("00000000-0000-0000-0000-000000010011");
-        public static readonly Guid Accommodation1Id = new("00000000-0000-0000-0000-000000010021");
-        public static readonly Guid Accommodation2Id = new("00000000-0000-0000-0000-000000010022");
-
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
 
         public HttpClient HttpClient => httpClient;
 
-        public AccommodationsQueryFixture(PropertyManagementApiFixture fixture)
+        public Guid PropertyId { get; private set; }
+        public Guid AccommodationId { get; private set; }
+
+        public FileUploadFixture(PropertyManagementApiFixture fixture)
         {
             httpClient = fixture.CreateHttpClient(services =>
             {
@@ -39,30 +38,39 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         {
             var property = Property.NewProperty(
                 Constants.CallerTenant,
-                "Test Property",
-                null,
+                "Upload Test Property",
+                "A property for file upload tests",
                 new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
                 new Location(30.2672, -97.7431),
                 null);
-            property.Id = PropertyId;
+            property.Id = Guid.CreateVersion7();
 
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
-            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, 100m);
-            accommodation1.Id = Accommodation1Id;
+            PropertyId = property.Id;
 
-            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, 250.5m);
-            accommodation2.Id = Accommodation2Id;
+            var accommodation = Accommodation.NewAccommodation(
+                Constants.CallerTenant,
+                PropertyId,
+                "Upload Test Room",
+                null,
+                1,
+                null,
+                5,
+                100m);
+            accommodation.Id = Guid.CreateVersion7();
 
-            dbContext.Accommodations.AddRange(accommodation1, accommodation2);
+            dbContext.Accommodations.Add(accommodation);
             await dbContext.SaveChangesAsync();
+
+            AccommodationId = accommodation.Id;
         }
 
         public async Task DisposeAsync()
         {
             await dbContext.Accommodations
-                .Where(a => new[] { Accommodation1Id, Accommodation2Id }.Contains(a.Id))
+                .Where(a => a.PropertyId == PropertyId)
                 .ExecuteDeleteAsync();
 
             await dbContext.Properties

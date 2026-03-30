@@ -10,8 +10,7 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
     {
         protected readonly TestWebApplicationFactory<TProgram> factory;
 
-        private readonly MsSqlContainer dbContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        private readonly MsSqlContainer dbContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
             .WithPassword("P@ssw0rd")
             .WithEnvironment("MSSQL_PID", "Developer")
             .Build();
@@ -44,7 +43,7 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
             Environment.SetEnvironmentVariable($"ConnectionStrings:Sql", dbContainer.GetConnectionString());
         }
 
-        public async Task DisposeAsync()
+        public virtual async Task DisposeAsync()
         {
             await dbContainer.StopAsync();
         }

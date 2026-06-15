@@ -3,9 +3,9 @@
 #nullable disable
 
 using BookFast.Common.Application.Integration;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Email;
 using BookFast.Identity.Core.Models;
-using BookFast.Identity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +21,15 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
     {
         private readonly UserManager<User> userManager;
         private readonly IMailNotificationQueue notificationQueue;
-        private readonly TransactionHelper transactionHelper;
+        private readonly IDbContext dbContext;
 
         public ResendEmailConfirmationModel(UserManager<User> userManager,
                                             IMailNotificationQueue notificationQueue,
-                                            TransactionHelper transactionHelper)
+                                             IDbContext dbContext)
         {
             this.userManager = userManager;
             this.notificationQueue = notificationQueue;
-            this.transactionHelper = transactionHelper;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
 
             if (user != null)
             {
-                using (var scope = transactionHelper.StartTransaction())
+                await dbContext.ExecuteInTransactionAsync(async ct =>
                 {
                     var userId = await userManager.GetUserIdAsync(user);
                     var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -89,10 +89,8 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
                         Model = new ConfirmEmail(callbackUrl)
                     };
 
-                    await notificationQueue.EnqueueMessageAsync(message);
-
-                    scope.Complete();
-                } 
+                    await notificationQueue.EnqueueMessageAsync(message, ct);
+                }, HttpContext.RequestAborted);
             }
 
             ShowMessageSent = true;

@@ -1,8 +1,10 @@
 ﻿using Azure.Storage.Blobs;
+using BookFast.Common.Infrastructure;
 using BookFast.PropertyManagement.Application;
 using BookFast.PropertyManagement.Application.Files;
 using BookFast.PropertyManagement.Infrastructure.Database;
 using BookFast.PropertyManagement.Infrastructure.Files;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -41,7 +43,25 @@ namespace BookFast.PropertyManagement.Infrastructure
             services.AddSingleton<IFileTokenIssuer, BlobFileTokenIssuer>();
             services.AddHostedService<BlobContainerInitializer>();
 
+            services.AddMassTransit(configuration, ConfigureMassTransit);
+
             return services;
+        }
+
+        private static void ConfigureMassTransit(IBusRegistrationConfigurator config)
+        {
+            config.AddEntityFrameworkOutbox<PropertyManagementContext>(outboxOptions =>
+            {
+                outboxOptions.QueryDelay = TimeSpan.FromMinutes(1);
+
+                outboxOptions.UseSqlServer();
+                outboxOptions.UseBusOutbox(cfg =>
+                {
+                    //cfg.DisableDeliveryService();
+                });
+
+                //outboxOptions.DisableInboxCleanupService();
+            });
         }
     }
 }

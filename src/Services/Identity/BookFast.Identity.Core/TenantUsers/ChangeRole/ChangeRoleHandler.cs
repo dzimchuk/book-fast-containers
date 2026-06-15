@@ -3,20 +3,22 @@ using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
 using BookFast.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Transactions;
 
 namespace BookFast.Identity.Core.TenantUsers.ChangeRole
 {
     public class ChangeRoleHandler : ICommandHandler<ChangeRoleCommand>
     {
+        private readonly IDbContext dbContext;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
         private readonly ISecurityContext securityContext;
 
-        public ChangeRoleHandler(UserManager<User> userManager,
+        public ChangeRoleHandler(IDbContext dbContext,
+                                 UserManager<User> userManager,
                                  RoleManager<Role> roleManager,
                                  ISecurityContext securityContext)
         {
+            this.dbContext = dbContext;
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.securityContext = securityContext;
@@ -29,10 +31,7 @@ namespace BookFast.Identity.Core.TenantUsers.ChangeRole
                 return Result.Failure<string>(ErrorCodes.UnsupportedRole);
             }
 
-            using (var scope = new TransactionScope(
-                    TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
-                    TransactionScopeAsyncFlowOption.Enabled))
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
                 var user = await userManager.FindByIdAsync(request.UserId);
                 if (user == null || user.TenantId != securityContext.GetCurrentTenant())
@@ -59,10 +58,8 @@ namespace BookFast.Identity.Core.TenantUsers.ChangeRole
                     return Result.Failure<string>(new ErrorCollection([.. result.Errors.Select(e => Error.Problem(e.Code, e.Description))]));
                 }
 
-                scope.Complete();
-
                 return Result.Success();
-            }
+            }, cancellationToken);
         }
     }
 }

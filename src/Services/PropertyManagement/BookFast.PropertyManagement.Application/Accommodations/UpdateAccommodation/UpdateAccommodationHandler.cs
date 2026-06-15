@@ -18,25 +18,28 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
 
         public async Task<Result> Handle(UpdateAccommodationCommand request, CancellationToken cancellationToken)
         {
-            var accommodation = await dbContext.Accommodations.FirstOrDefaultAsync(
-                a => a.Id == request.AccommodationId && a.TenantId == securityContext.GetCurrentTenant(),
-                cancellationToken);
-            if (accommodation == null)
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
-                return ErrorCodes.AccommodationNotFound(request.AccommodationId);
-            }
+                var accommodation = await dbContext.Accommodations.FirstOrDefaultAsync(
+                    a => a.Id == request.AccommodationId && a.TenantId == securityContext.GetCurrentTenant(),
+                    ct);
+                if (accommodation == null)
+                {
+                    return ErrorCodes.AccommodationNotFound(request.AccommodationId);
+                }
 
-            accommodation.Update(
-                request.Name,
-                request.Description,
-                request.RoomCount,
-                request.Images,
-                request.Quantity,
-                request.Price);
+                accommodation.Update(
+                    request.Name,
+                    request.Description,
+                    request.RoomCount,
+                    request.Images,
+                    request.Quantity,
+                    request.Price);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(ct);
 
-            return Result.Success();
+                return Result.Success();
+            }, cancellationToken);
         }
     }
 }

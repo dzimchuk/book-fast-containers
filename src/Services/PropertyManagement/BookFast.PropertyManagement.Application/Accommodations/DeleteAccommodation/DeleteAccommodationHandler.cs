@@ -18,19 +18,22 @@ namespace BookFast.PropertyManagement.Application.Accommodations.DeleteAccommoda
 
         public async Task<Result> Handle(DeleteAccommodationCommand request, CancellationToken cancellationToken)
         {
-            var accommodation = await dbContext.Accommodations.FirstOrDefaultAsync(
-                a => a.Id == request.AccommodationId && a.TenantId == securityContext.GetCurrentTenant(),
-                cancellationToken);
-            if (accommodation == null)
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
-                return ErrorCodes.AccommodationNotFound(request.AccommodationId);
-            }
+                var accommodation = await dbContext.Accommodations.FirstOrDefaultAsync(
+                    a => a.Id == request.AccommodationId && a.TenantId == securityContext.GetCurrentTenant(),
+                    ct);
+                if (accommodation == null)
+                {
+                    return ErrorCodes.AccommodationNotFound(request.AccommodationId);
+                }
 
-            dbContext.Accommodations.Remove(accommodation);
+                dbContext.Accommodations.Remove(accommodation);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(ct);
 
-            return Result.Success();
+                return Result.Success();
+            }, cancellationToken);
         }
     }
 }

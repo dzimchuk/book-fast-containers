@@ -20,16 +20,30 @@ namespace BookFast.Common.Infrastructure
 
         public static void AddMassTransit(this IServiceCollection services,
             IConfiguration configuration,
-            Action<IBusRegistrationConfigurator> configureConsumers)
+            Action<IBusRegistrationConfigurator> configureServiceSpecifics)
         {
             services.TryAddTransient<IMailNotificationQueue, MailNotificationQueue>();
 
             services.AddMassTransit(config =>
             {
-                configureConsumers?.Invoke(config);
+                configureServiceSpecifics?.Invoke(config);
 
-                config.UsingInMemory((context, cfg) =>
+                //config.UsingInMemory((context, cfg) =>
+                //{
+                //    cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
+                //    cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
+
+                //    cfg.ConfigureEndpoints(context);
+                //});
+
+                config.UsingRabbitMq((context, cfg) =>
                 {
+                    cfg.Host(new Uri(configuration.GetConnectionString("MessageBus")), hostConfig =>
+                    {
+                        //hostConfig.Username("");
+                        //hostConfig.Password("");
+                    });
+
                     cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
                     cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
 

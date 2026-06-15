@@ -60,8 +60,6 @@ namespace BookFast.Identity
 
             services.AddRazorPages();
 
-            services.AddScoped<TransactionHelper>();
-
             services.AddScoped<IEmailConfirmationSender, EmailConfirmationSender>();
 
             services.Configure<ForwardedHeadersOptions>(options =>

@@ -1,8 +1,10 @@
-﻿using BookFast.Identity.Core;
+﻿using BookFast.Common.SeedWork;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace BookFast.Identity.Infrastructure.Database
 {
@@ -28,12 +30,54 @@ namespace BookFast.Identity.Infrastructure.Database
 
             builder.ApplyConfigurationsFromAssembly(typeof(IdentityContext).Assembly);
 
-            //builder.AddInboxStateEntity();
-            //builder.AddOutboxMessageEntity();
-            //builder.AddOutboxStateEntity();
+            builder.AddInboxStateEntity();
+            builder.AddOutboxMessageEntity();
+            builder.AddOutboxStateEntity();
 
             builder.RewriteIdentityTableNames();
             builder.RewriteOpenIddictTableNames();
+        }
+
+        public Task ExecuteInTransactionAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
+            => ExecuteInTransactionAsync<bool>(
+                async ct =>
+                {
+                    await operation(ct);
+                    return true;
+                },
+                cancellationToken);
+
+        public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+        {
+            // https://learn.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
+            var executionStrategy = Database.CreateExecutionStrategy();
+
+            return await executionStrategy.ExecuteAsync(async () =>
+            {
+                using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                       new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                       TransactionScopeAsyncFlowOption.Enabled);
+
+                TResult result = await operation(cancellationToken);
+
+                if (ShouldCommitTransaction(result))
+                {
+                    await SaveChangesAsync(cancellationToken); // make sure to persist outbox messages
+                    scope.Complete();
+                }
+
+                return result;
+            });
+        }
+
+        private static bool ShouldCommitTransaction<TResult>(TResult result)
+        {
+            if (result is Result r)
+            {
+                return r.IsSuccess;
+            }
+
+            return true;
         }
     }
 }

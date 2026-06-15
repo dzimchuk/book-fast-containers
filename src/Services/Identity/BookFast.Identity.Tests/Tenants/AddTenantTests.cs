@@ -48,6 +48,9 @@ namespace BookFast.Identity.Tests.Tenants
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             await response.ShouldBeEquivalentToFile();
+
+            var tenant = await fixture.DbContext.Tenants.FirstOrDefaultAsync(t => t.Name == "New tenant");
+            Assert.Null(tenant);
         }
 
         [Fact]

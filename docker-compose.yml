@@ -10,6 +10,7 @@ services:
     depends_on:
       - bookfast.database
       - bookfast.telemetry-dashboard
+      - bookfast.messaging
 
   bookfast.property-management:
     image: ${DOCKER_REGISTRY-}bookfast-property-management
@@ -23,6 +24,7 @@ services:
       - bookfast.database
       - bookfast.azurite
       - bookfast.telemetry-dashboard
+      - bookfast.messaging
 
   bookfast.database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
@@ -55,3 +57,17 @@ services:
     ports:
       - 18889:18889
       - 18888:18888
+
+  bookfast.messaging:
+    image: rabbitmq:management-alpine
+    container_name: messaging
+    hostname: messaging
+    volumes:
+        - ./.containers/rabbitmq/data/:/var/lib/rabbitmq
+        - ./.containers/rabbitmq/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672

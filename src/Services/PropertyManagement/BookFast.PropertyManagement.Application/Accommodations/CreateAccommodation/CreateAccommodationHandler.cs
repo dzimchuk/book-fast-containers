@@ -26,23 +26,26 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                 return Result.Failure<Guid>(ErrorCodes.PropertyNotFound(request.PropertyId));
             }
 
-            var accommodation = Accommodation.NewAccommodation(
-                tenantId,
-                request.PropertyId,
-                request.Name,
-                request.Description,
-                request.RoomCount,
-                request.Images,
-                request.Quantity,
-                request.Price);
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
+            {
+                var accommodation = Accommodation.NewAccommodation(
+                    tenantId,
+                    request.PropertyId,
+                    request.Name,
+                    request.Description,
+                    request.RoomCount,
+                    request.Images,
+                    request.Quantity,
+                    request.Price);
 
-            accommodation.Id = Guid.CreateVersion7();
+                accommodation.Id = Guid.CreateVersion7();
 
-            await dbContext.Accommodations.AddAsync(accommodation, cancellationToken);
+                await dbContext.Accommodations.AddAsync(accommodation, ct);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(ct);
 
-            return accommodation.Id;
+                return accommodation.Id;
+            }, cancellationToken);
         }
     }
 }

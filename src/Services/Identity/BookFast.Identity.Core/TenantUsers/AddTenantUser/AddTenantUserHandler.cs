@@ -3,7 +3,6 @@ using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
 using BookFast.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Transactions;
 
 namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
 {
@@ -14,18 +13,21 @@ namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
         private readonly RoleManager<Role> roleManager;
         private readonly ISecurityContext securityContext;
         private readonly IEmailConfirmationSender confirmationSender;
+        private readonly IDbContext dbContext;
 
         public AddTenantUserHandler(UserManager<User> userManager,
                                     IUserStore<User> userStore,
                                     RoleManager<Role> roleManager,
                                     ISecurityContext securityContext,
-                                    IEmailConfirmationSender confirmationSender)
+                                    IEmailConfirmationSender confirmationSender, 
+                                    IDbContext dbContext)
         {
             this.userManager = userManager;
             this.userStore = userStore;
             this.roleManager = roleManager;
             this.securityContext = securityContext;
             this.confirmationSender = confirmationSender;
+            this.dbContext = dbContext;
         }
 
         public async Task<Result<string>> Handle(AddTenantUserCommand request, CancellationToken cancellationToken)
@@ -35,12 +37,9 @@ namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
                 return Result.Failure<string>(ErrorCodes.UnsupportedRole);
             }
 
-            using (var scope = new TransactionScope(
-                    TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
-                    TransactionScopeAsyncFlowOption.Enabled))
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
-                var user = new User 
+                var user = new User
                 {
                     Id = Guid.CreateVersion7().ToString(),
                     TenantId = securityContext.GetCurrentTenant()
@@ -68,10 +67,8 @@ namespace BookFast.Identity.Core.TenantUsers.AddTenantUser
 
                 await confirmationSender.SendAsync(user);
 
-                scope.Complete();
-
                 return user.Id;
-            }
+            }, cancellationToken);
         }
     }
 }

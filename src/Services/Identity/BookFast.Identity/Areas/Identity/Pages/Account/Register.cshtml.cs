@@ -3,9 +3,10 @@
 #nullable disable
 
 using BookFast.Common.Application.Integration;
+using BookFast.Common.SeedWork;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Email;
 using BookFast.Identity.Core.Models;
-using BookFast.Identity.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<User> emailStore;
         private readonly ILogger<RegisterModel> logger;
         private readonly IMailNotificationQueue notificationQueue;
-        private readonly TransactionHelper transactionHelper;
+        private readonly IDbContext dbContext;
 
         public RegisterModel(
             UserManager<User> userManager,
@@ -32,7 +33,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             SignInManager<User> signInManager,
             ILogger<RegisterModel> logger,
             IMailNotificationQueue notificationQueue, 
-            TransactionHelper transactionHelper)
+            IDbContext dbContext)
         {
             this.userManager = userManager;
             this.userStore = userStore;
@@ -40,7 +41,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             this.signInManager = signInManager;
             this.logger = logger;
             this.notificationQueue = notificationQueue;
-            this.transactionHelper = transactionHelper;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -104,30 +105,33 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
-        private async Task<(IdentityResult, User)> CreateNewUserAsync()
+        private async Task<Result<User>> CreateNewUserAsync(CancellationToken cancellationToken)
         {
             var user = new User();
 
-            await userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-            await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+            await userStore.SetUserNameAsync(user, Input.Email, cancellationToken);
+            await emailStore.SetEmailAsync(user, Input.Email, cancellationToken);
             var result = await userManager.CreateAsync(user, Input.Password);
 
             if (!result.Succeeded)
             {
-                return (result, null);
+                return Result.Failure<User>(
+                    new ErrorCollection([.. result.Errors.Select(e => Error.Problem(e.Code, e.Description))]));
             }
 
-            return (result, user);
+            return user;
         }
 
-        private async Task<(IdentityResult, User)> RegisterUserAndSendEmailAsync(string returnUrl)
+        private async Task<Result<User>> RegisterUserAndSendEmailAsync(string returnUrl)
         {
-            using (var scope = transactionHelper.StartTransaction())
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
-                var (result, user) = await CreateNewUserAsync();
+                var result = await CreateNewUserAsync(ct);
 
-                if (result.Succeeded)
+                if (result.IsSuccess)
                 {
+                    var user = result.Value;
+
                     if (userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         var userId = await userManager.GetUserIdAsync(user);
@@ -146,16 +150,14 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
                             Model = new ConfirmEmail(callbackUrl)
                         };
 
-                        await notificationQueue.EnqueueMessageAsync(message);
+                        await notificationQueue.EnqueueMessageAsync(message, ct);
                     }
 
                     logger.LogInformation("User created a new account with password.");
-
-                    scope.Complete();
                 }
 
-                return (result, user);
-            }
+                return result;
+            }, HttpContext.RequestAborted);
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -164,10 +166,12 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
             ExternalLogins = (await signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var (result, user) = await RegisterUserAndSendEmailAsync(returnUrl);
+                var result = await RegisterUserAndSendEmailAsync(returnUrl);
 
-                if (result.Succeeded)
+                if (result.IsSuccess)
                 {
+                    var user = result.Value;
+
                     if (userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl });
@@ -178,14 +182,27 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+
+                AddModelStateErrors(result.Error);
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private void AddModelStateErrors(Error error)
+        {
+            if (error is ErrorCollection collection)
+            {
+                foreach (var innerError in collection.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, innerError.Description);
+                }
+
+                return;
+            }
+
+            ModelState.AddModelError(string.Empty, error.Description);
         }
 
         private IUserEmailStore<User> GetEmailStore()

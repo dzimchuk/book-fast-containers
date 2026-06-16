@@ -38,16 +38,18 @@ namespace BookFast.Identity.Infrastructure.Database
             builder.RewriteOpenIddictTableNames();
         }
 
-        public Task ExecuteInTransactionAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default)
-            => ExecuteInTransactionAsync<bool>(
+        public async Task<Result> ExecuteInTransactionAsync(Func<CancellationToken, Task<Result>> operation, CancellationToken cancellationToken = default)
+            => await ExecuteInTransactionAsync<int>(
                 async ct =>
                 {
-                    await operation(ct);
-                    return true;
+                    var result = await operation(ct);
+                    return result.IsSuccess
+                        ? Result.Success(0)
+                        : Result.Failure<int>(result.Error);
                 },
                 cancellationToken);
 
-        public async Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default)
+        public async Task<Result<TResponse>> ExecuteInTransactionAsync<TResponse>(Func<CancellationToken, Task<Result<TResponse>>> operation, CancellationToken cancellationToken = default)
         {
             // https://learn.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
             var executionStrategy = Database.CreateExecutionStrategy();
@@ -58,9 +60,9 @@ namespace BookFast.Identity.Infrastructure.Database
                                                        new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                                                        TransactionScopeAsyncFlowOption.Enabled);
 
-                TResult result = await operation(cancellationToken);
+                var result = await operation(cancellationToken);
 
-                if (ShouldCommitTransaction(result))
+                if (result.IsSuccess)
                 {
                     await SaveChangesAsync(cancellationToken); // make sure to persist outbox messages
                     scope.Complete();
@@ -68,16 +70,6 @@ namespace BookFast.Identity.Infrastructure.Database
 
                 return result;
             });
-        }
-
-        private static bool ShouldCommitTransaction<TResult>(TResult result)
-        {
-            if (result is Result r)
-            {
-                return r.IsSuccess;
-            }
-
-            return true;
         }
     }
 }

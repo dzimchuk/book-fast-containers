@@ -26,7 +26,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                 return Result.Failure<Guid>(ErrorCodes.PropertyNotFound(request.PropertyId));
             }
 
-            return await dbContext.ExecuteInTransactionAsync(async ct =>
+            return await dbContext.ExecuteInTransactionAsync<Guid>(async ct =>
             {
                 var accommodation = Accommodation.NewAccommodation(
                     tenantId,

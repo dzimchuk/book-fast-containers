@@ -3,6 +3,7 @@
 #nullable disable
 
 using BookFast.Common.Application.Integration;
+using BookFast.Common.SeedWork;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Email;
 using BookFast.Identity.Core.Models;
@@ -90,6 +91,8 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
                     };
 
                     await notificationQueue.EnqueueMessageAsync(message, ct);
+
+                    return Result.Success();
                 }, HttpContext.RequestAborted);
             }
 

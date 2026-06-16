@@ -1,4 +1,5 @@
-﻿using BookFast.PropertyManagement.Domain;
+﻿using BookFast.Common.SeedWork;
+using BookFast.PropertyManagement.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.PropertyManagement.Application
@@ -10,7 +11,7 @@ namespace BookFast.PropertyManagement.Application
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-        Task ExecuteInTransactionAsync(Func<CancellationToken, Task> operation, CancellationToken cancellationToken = default);
-        Task<TResult> ExecuteInTransactionAsync<TResult>(Func<CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken = default);
+        Task<Result> ExecuteInTransactionAsync(Func<CancellationToken, Task<Result>> operation, CancellationToken cancellationToken = default);
+        Task<Result<TResponse>> ExecuteInTransactionAsync<TResponse>(Func<CancellationToken, Task<Result<TResponse>>> operation, CancellationToken cancellationToken = default);
     }
 }

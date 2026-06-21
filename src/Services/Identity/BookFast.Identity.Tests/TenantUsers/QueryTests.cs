@@ -9,7 +9,7 @@ namespace BookFast.Identity.Tests.TenantUsers
     [Collection(nameof(IntegrationTestCollection))]
     public class QueryTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
-        private const string baseUrl = "/users";
+        private const string baseUrl = "/api/users";
 
         [Fact]
         public async Task Find_NotFound()

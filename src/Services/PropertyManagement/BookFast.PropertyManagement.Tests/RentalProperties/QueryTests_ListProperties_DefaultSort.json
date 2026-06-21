@@ -1,0 +1,56 @@
+{
+  "totalRecords": 3,
+  "records": [
+    {
+      "id": "00000000-0000-0000-0000-000000010002",
+      "name": "Beach House",
+      "description": "Beautiful beachfront property",
+      "address": {
+        "country": "USA",
+        "state": "California",
+        "city": "Santa Monica",
+        "street": "456 Ocean Ave",
+        "zipCode": "90401"
+      },
+      "location": {
+        "longitude": -118.4912,
+        "latitude": 34.0195
+      },
+      "isActive": true
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000010003",
+      "name": "City Apartment",
+      "description": "Modern city apartment",
+      "address": {
+        "country": "USA",
+        "state": "New York",
+        "city": "New York",
+        "street": "789 Park Ave",
+        "zipCode": "10021"
+      },
+      "location": {
+        "longitude": -74.006,
+        "latitude": 40.7128
+      },
+      "isActive": true
+    },
+    {
+      "id": "00000000-0000-0000-0000-000000010001",
+      "name": "Mountain Retreat",
+      "description": "A cozy mountain retreat",
+      "address": {
+        "country": "USA",
+        "state": "Colorado",
+        "city": "Denver",
+        "street": "123 Main St",
+        "zipCode": "80203"
+      },
+      "location": {
+        "longitude": -104.9903,
+        "latitude": 39.7392
+      },
+      "isActive": true
+    }
+  ]
+}

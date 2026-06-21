@@ -9,7 +9,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task FindTenant_NotFound()
         {
-            var response = await fixture.HttpClient.GetAsync("/tenants/123");
+            var response = await fixture.HttpClient.GetAsync("/api/tenants/123");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -19,7 +19,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task FindTenant_Success()
         {
-            var response = await fixture.HttpClient.GetAsync($"/tenants/{TenantsFixture.TestTenantId}");
+            var response = await fixture.HttpClient.GetAsync($"/api/tenants/{TenantsFixture.TestTenantId}");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 

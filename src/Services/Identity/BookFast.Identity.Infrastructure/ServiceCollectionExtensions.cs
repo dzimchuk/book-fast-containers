@@ -26,6 +26,7 @@ namespace BookFast.Identity.Infrastructure
                 options.UseSqlServer(
                     connectionString, 
                     sqlServerOptions => sqlServerOptions
+                        .EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null) // see also https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
                         .MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Identity))
                         .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning))
                     .UseSnakeCaseNamingConvention();
@@ -35,7 +36,7 @@ namespace BookFast.Identity.Infrastructure
 
             services.Configure<CommunicationServiceOptions>(configuration.GetSection("CommunicationService"));
 
-            services.AddMassTransit(configuration, ConfigureConsumers);
+            services.AddMassTransit(configuration, ConfigureMassTransit);
         }
 
         public static void AddIdentityStore(this IdentityBuilder builder)
@@ -49,6 +50,24 @@ namespace BookFast.Identity.Infrastructure
             // Note: call ReplaceDefaultEntities() to replace the default OpenIddict entities.
             builder.UseEntityFrameworkCore()
                 .UseDbContext<IdentityContext>();
+        }
+
+        private static void ConfigureMassTransit(IBusRegistrationConfigurator config)
+        {
+            config.AddEntityFrameworkOutbox<IdentityContext>(outboxOptions =>
+            {
+                outboxOptions.QueryDelay = TimeSpan.FromMinutes(1);
+
+                outboxOptions.UseSqlServer();
+                outboxOptions.UseBusOutbox(cfg =>
+                {
+                    //cfg.DisableDeliveryService();
+                });
+
+                //outboxOptions.DisableInboxCleanupService();
+            });
+
+            ConfigureConsumers(config);
         }
 
         private static void ConfigureConsumers(IBusRegistrationConfigurator config)

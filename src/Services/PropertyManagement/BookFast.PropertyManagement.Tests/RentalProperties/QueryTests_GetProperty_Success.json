@@ -1,0 +1,17 @@
+{
+  "id": "00000000-0000-0000-0000-000000010001",
+  "name": "Mountain Retreat",
+  "description": "A cozy mountain retreat",
+  "address": {
+    "country": "USA",
+    "state": "Colorado",
+    "city": "Denver",
+    "street": "123 Main St",
+    "zipCode": "80203"
+  },
+  "location": {
+    "longitude": -104.9903,
+    "latitude": 39.7392
+  },
+  "isActive": true
+}

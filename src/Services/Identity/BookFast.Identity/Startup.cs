@@ -5,6 +5,7 @@ using BookFast.Common.Api.Swagger;
 using BookFast.Common.Application;
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Presentation.Authorization;
+using BookFast.Common.Presentation.Endpoints;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure;
@@ -17,6 +18,7 @@ using OpenIddict.Validation.AspNetCore;
 using Quartz;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
+using static BookFast.Common.Api.Authentication.ConfigurationExtensions;
 
 namespace BookFast.Identity
 {
@@ -50,15 +52,13 @@ namespace BookFast.Identity
             services.AddIdentityInfrastructure(configuration);
 
             services
-                .AddControllersWithViews()
+                .AddControllersWithViews(options => options.Conventions.Add(new ApiPrefixConvention("api")))
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
 
             services.AddRazorPages();
-
-            services.AddScoped<TransactionHelper>();
 
             services.AddScoped<IEmailConfirmationSender, EmailConfirmationSender>();
 
@@ -229,6 +229,9 @@ namespace BookFast.Identity
 
                     // Register the ASP.NET Core host.
                     options.UseAspNetCore();
+
+                    var authSettings = configuration.GetAuthSettings("Authentication");
+                    options.AddAudiences(authSettings.Audiences ?? Array.Empty<string>());
                 });
 
             services.AddAuthorization(options => AuthorizationPolicies.Register(options, OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme));

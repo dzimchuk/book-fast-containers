@@ -3,7 +3,6 @@ using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
 using BookFast.Identity.Core.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Transactions;
 
 namespace BookFast.Identity.Core.Tenants.AddTenant
 {
@@ -15,10 +14,7 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
     {
         public async Task<Result<string>> Handle(AddTenantCommand request, CancellationToken cancellationToken)
         {
-            using (var scope = new TransactionScope(
-                    TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
-                    TransactionScopeAsyncFlowOption.Enabled))
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
                 var upperTenantName = request.Name?.ToUpperInvariant();
                 if (dbContext.Tenants.Any(t => t.Name.ToUpper() == upperTenantName))
@@ -34,7 +30,7 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
 
                 dbContext.Tenants.Add(tenant);
 
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.SaveChangesAsync(ct);
 
                 var user = new User
                 {
@@ -42,12 +38,12 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
                     TenantId = tenant.Id
                 };
 
-                await userStore.SetUserNameAsync(user, request.TenantAdmin, cancellationToken);
+                await userStore.SetUserNameAsync(user, request.TenantAdmin, ct);
 
                 var emailStore = userStore as IUserEmailStore<User>;
                 if (emailStore != null)
                 {
-                    await emailStore.SetEmailAsync(user, request.TenantAdmin, cancellationToken);
+                    await emailStore.SetEmailAsync(user, request.TenantAdmin, ct);
                 }
 
                 var result = await userManager.CreateAsync(user);
@@ -64,10 +60,8 @@ namespace BookFast.Identity.Core.Tenants.AddTenant
 
                 await confirmationSender.SendAsync(user);
 
-                scope.Complete();
-
                 return tenant.Id;
-            }
+            }, cancellationToken);
         }
     }
 }

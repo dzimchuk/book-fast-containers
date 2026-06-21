@@ -9,29 +9,34 @@ namespace BookFast.Common.TestInfrastructure
     {
         public static async Task ShouldBeEquivalentToFile(this HttpResponseMessage response,
             string caseName = null,
+            bool partial = false,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null)
         {
             var responseText = await response.Content.ReadAsStringAsync();
             var responsePayload = JsonNode.Parse(responseText);
 
-            ShouldBeEquivalentToFileInternal(responsePayload, memberName, sourceFilePath, caseName);
+            ShouldBeEquivalentToFileInternal(responsePayload, memberName, sourceFilePath, caseName, partial);
         }
 
         public static void ShouldBeEquivalentToFile(this JsonNode actual,
             string caseName = null,
+            bool partial = false,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null)
         {
-            ShouldBeEquivalentToFileInternal(actual, memberName, sourceFilePath, caseName);
+            ShouldBeEquivalentToFileInternal(actual, memberName, sourceFilePath, caseName, partial);
         }
 
-        private static void ShouldBeEquivalentToFileInternal(JsonNode actual, string memberName, string sourceFilePath, string caseName = null)
+        private static void ShouldBeEquivalentToFileInternal(JsonNode actual, string memberName, string sourceFilePath, string caseName = null, bool partial = false)
         {
             using (new AssertionScope(new CustomAssertionStrategy(() => WriteJson(actual, memberName, sourceFilePath, caseName))))
             {
                 var expected = ReadJson(memberName, sourceFilePath, caseName);
-                actual.Should().DeepEqualsWith(expected);
+                if (partial)
+                    actual.Should().PartiallyMatchesWith(expected);
+                else
+                    actual.Should().DeepEqualsWith(expected);
             }
         }
 
@@ -88,6 +93,39 @@ namespace BookFast.Common.TestInfrastructure
                 .FailWith("Actual JsonNode does not match expected JsonNode. \nActual:\n{0}\nExpected:\n{1}", Subject.ToString(), expected.ToString());
 
             return new AndConstraint<JsonNodeAssertions>(this);
+        }
+
+        [CustomAssertion]
+        public AndConstraint<JsonNodeAssertions> PartiallyMatchesWith(
+            JsonNode expected, string because = "", params object[] becauseArgs)
+        {
+            CurrentAssertionChain
+                .BecauseOf(because, becauseArgs)
+                .ForCondition(IsSubsetOf(Subject, expected))
+                .FailWith("Actual JsonNode does not contain all expected properties. \nActual:\n{0}\nExpected:\n{1}", Subject.ToString(), expected.ToString());
+
+            return new AndConstraint<JsonNodeAssertions>(this);
+        }
+
+        private static bool IsSubsetOf(JsonNode actual, JsonNode expected)
+        {
+            if (expected is JsonObject expectedObj)
+            {
+                if (actual is not JsonObject actualObj)
+                    return false;
+
+                foreach (var kvp in expectedObj)
+                {
+                    if (!actualObj.TryGetPropertyValue(kvp.Key, out var actualValue))
+                        return false;
+
+                    if (!IsSubsetOf(actualValue, kvp.Value))
+                        return false;
+                }
+                return true;
+            }
+
+            return JsonNode.DeepEquals(actual, expected);
         }
     }
 }

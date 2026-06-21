@@ -1,0 +1,16 @@
+{
+  "totalRecords": 2,
+  "totalPages": 2,
+  "pageNumber": 1,
+  "records": [
+    {
+      "id": "00000000-0000-0000-0000-000000010021",
+      "propertyId": "00000000-0000-0000-0000-000000010011",
+      "name": "Standard Room",
+      "roomCount": 1,
+      "quantity": 5,
+      "price": "100",
+      "isActive": true
+    }
+  ]
+}

@@ -3,9 +3,10 @@
 #nullable disable
 
 using BookFast.Common.Application.Integration;
+using BookFast.Common.SeedWork;
+using BookFast.Identity.Core;
 using BookFast.Identity.Core.Email;
 using BookFast.Identity.Core.Models;
-using BookFast.Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,15 +21,15 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
     {
         private readonly UserManager<User> userManager;
         private readonly IMailNotificationQueue notificationQueue;
-        private readonly TransactionHelper transactionHelper;
+        private readonly IDbContext dbContext;
 
         public ForgotPasswordModel(UserManager<User> userManager,
                                    IMailNotificationQueue notificationQueue,
-                                   TransactionHelper transactionHelper)
+                                   IDbContext dbContext)
         {
             this.userManager = userManager;
             this.notificationQueue = notificationQueue;
-            this.transactionHelper = transactionHelper;
+            this.dbContext = dbContext;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
 
         private async Task GenerateTokenAndSendEmailAsync(User user)
         {
-            using (var scope = transactionHelper.StartTransaction())
+            await dbContext.ExecuteInTransactionAsync(async ct =>
             {
                 // For more information on how to enable account confirmation and password reset please
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
@@ -77,10 +78,10 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
                     Model = new ResetPassword(callbackUrl)
                 };
 
-                await notificationQueue.EnqueueMessageAsync(message);
+                await notificationQueue.EnqueueMessageAsync(message, ct);
 
-                scope.Complete();
-            }
+                return Result.Success();
+            }, HttpContext.RequestAborted);
         }
 
         public async Task<IActionResult> OnPostAsync()

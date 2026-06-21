@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
+using Testcontainers.RabbitMq;
 
 namespace BookFast.Common.TestInfrastructure.IntegrationTest
 {
@@ -10,10 +11,14 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
     {
         protected readonly TestWebApplicationFactory<TProgram> factory;
 
-        private readonly MsSqlContainer dbContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        private readonly MsSqlContainer dbContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
             .WithPassword("P@ssw0rd")
             .WithEnvironment("MSSQL_PID", "Developer")
+            .Build();
+
+        private readonly RabbitMqContainer rabbitMqContainer = new RabbitMqBuilder("rabbitmq:management-alpine")
+            .WithUsername("guest")
+            .WithPassword("guest")
             .Build();
 
         public ApiFixture()
@@ -40,13 +45,16 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
         public virtual async Task InitializeAsync()
         {
             await dbContainer.StartAsync();
+            await rabbitMqContainer.StartAsync();
 
             Environment.SetEnvironmentVariable($"ConnectionStrings:Sql", dbContainer.GetConnectionString());
+            Environment.SetEnvironmentVariable($"ConnectionStrings:MessageBus", rabbitMqContainer.GetConnectionString());
         }
 
-        public async Task DisposeAsync()
+        public virtual async Task DisposeAsync()
         {
             await dbContainer.StopAsync();
+            await rabbitMqContainer.StopAsync();
         }
     }
 }

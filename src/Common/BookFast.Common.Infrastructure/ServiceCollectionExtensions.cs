@@ -23,6 +23,7 @@ namespace BookFast.Common.Infrastructure
             Action<IBusRegistrationConfigurator> configureServiceSpecifics)
         {
             services.TryAddTransient<IMailNotificationQueue, MailNotificationQueue>();
+            services.TryAddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
 
             services.AddMassTransit(config =>
             {

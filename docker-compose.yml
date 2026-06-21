@@ -26,6 +26,19 @@ services:
       - bookfast.telemetry-dashboard
       - bookfast.messaging
 
+  bookfast.search:
+    image: ${DOCKER_REGISTRY-}bookfast-search
+    container_name: search
+    build:
+      context: .
+      dockerfile: src/Services/Search/BookFast.Search/Dockerfile
+    ports:
+      - 5201:8081
+    depends_on:
+      - bookfast.database
+      - bookfast.telemetry-dashboard
+      - bookfast.messaging
+
   bookfast.database:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     container_name: database

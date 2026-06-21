@@ -1,7 +1,9 @@
+using BookFast.Common.Application.Integration;
 using BookFast.Common.Application.Messaging;
 using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
 using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation
@@ -10,11 +12,15 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
     {
         private readonly IDbContext dbContext;
         private readonly ISecurityContext securityContext;
+        private readonly IIntegrationEventPublisher eventPublisher;
 
-        public CreateAccommodationHandler(IDbContext dbContext, ISecurityContext securityContext)
+        public CreateAccommodationHandler(IDbContext dbContext,
+                                          ISecurityContext securityContext,
+                                          IIntegrationEventPublisher eventPublisher)
         {
             this.dbContext = dbContext;
             this.securityContext = securityContext;
+            this.eventPublisher = eventPublisher;
         }
 
         public async Task<Result<Guid>> Handle(CreateAccommodationCommand request, CancellationToken cancellationToken)
@@ -43,6 +49,19 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                 await dbContext.Accommodations.AddAsync(accommodation, ct);
 
                 await dbContext.SaveChangesAsync(ct);
+
+                await eventPublisher.PublishAsync(new AccommodationCreatedEvent
+                {
+                    TenantId = tenantId,
+                    AccommodationId = accommodation.Id,
+                    PropertyId = accommodation.PropertyId,
+                    Name = accommodation.Name,
+                    Description = accommodation.Description,
+                    RoomCount = accommodation.RoomCount,
+                    Images = accommodation.Images,
+                    Quantity = accommodation.Quantity,
+                    Price = accommodation.Price
+                }, ct);
 
                 return accommodation.Id;
             }, cancellationToken);

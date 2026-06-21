@@ -1,0 +1,6 @@
+@BookFast.Search_HostAddress = http://localhost:5106
+
+GET {{BookFast.Search_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

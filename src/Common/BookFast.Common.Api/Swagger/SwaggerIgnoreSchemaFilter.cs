@@ -8,6 +8,11 @@ namespace BookFast.Common.Api.Swagger
     {
         public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
         {
+            if (schema?.Properties == null || context?.Type == null)
+            {
+                return;
+            }
+
             var properties = context.Type.GetProperties();
             foreach (var property in properties)
             {

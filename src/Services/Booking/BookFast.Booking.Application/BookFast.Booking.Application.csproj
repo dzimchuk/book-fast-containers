@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\BookFast.Common.Application\BookFast.Common.Application.csproj" />
+    <ProjectReference Include="..\BookFast.Booking.Domain\BookFast.Booking.Domain.csproj" />
+  </ItemGroup>
+</Project>

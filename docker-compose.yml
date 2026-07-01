@@ -25,7 +25,7 @@ services:
       - bookfast.azurite
       - bookfast.telemetry-dashboard
       - bookfast.messaging
-
+      
   bookfast.search:
     image: ${DOCKER_REGISTRY-}bookfast-search
     container_name: search
@@ -35,7 +35,18 @@ services:
     ports:
       - 5201:8081
     depends_on:
-      - bookfast.database
+      - bookfast.telemetry-dashboard
+      - bookfast.messaging
+
+  bookfast.booking:
+    image: ${DOCKER_REGISTRY-}bookfast-booking
+    container_name: booking
+    build:
+      context: .
+      dockerfile: src/Services/Booking/BookFast.Booking/Dockerfile
+    ports:
+      - 5301:8081
+    depends_on:
       - bookfast.telemetry-dashboard
       - bookfast.messaging
 

@@ -12,7 +12,7 @@ namespace BookFast.Search.Indexer
 
         private static void ConfigureMassTransit(IBusRegistrationConfigurator config)
         {
-            var endpointNameFormatter = new KebabCaseEndpointNameFormatter(prefix: null, includeNamespace: false);
+            var endpointNameFormatter = new KebabCaseEndpointNameFormatter(prefix: "search", includeNamespace: false);
             config.SetEndpointNameFormatter(endpointNameFormatter);
 
             config.AddConsumer<AccommodationCreatedEventConsumer>();

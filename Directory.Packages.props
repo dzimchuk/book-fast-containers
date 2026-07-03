@@ -17,6 +17,7 @@
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageVersion Include="Fluid.Core" Version="2.31.0" />
     <PackageVersion Include="MassTransit" Version="9.1.2" />
+    <PackageVersion Include="MassTransit.Abstractions" Version="9.1.2" />
     <PackageVersion Include="MassTransit.EntityFrameworkCore" Version="9.1.2" />
     <PackageVersion Include="MassTransit.RabbitMQ" Version="9.1.2" />
     <PackageVersion Include="MediatR" Version="14.1.0" />

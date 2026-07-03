@@ -1,5 +1,8 @@
+using MassTransit;
+
 namespace BookFast.PropertyManagement.Integration
 {
+    [EntityName("accommodation-updated-event")]
     public record AccommodationUpdatedEvent
     {
         public string TenantId { get; init; }

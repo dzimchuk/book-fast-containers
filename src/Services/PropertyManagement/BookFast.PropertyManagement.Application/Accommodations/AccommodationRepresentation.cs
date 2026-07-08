@@ -28,10 +28,9 @@ namespace BookFast.PropertyManagement.Application.Accommodations
         public string Description { get; set; }
 
         /// <summary>
-        /// Number of rooms
+        /// Number of bedrooms
         /// </summary>
-        [Required]
-        public int RoomCount { get; set; }
+        public int? Bedrooms { get; set; }
 
         /// <summary>
         /// Accommodation images
@@ -45,10 +44,9 @@ namespace BookFast.PropertyManagement.Application.Accommodations
         public int Quantity { get; set; }
 
         /// <summary>
-        /// Price
+        /// Price range
         /// </summary>
-        [Required]
-        public decimal Price { get; set; }
+        public PriceRangeRepresentation PriceRange { get; set; }
 
         public bool IsActive { get; set; }
     }

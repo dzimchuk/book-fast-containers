@@ -3,6 +3,5 @@
   "title": "General.Validation",
   "status": 400,
   "detail": "One or more validation errors occurred",
-  "NotEmptyValidator": "'Name' must not be empty.",
-  "GreaterThanOrEqualValidator": "'Quantity' must be greater than or equal to '1'."
+  "PriceRangeIncoherentBounds": "'Min Price' must not be greater than 'Max Price'."
 }

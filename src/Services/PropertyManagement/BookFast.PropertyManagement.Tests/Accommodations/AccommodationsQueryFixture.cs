@@ -1,4 +1,5 @@
 using BookFast.Common.Application.Security;
+using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Domain;
 using BookFast.PropertyManagement.Infrastructure.Database;
@@ -49,10 +50,10 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
-            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, 100m);
+            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
             accommodation1.Id = Accommodation1Id;
 
-            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, 250.5m);
+            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, new PriceRange(new Money(250.5m, "USD"), new Money(250.5m, "USD")));
             accommodation2.Id = Accommodation2Id;
 
             dbContext.Accommodations.AddRange(accommodation1, accommodation2);

@@ -8,9 +8,9 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
         {
             RuleFor(cmd => cmd.Name).NotEmpty().Length(3, 100);
             RuleFor(cmd => cmd.Description).MaximumLength(1000);
-            RuleFor(cmd => cmd.RoomCount).GreaterThanOrEqualTo(1).LessThanOrEqualTo(20);
+            RuleFor(cmd => cmd.Bedrooms).GreaterThanOrEqualTo(1).When(cmd => cmd.Bedrooms.HasValue);
             RuleFor(cmd => cmd.Quantity).GreaterThanOrEqualTo(1);
-            RuleFor(cmd => cmd.Price).GreaterThanOrEqualTo(decimal.Zero);
+            RuleFor(cmd => cmd.PriceRange).SetValidator(new PriceRangeValidator()).When(cmd => cmd.PriceRange is not null);
         }
     }
 }

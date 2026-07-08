@@ -25,7 +25,30 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
 
             builder.Property(accommodation => accommodation.Images).IsRequired(false).HasConversion(converter);
 
-            builder.Property(accommodation => accommodation.RoomCount).IsRequired(true);
+            builder.Property(accommodation => accommodation.Bedrooms).IsRequired(false);
+            builder.Property(accommodation => accommodation.Quantity).IsRequired(true);
+
+            builder.OwnsOne(accommodation => accommodation.PriceRange, priceRangeBuilder =>
+            {
+                priceRangeBuilder.OwnsOne(range => range.MinPrice, moneyBuilder =>
+                {
+                    moneyBuilder.Property(money => money.Amount).HasColumnName("min_price_amount");
+                    moneyBuilder.Property(money => money.Currency).HasMaxLength(3).HasColumnName("min_price_currency");
+
+                    moneyBuilder.WithOwner();
+                });
+
+                priceRangeBuilder.OwnsOne(range => range.MaxPrice, moneyBuilder =>
+                {
+                    moneyBuilder.Property(money => money.Amount).HasColumnName("max_price_amount");
+                    moneyBuilder.Property(money => money.Currency).HasMaxLength(3).HasColumnName("max_price_currency");
+
+                    moneyBuilder.WithOwner();
+                });
+
+                priceRangeBuilder.WithOwner();
+            });
+            builder.Navigation(accommodation => accommodation.PriceRange).IsRequired(true); // necessary as MinPrice/MaxPrice are independently optional
 
             builder.HasOne<Property>()
                 .WithMany()

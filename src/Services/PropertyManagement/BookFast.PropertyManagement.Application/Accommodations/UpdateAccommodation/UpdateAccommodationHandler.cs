@@ -37,10 +37,10 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
                 accommodation.Update(
                     request.Name,
                     request.Description,
-                    request.RoomCount,
+                    request.Bedrooms,
                     request.Images,
                     request.Quantity,
-                    request.Price);
+                    request.PriceRange);
 
                 await dbContext.SaveChangesAsync(ct);
 
@@ -51,10 +51,10 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
                     PropertyId = accommodation.PropertyId,
                     Name = accommodation.Name,
                     Description = accommodation.Description,
-                    RoomCount = accommodation.RoomCount,
+                    Bedrooms = accommodation.Bedrooms,
                     Images = accommodation.Images,
                     Quantity = accommodation.Quantity,
-                    Price = accommodation.Price
+                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange
                 }, ct);
 
                 return Result.Success();

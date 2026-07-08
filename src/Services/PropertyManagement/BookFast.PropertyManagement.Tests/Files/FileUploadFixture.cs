@@ -1,4 +1,5 @@
 using BookFast.Common.Application.Security;
+using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Domain;
 using BookFast.PropertyManagement.Infrastructure.Database;
@@ -58,7 +59,7 @@ namespace BookFast.PropertyManagement.Tests.Files
                 1,
                 null,
                 5,
-                100m);
+                new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
             accommodation.Id = Guid.CreateVersion7();
 
             dbContext.Accommodations.Add(accommodation);

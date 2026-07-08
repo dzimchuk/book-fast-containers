@@ -5,9 +5,18 @@
       "id": "00000000-0000-0000-0000-000000010021",
       "propertyId": "00000000-0000-0000-0000-000000010011",
       "name": "Standard Room",
-      "roomCount": 1,
+      "bedrooms": 1,
       "quantity": 5,
-      "price": "100",
+      "priceRange": {
+        "minPrice": {
+          "amount": "100",
+          "currency": "USD"
+        },
+        "maxPrice": {
+          "amount": "100",
+          "currency": "USD"
+        }
+      },
       "isActive": true
     },
     {
@@ -15,9 +24,18 @@
       "propertyId": "00000000-0000-0000-0000-000000010011",
       "name": "Suite",
       "description": "Luxury suite with ocean view",
-      "roomCount": 3,
+      "bedrooms": 3,
       "quantity": 2,
-      "price": "250.5",
+      "priceRange": {
+        "minPrice": {
+          "amount": "250.5",
+          "currency": "USD"
+        },
+        "maxPrice": {
+          "amount": "250.5",
+          "currency": "USD"
+        }
+      },
       "isActive": true
     }
   ]

@@ -1,3 +1,4 @@
+using BookFast.Common.Domain;
 using MassTransit;
 
 namespace BookFast.PropertyManagement.Integration
@@ -11,10 +12,10 @@ namespace BookFast.PropertyManagement.Integration
 
         public string Name { get; init; }
         public string Description { get; init; }
-        public int RoomCount { get; init; }
+        public int? Bedrooms { get; init; }
         public string[] Images { get; init; }
 
         public int Quantity { get; init; }
-        public decimal Price { get; init; }
+        public PriceRange PriceRange { get; init; }
     }
 }

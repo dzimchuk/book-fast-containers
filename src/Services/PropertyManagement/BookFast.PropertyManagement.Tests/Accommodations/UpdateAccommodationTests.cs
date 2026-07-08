@@ -1,3 +1,4 @@
+using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure;
 using BookFast.PropertyManagement.Application.Accommodations.UpdateAccommodation;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,22 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         public static IEnumerable<object[]> ValidationData =>
         [
             ["EmptyParameters", new UpdateAccommodationCommand()],
-            ["NameTooShort", new UpdateAccommodationCommand { Name = "ab", RoomCount = 1, Quantity = 1 }]
+            ["NameTooShort", new UpdateAccommodationCommand { Name = "ab", Bedrooms = 1, Quantity = 1 }],
+            ["MinPriceGreaterThanMaxPrice", new UpdateAccommodationCommand
+            {
+                Name = "Standard Room", Quantity = 1,
+                PriceRange = new PriceRange(new Money(200m, "USD"), new Money(100m, "USD"))
+            }],
+            ["PriceRangeCurrencyMismatch", new UpdateAccommodationCommand
+            {
+                Name = "Standard Room", Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "EUR"))
+            }],
+            ["InvalidCurrency", new UpdateAccommodationCommand
+            {
+                Name = "Standard Room", Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "ZZZ"), null)
+            }]
         ];
 
         [Theory, MemberData(nameof(ValidationData))]
@@ -28,7 +44,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task AccommodationNotFound()
         {
-            var command = new UpdateAccommodationCommand { Name = "Updated Room", RoomCount = 1, Quantity = 1 };
+            var command = new UpdateAccommodationCommand { Name = "Updated Room", Bedrooms = 1, Quantity = 1 };
 
             var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{Guid.Empty}", command);
 
@@ -44,9 +60,9 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             {
                 Name = "Updated Room",
                 Description = "Updated description",
-                RoomCount = 2,
+                Bedrooms = 2,
                 Quantity = 4,
-                Price = 150m
+                PriceRange = new PriceRange(new Money(150m, "USD"), null)
             };
 
             var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
@@ -59,8 +75,54 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.NotNull(accommodation);
             Assert.Equal("Updated Room", accommodation.Name);
             Assert.Equal("Updated description", accommodation.Description);
-            Assert.Equal(2, accommodation.RoomCount);
+            Assert.Equal(2, accommodation.Bedrooms);
             Assert.Equal(4, accommodation.Quantity);
+            Assert.Equal(150m, accommodation.PriceRange.MinPrice.Amount);
+            Assert.Null(accommodation.PriceRange.MaxPrice);
+        }
+
+        [Fact]
+        public async Task NoPriceRange_Success()
+        {
+            var command = new UpdateAccommodationCommand
+            {
+                Name = "No Range Room",
+                Bedrooms = 1,
+                Quantity = 1
+            };
+
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+
+            Assert.NotNull(accommodation);
+            Assert.True(accommodation.PriceRange.IsEmpty);
+        }
+
+        [Fact]
+        public async Task OnlyMaxPrice_Success()
+        {
+            var command = new UpdateAccommodationCommand
+            {
+                Name = "Max Only Room",
+                Bedrooms = 1,
+                Quantity = 1,
+                PriceRange = new PriceRange(null, new Money(300m, "USD"))
+            };
+
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+
+            Assert.NotNull(accommodation);
+            Assert.Null(accommodation.PriceRange.MinPrice);
+            Assert.Equal(300m, accommodation.PriceRange.MaxPrice.Amount);
         }
     }
 }

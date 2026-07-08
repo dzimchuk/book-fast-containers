@@ -3,6 +3,5 @@
   "title": "General.Validation",
   "status": 400,
   "detail": "One or more validation errors occurred",
-  "NotEmptyValidator": "'Name' must not be empty.",
-  "GreaterThanOrEqualValidator": "'Quantity' must be greater than or equal to '1'."
+  "InvalidCurrency": "'Currency' is not a valid ISO 4217 currency code."
 }

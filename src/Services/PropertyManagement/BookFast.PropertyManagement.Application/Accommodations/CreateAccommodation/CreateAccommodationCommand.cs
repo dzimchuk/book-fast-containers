@@ -1,4 +1,5 @@
 using BookFast.Common.Application.Messaging;
+using BookFast.Common.Domain;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation
 {
@@ -11,11 +12,11 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
 
         public string Description { get; set; }
 
-        public int RoomCount { get; set; }
+        public int? Bedrooms { get; set; }
 
         public string[] Images { get; set; }
 
         public int Quantity { get; set; }
-        public decimal Price { get; set; }
+        public PriceRange PriceRange { get; set; }
     }
 }

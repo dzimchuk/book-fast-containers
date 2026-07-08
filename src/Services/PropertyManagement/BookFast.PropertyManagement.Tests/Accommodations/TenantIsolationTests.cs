@@ -1,4 +1,5 @@
 using BookFast.Common.Application.Security;
+using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation;
@@ -64,7 +65,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 1,
                 null,
                 5,
-                100m);
+                new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
 
             accommodation.Id = Guid.CreateVersion7();
             dbContext.Accommodations.Add(accommodation);
@@ -79,9 +80,9 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             var command = new CreateAccommodationCommand
             {
                 Name = "Hijacked Room",
-                RoomCount = 1,
+                Bedrooms = 1,
                 Quantity = 1,
-                Price = 50m
+                PriceRange = new PriceRange(new Money(50m, "USD"), new Money(50m, "USD"))
             };
 
             var response = await httpClient.PostAsJsonAsync($"/api/properties/{propertyId}/accommodations", command);
@@ -105,9 +106,9 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             var command = new UpdateAccommodationCommand
             {
                 Name = "Hijacked",
-                RoomCount = 1,
+                Bedrooms = 1,
                 Quantity = 1,
-                Price = 50m
+                PriceRange = new PriceRange(new Money(50m, "USD"), new Money(50m, "USD"))
             };
 
             var response = await httpClient.PutAsJsonAsync($"/api/properties/{propertyId}/accommodations/{accommodationId}", command);

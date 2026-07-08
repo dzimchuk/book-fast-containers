@@ -11,11 +11,11 @@ namespace BookFast.PropertyManagement.Domain
         public string Name { get; private set; }
         public string Description { get; private set; }
 
-        public int RoomCount { get; private set; }
+        public int? Bedrooms { get; private set; }
         public string[] Images { get; private set; }
 
         public int Quantity { get; private set; }
-        public decimal Price { get; private set; }
+        public PriceRange PriceRange { get; private set; }
 
         public bool IsActive { get; private set; }
 
@@ -24,10 +24,10 @@ namespace BookFast.PropertyManagement.Domain
             Guid propertyId,
             string name,
             string description,
-            int roomCount,
+            int? bedrooms,
             string[] images,
             int quantity,
-            decimal price)
+            PriceRange priceRange)
         {
             var accommodation = new Accommodation
             {
@@ -35,10 +35,10 @@ namespace BookFast.PropertyManagement.Domain
                 PropertyId = propertyId,
                 Name = name ?? throw new ArgumentNullException(nameof(name)),
                 Description = description,
-                RoomCount = roomCount,
+                Bedrooms = bedrooms,
                 Images = ImagePathHelper.CleanUp(images),
                 Quantity = quantity,
-                Price = price,
+                PriceRange = new PriceRange(priceRange?.MinPrice, priceRange?.MaxPrice),
                 IsActive = true
             };
 
@@ -48,17 +48,17 @@ namespace BookFast.PropertyManagement.Domain
         public void Update(
             string name,
             string description,
-            int roomCount,
+            int? bedrooms,
             string[] images,
             int quantity,
-            decimal price)
+            PriceRange priceRange)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Description = description;
-            RoomCount = roomCount;
+            Bedrooms = bedrooms;
             Images = ImagePathHelper.Merge(Images, images);
             Quantity = quantity;
-            Price = price;
+            PriceRange = new PriceRange(priceRange?.MinPrice, priceRange?.MaxPrice);
         }
 
         public void Deactivate()

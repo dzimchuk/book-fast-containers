@@ -32,10 +32,10 @@ namespace BookFast.PropertyManagement.Application.Accommodations.GetAccommodatio
                 PropertyId = accommodation.PropertyId,
                 Name = accommodation.Name,
                 Description = accommodation.Description,
-                RoomCount = accommodation.RoomCount,
+                Bedrooms = accommodation.Bedrooms,
                 Images = accommodation.Images,
                 Quantity = accommodation.Quantity,
-                Price = accommodation.Price,
+                PriceRange = PriceRangeRepresentation.Map(accommodation.PriceRange),
                 IsActive = accommodation.IsActive
             };
         }

@@ -1,4 +1,5 @@
 ﻿using BookFast.Common.Application.Security;
+using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application;
 using BookFast.PropertyManagement.Domain;
@@ -85,7 +86,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Property2Id = property2.Id;
             PropertyWithAccommodationId = propertyWithAccommodation.Id;
 
-            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, 100m);
+            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
             accommodation.Id = Guid.CreateVersion7();
 
             dbContext.Accommodations.Add(accommodation);

@@ -27,7 +27,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
         {
             var tenantId = securityContext.GetCurrentTenant();
 
-            if (!await dbContext.Properties.AnyAsync(facility => facility.Id == request.PropertyId && facility.TenantId == tenantId, cancellationToken: cancellationToken))
+            if (!await dbContext.Properties.AnyAsync(property => property.Id == request.PropertyId && property.TenantId == tenantId, cancellationToken: cancellationToken))
             {
                 return Result.Failure<Guid>(ErrorCodes.PropertyNotFound(request.PropertyId));
             }
@@ -39,10 +39,10 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                     request.PropertyId,
                     request.Name,
                     request.Description,
-                    request.RoomCount,
+                    request.Bedrooms,
                     request.Images,
                     request.Quantity,
-                    request.Price);
+                    request.PriceRange);
 
                 accommodation.Id = Guid.CreateVersion7();
 
@@ -57,10 +57,10 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                     PropertyId = accommodation.PropertyId,
                     Name = accommodation.Name,
                     Description = accommodation.Description,
-                    RoomCount = accommodation.RoomCount,
+                    Bedrooms = accommodation.Bedrooms,
                     Images = accommodation.Images,
                     Quantity = accommodation.Quantity,
-                    Price = accommodation.Price
+                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange
                 }, ct);
 
                 return accommodation.Id;

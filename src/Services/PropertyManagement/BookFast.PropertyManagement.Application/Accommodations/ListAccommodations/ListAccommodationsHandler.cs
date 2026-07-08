@@ -31,10 +31,22 @@ namespace BookFast.PropertyManagement.Application.Accommodations.ListAccommodati
                             PropertyId = item.PropertyId,
                             Name = item.Name,
                             Description = item.Description,
-                            RoomCount = item.RoomCount,
+                            Bedrooms = item.Bedrooms,
                             Images = item.Images,
                             Quantity = item.Quantity,
-                            Price = item.Price,
+                            PriceRange = item.PriceRange.MinPrice == null && item.PriceRange.MaxPrice == null ? null : new PriceRangeRepresentation
+                            {
+                                MinPrice = item.PriceRange.MinPrice == null ? null : new MoneyRepresentation
+                                {
+                                    Amount = item.PriceRange.MinPrice.Amount,
+                                    Currency = item.PriceRange.MinPrice.Currency
+                                },
+                                MaxPrice = item.PriceRange.MaxPrice == null ? null : new MoneyRepresentation
+                                {
+                                    Amount = item.PriceRange.MaxPrice.Amount,
+                                    Currency = item.PriceRange.MaxPrice.Currency
+                                }
+                            },
                             IsActive = item.IsActive
                         };
 

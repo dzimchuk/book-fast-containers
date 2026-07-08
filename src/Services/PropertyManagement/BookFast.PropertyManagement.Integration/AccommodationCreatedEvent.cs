@@ -17,5 +17,7 @@ namespace BookFast.PropertyManagement.Integration
 
         public int Quantity { get; init; }
         public PriceRange PriceRange { get; init; }
+
+        public string[] Facilities { get; init; }
     }
 }

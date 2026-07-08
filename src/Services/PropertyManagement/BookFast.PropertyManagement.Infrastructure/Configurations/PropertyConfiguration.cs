@@ -46,6 +46,12 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
                 json => json.ToStringArray());
 
             builder.Property(prop => prop.Images).IsRequired(false).HasConversion(converter);
+
+            var facilitiesConverter = new ValueConverter<Facility[], string>(
+                facilities => facilities.ToJson(),
+                json => json.ToFacilityArray());
+
+            builder.Property(prop => prop.Facilities).IsRequired(true).HasConversion(facilitiesConverter);
         }
     }
 }

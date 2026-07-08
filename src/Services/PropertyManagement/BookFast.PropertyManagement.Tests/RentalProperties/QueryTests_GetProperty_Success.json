@@ -13,5 +13,9 @@
     "longitude": -104.9903,
     "latitude": 39.7392
   },
+  "facilities": [
+    "Parking",
+    "WiFi"
+  ],
   "isActive": true
 }

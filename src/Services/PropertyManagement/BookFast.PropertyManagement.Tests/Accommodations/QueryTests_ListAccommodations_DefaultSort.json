@@ -17,6 +17,9 @@
           "currency": "USD"
         }
       },
+      "facilities": [
+        "WiFi"
+      ],
       "isActive": true
     },
     {
@@ -36,6 +39,10 @@
           "currency": "USD"
         }
       },
+      "facilities": [
+        "WiFi",
+        "Refrigerator"
+      ],
       "isActive": true
     }
   ]

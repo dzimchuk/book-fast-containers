@@ -49,6 +49,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "A cozy mountain retreat",
                 new Address("USA", "Colorado", "Denver", "123 Main St", "80203"),
                 new Location(39.7392, -104.9903),
+                null,
                 null);
             property1.Id = Guid.CreateVersion7();
 
@@ -58,6 +59,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "Beautiful beachfront property",
                 new Address("USA", "California", "Santa Monica", "456 Ocean Ave", "90401"),
                 new Location(34.0195, -118.4912),
+                null,
                 null);
             property2.Id = Guid.CreateVersion7();
 
@@ -67,6 +69,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "Modern city apartment",
                 new Address("USA", "New York", "New York", "789 Park Ave", "10021"),
                 new Location(40.7128, -74.0060),
+                null,
                 null);
             propertyWithAccommodation.Id = Guid.CreateVersion7();
 
@@ -76,6 +79,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 null,
                 new Address("UK", "England", "London", "10 Downing St", "SW1A 2AA"),
                 new Location(51.5074, -0.1278),
+                null,
                 null);
             tenant2Property.Id = Guid.CreateVersion7();
 
@@ -86,7 +90,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Property2Id = property2.Id;
             PropertyWithAccommodationId = propertyWithAccommodation.Id;
 
-            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
+            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyWithAccommodationId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")), null);
             accommodation.Id = Guid.CreateVersion7();
 
             dbContext.Accommodations.Add(accommodation);

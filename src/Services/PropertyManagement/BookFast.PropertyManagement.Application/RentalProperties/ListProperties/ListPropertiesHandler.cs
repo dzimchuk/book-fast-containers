@@ -43,6 +43,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.ListPropertie
                                 Longitude = item.Location.Longitude
                             },
                             Images = item.Images,
+                            Facilities = item.Facilities,
                             IsActive = item.IsActive
                         };
 

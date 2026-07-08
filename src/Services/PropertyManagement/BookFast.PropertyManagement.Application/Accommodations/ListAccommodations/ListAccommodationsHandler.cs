@@ -47,6 +47,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.ListAccommodati
                                     Currency = item.PriceRange.MaxPrice.Currency
                                 }
                             },
+                            Facilities = item.Facilities,
                             IsActive = item.IsActive
                         };
 

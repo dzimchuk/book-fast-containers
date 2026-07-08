@@ -42,7 +42,8 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                     request.Bedrooms,
                     request.Images,
                     request.Quantity,
-                    request.PriceRange);
+                    request.PriceRange,
+                    request.Facilities);
 
                 accommodation.Id = Guid.CreateVersion7();
 
@@ -60,7 +61,8 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
                     Bedrooms = accommodation.Bedrooms,
                     Images = accommodation.Images,
                     Quantity = accommodation.Quantity,
-                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange
+                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange,
+                    Facilities = accommodation.Facilities.Select(facility => facility.ToString()).ToArray()
                 }, ct);
 
                 return accommodation.Id;

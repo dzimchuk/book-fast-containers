@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookFast.PropertyManagement.Domain;
 
 namespace BookFast.PropertyManagement.Application.RentalProperties
 {
@@ -36,6 +37,11 @@ namespace BookFast.PropertyManagement.Application.RentalProperties
         /// Property images
         /// </summary>
         public string[] Images { get; set; }
+
+        /// <summary>
+        /// Facilities
+        /// </summary>
+        public Facility[] Facilities { get; set; }
 
         public bool IsActive { get; set; }
     }

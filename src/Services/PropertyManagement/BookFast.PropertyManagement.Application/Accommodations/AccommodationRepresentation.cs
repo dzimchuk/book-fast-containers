@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using BookFast.PropertyManagement.Domain;
 
 namespace BookFast.PropertyManagement.Application.Accommodations
 {
@@ -47,6 +48,11 @@ namespace BookFast.PropertyManagement.Application.Accommodations
         /// Price range
         /// </summary>
         public PriceRangeRepresentation PriceRange { get; set; }
+
+        /// <summary>
+        /// Facilities
+        /// </summary>
+        public Facility[] Facilities { get; set; }
 
         public bool IsActive { get; set; }
     }

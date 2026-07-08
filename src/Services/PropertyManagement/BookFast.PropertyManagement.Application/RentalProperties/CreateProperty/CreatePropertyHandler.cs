@@ -25,7 +25,8 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.CreatePropert
                 request.Description,
                 request.Address,
                 request.Location,
-                request.Images);
+                request.Images,
+                request.Facilities);
 
             property.Id = Guid.CreateVersion7();
 

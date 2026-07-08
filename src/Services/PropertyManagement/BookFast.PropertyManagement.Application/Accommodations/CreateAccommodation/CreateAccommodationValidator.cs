@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using BookFast.PropertyManagement.Domain;
+using FluentValidation;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation
 {
@@ -11,6 +12,12 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
             RuleFor(cmd => cmd.Bedrooms).GreaterThanOrEqualTo(1).When(cmd => cmd.Bedrooms.HasValue);
             RuleFor(cmd => cmd.Quantity).GreaterThanOrEqualTo(1);
             RuleFor(cmd => cmd.PriceRange).SetValidator(new PriceRangeValidator()).When(cmd => cmd.PriceRange is not null);
+
+            RuleForEach(cmd => cmd.Facilities)
+                .Must(facility => facility.AppliesToAccommodation())
+                .WithErrorCode("FacilityNotAccommodationScoped")
+                .WithMessage("'{PropertyValue}' is not a valid facility for an accommodation.")
+                .When(cmd => cmd.Facilities is not null);
         }
     }
 }

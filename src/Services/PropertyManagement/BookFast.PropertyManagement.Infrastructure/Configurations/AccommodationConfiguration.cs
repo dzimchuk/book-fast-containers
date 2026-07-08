@@ -28,6 +28,12 @@ namespace BookFast.PropertyManagement.Infrastructure.Configurations
             builder.Property(accommodation => accommodation.Bedrooms).IsRequired(false);
             builder.Property(accommodation => accommodation.Quantity).IsRequired(true);
 
+            var facilitiesConverter = new ValueConverter<Facility[], string>(
+                facilities => facilities.ToJson(),
+                json => json.ToFacilityArray());
+
+            builder.Property(accommodation => accommodation.Facilities).IsRequired(true).HasConversion(facilitiesConverter);
+
             builder.OwnsOne(accommodation => accommodation.PriceRange, priceRangeBuilder =>
             {
                 priceRangeBuilder.OwnsOne(range => range.MinPrice, moneyBuilder =>

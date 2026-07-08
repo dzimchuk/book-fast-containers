@@ -18,6 +18,9 @@
         "longitude": -118.4912,
         "latitude": 34.0195
       },
+      "facilities": [
+        "Pool"
+      ],
       "isActive": true
     },
     {
@@ -35,6 +38,7 @@
         "longitude": -74.006,
         "latitude": 40.7128
       },
+      "facilities": [],
       "isActive": true
     }
   ]

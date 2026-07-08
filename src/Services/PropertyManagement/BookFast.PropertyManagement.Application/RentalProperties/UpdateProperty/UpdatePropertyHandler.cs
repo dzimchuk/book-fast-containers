@@ -31,7 +31,8 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.UpdatePropert
                 request.Description,
                 request.Address,
                 request.Location,
-                request.Images);
+                request.Images,
+                request.Facilities);
 
             await dbContext.SaveChangesAsync(cancellationToken);
 

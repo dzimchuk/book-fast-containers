@@ -28,6 +28,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.GetProperty
                                       item.Address,
                                       item.Location,
                                       item.Images,
+                                      item.Facilities,
                                       item.IsActive
                                   }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -44,6 +45,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.GetProperty
                 Address = AddressRepresentation.Map(property.Address),
                 Location = LocationRepresentation.Map(property.Location),
                 Images = property.Images,
+                Facilities = property.Facilities,
                 IsActive = property.IsActive
             };
         }

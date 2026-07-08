@@ -36,6 +36,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.GetAccommodatio
                 Images = accommodation.Images,
                 Quantity = accommodation.Quantity,
                 PriceRange = PriceRangeRepresentation.Map(accommodation.PriceRange),
+                Facilities = accommodation.Facilities,
                 IsActive = accommodation.IsActive
             };
         }

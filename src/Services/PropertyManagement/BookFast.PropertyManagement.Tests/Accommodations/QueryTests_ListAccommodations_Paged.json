@@ -19,6 +19,9 @@
           "currency": "USD"
         }
       },
+      "facilities": [
+        "WiFi"
+      ],
       "isActive": true
     }
   ]

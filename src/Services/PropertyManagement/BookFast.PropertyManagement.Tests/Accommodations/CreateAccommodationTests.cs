@@ -2,6 +2,7 @@ using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation;
+using BookFast.PropertyManagement.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
@@ -32,6 +33,11 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             {
                 Name = "Standard Room", Quantity = 1,
                 PriceRange = new PriceRange(new Money(100m, "ZZZ"), null)
+            }],
+            ["FacilityNotAccommodationScoped", new CreateAccommodationCommand
+            {
+                Name = "Standard Room", Quantity = 1,
+                Facilities = [Facility.Parking]
             }]
         ];
 
@@ -163,6 +169,28 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.NotNull(accommodation);
             Assert.Null(accommodation.PriceRange.MinPrice);
             Assert.Equal(300m, accommodation.PriceRange.MaxPrice.Amount);
+        }
+
+        [Fact]
+        public async Task Facilities_Success()
+        {
+            var command = new CreateAccommodationCommand
+            {
+                Name = "Family Suite",
+                Quantity = 1,
+                Facilities = [Facility.WiFi, Facility.Refrigerator]
+            };
+
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
+            newAccommodationId = Guid.Parse(match.Groups["id"].Value);
+
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            Assert.NotNull(accommodation);
+            Assert.Equal([Facility.WiFi, Facility.Refrigerator], accommodation.Facilities);
         }
 
         public Task InitializeAsync() => Task.CompletedTask;

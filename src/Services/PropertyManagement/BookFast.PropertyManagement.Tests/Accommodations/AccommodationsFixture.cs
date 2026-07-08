@@ -46,6 +46,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 "A property for accommodation tests",
                 new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
                 new Location(30.2672, -97.7431),
+                null,
                 null);
 
             property.Id = Guid.CreateVersion7();
@@ -55,7 +56,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
 
             PropertyId = property.Id;
 
-            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
+            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")), null);
             accommodation.Id = Guid.CreateVersion7();
             
             dbContext.Accommodations.Add(accommodation);

@@ -17,6 +17,8 @@ namespace BookFast.PropertyManagement.Domain
         public int Quantity { get; private set; }
         public PriceRange PriceRange { get; private set; }
 
+        public Facility[] Facilities { get; private set; }
+
         public bool IsActive { get; private set; }
 
         public static Accommodation NewAccommodation(
@@ -27,7 +29,8 @@ namespace BookFast.PropertyManagement.Domain
             int? bedrooms,
             string[] images,
             int quantity,
-            PriceRange priceRange)
+            PriceRange priceRange,
+            Facility[] facilities)
         {
             var accommodation = new Accommodation
             {
@@ -39,6 +42,7 @@ namespace BookFast.PropertyManagement.Domain
                 Images = ImagePathHelper.CleanUp(images),
                 Quantity = quantity,
                 PriceRange = new PriceRange(priceRange?.MinPrice, priceRange?.MaxPrice),
+                Facilities = facilities?.Distinct().ToArray() ?? [],
                 IsActive = true
             };
 
@@ -51,7 +55,8 @@ namespace BookFast.PropertyManagement.Domain
             int? bedrooms,
             string[] images,
             int quantity,
-            PriceRange priceRange)
+            PriceRange priceRange,
+            Facility[] facilities)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Description = description;
@@ -59,6 +64,7 @@ namespace BookFast.PropertyManagement.Domain
             Images = ImagePathHelper.Merge(Images, images);
             Quantity = quantity;
             PriceRange = new PriceRange(priceRange?.MinPrice, priceRange?.MaxPrice);
+            Facilities = facilities?.Distinct().ToArray() ?? [];
         }
 
         public void Deactivate()

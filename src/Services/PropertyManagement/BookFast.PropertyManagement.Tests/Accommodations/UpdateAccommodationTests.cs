@@ -1,6 +1,7 @@
 using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure;
 using BookFast.PropertyManagement.Application.Accommodations.UpdateAccommodation;
+using BookFast.PropertyManagement.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
@@ -28,6 +29,11 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             {
                 Name = "Standard Room", Quantity = 1,
                 PriceRange = new PriceRange(new Money(100m, "ZZZ"), null)
+            }],
+            ["FacilityNotAccommodationScoped", new UpdateAccommodationCommand
+            {
+                Name = "Standard Room", Quantity = 1,
+                Facilities = [Facility.Parking]
             }]
         ];
 
@@ -123,6 +129,28 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.NotNull(accommodation);
             Assert.Null(accommodation.PriceRange.MinPrice);
             Assert.Equal(300m, accommodation.PriceRange.MaxPrice.Amount);
+        }
+
+        [Fact]
+        public async Task Facilities_Success()
+        {
+            var command = new UpdateAccommodationCommand
+            {
+                Name = "Updated Facilities Room",
+                Bedrooms = 1,
+                Quantity = 1,
+                Facilities = [Facility.WiFi, Facility.Refrigerator]
+            };
+
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+
+            Assert.NotNull(accommodation);
+            Assert.Equal([Facility.WiFi, Facility.Refrigerator], accommodation.Facilities);
         }
     }
 }

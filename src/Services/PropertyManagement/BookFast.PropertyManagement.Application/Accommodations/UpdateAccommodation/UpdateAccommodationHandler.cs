@@ -40,7 +40,8 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
                     request.Bedrooms,
                     request.Images,
                     request.Quantity,
-                    request.PriceRange);
+                    request.PriceRange,
+                    request.Facilities);
 
                 await dbContext.SaveChangesAsync(ct);
 
@@ -54,7 +55,8 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
                     Bedrooms = accommodation.Bedrooms,
                     Images = accommodation.Images,
                     Quantity = accommodation.Quantity,
-                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange
+                    PriceRange = accommodation.PriceRange.IsEmpty ? null : accommodation.PriceRange,
+                    Facilities = accommodation.Facilities.Select(facility => facility.ToString()).ToArray()
                 }, ct);
 
                 return Result.Success();

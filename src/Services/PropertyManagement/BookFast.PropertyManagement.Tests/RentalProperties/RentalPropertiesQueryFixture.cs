@@ -45,7 +45,8 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "A cozy mountain retreat",
                 new Address("USA", "Colorado", "Denver", "123 Main St", "80203"),
                 new Location(39.7392, -104.9903),
-                null);
+                null,
+                [Facility.Parking, Facility.WiFi]);
             property1.Id = Property1Id;
 
             var property2 = Property.NewProperty(
@@ -54,7 +55,8 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "Beautiful beachfront property",
                 new Address("USA", "California", "Santa Monica", "456 Ocean Ave", "90401"),
                 new Location(34.0195, -118.4912),
-                null);
+                null,
+                [Facility.Pool]);
             property2.Id = Property2Id;
 
             var property3 = Property.NewProperty(
@@ -63,6 +65,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "Modern city apartment",
                 new Address("USA", "New York", "New York", "789 Park Ave", "10021"),
                 new Location(40.7128, -74.006),
+                null,
                 null);
             property3.Id = Property3Id;
 
@@ -72,6 +75,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 null,
                 new Address("UK", "England", "London", "10 Downing St", "SW1A 2AA"),
                 new Location(51.5074, -0.1278),
+                null,
                 null);
             tenant2Property.Id = Guid.CreateVersion7();
 

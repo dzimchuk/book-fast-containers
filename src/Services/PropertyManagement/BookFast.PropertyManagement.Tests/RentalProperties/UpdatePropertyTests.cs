@@ -17,7 +17,12 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         public static IEnumerable<object[]> ValidationData =>
         [
             ["EmptyParameters", new UpdatePropertyCommand()],
-            ["NameTooShort", new UpdatePropertyCommand { Name = "ab", Address = ValidAddress }]
+            ["NameTooShort", new UpdatePropertyCommand { Name = "ab", Address = ValidAddress }],
+            ["FacilityNotPropertyScoped", new UpdatePropertyCommand
+            {
+                Name = "Updated", Address = ValidAddress,
+                Facilities = [Facility.Refrigerator]
+            }]
         ];
 
         [Theory, MemberData(nameof(ValidationData))]
@@ -62,6 +67,27 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Assert.NotNull(property);
             Assert.Equal("Updated Mountain Retreat", property.Name);
             Assert.Equal("Updated description", property.Description);
+        }
+
+        [Fact]
+        public async Task Facilities_Success()
+        {
+            var command = new UpdatePropertyCommand
+            {
+                Name = "Updated Facilities Property",
+                Address = ValidAddress,
+                Facilities = [Facility.Parking, Facility.WiFi]
+            };
+
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            var property = await fixture.DbContext.Properties.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == fixture.Property1Id);
+
+            Assert.NotNull(property);
+            Assert.Equal([Facility.Parking, Facility.WiFi], property.Facilities);
         }
     }
 }

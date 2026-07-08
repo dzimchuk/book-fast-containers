@@ -47,6 +47,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 "Belongs to CallerTenant",
                 new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
                 new Location(30.2672, -97.7431),
+                null,
                 null);
 
             property.Id = Guid.CreateVersion7();

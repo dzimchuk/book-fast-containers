@@ -44,16 +44,17 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 null,
                 new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
                 new Location(30.2672, -97.7431),
+                null,
                 null);
             property.Id = PropertyId;
 
             dbContext.Properties.Add(property);
             await dbContext.SaveChangesAsync();
 
-            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")));
+            var accommodation1 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")), [Facility.WiFi]);
             accommodation1.Id = Accommodation1Id;
 
-            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, new PriceRange(new Money(250.5m, "USD"), new Money(250.5m, "USD")));
+            var accommodation2 = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Suite", "Luxury suite with ocean view", 3, null, 2, new PriceRange(new Money(250.5m, "USD"), new Money(250.5m, "USD")), [Facility.WiFi, Facility.Refrigerator]);
             accommodation2.Id = Accommodation2Id;
 
             dbContext.Accommodations.AddRange(accommodation1, accommodation2);

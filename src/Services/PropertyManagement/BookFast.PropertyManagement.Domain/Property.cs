@@ -13,6 +13,8 @@ namespace BookFast.PropertyManagement.Domain
         public Address Address { get; private set; }
         public Location Location { get; private set; }
 
+        public Facility[] Facilities { get; private set; }
+
         public bool IsActive { get; private set; }
 
         public static Property NewProperty(string tenantId,
@@ -20,9 +22,10 @@ namespace BookFast.PropertyManagement.Domain
             string description,
             Address address,
             Location location,
-            string[] images)
+            string[] images,
+            Facility[] facilities)
         {
-            var facility = new Property
+            var property = new Property
             {
                 TenantId = tenantId ?? throw new ArgumentNullException(nameof(tenantId)),
                 Name = name ?? throw new ArgumentNullException(nameof(name)),
@@ -30,10 +33,11 @@ namespace BookFast.PropertyManagement.Domain
                 Address = address,
                 Location = location,
                 Images = ImagePathHelper.CleanUp(images),
+                Facilities = facilities?.Distinct().ToArray() ?? [],
                 IsActive = true
             };
 
-            return facility;
+            return property;
         }
 
         public void Update(
@@ -41,13 +45,15 @@ namespace BookFast.PropertyManagement.Domain
             string description,
             Address address,
             Location location,
-            string[] images)
+            string[] images,
+            Facility[] facilities)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Description = description;
             Address = address;
             Location = location;
             Images = ImagePathHelper.Merge(Images, images);
+            Facilities = facilities?.Distinct().ToArray() ?? [];
         }
 
         public void Deactivate()

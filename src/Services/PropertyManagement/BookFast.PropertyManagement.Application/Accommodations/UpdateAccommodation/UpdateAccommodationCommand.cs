@@ -1,5 +1,6 @@
 using BookFast.Common.Application.Messaging;
 using BookFast.Common.Domain;
+using BookFast.PropertyManagement.Domain;
 
 namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommodation
 {
@@ -18,5 +19,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.UpdateAccommoda
 
         public int Quantity { get; set; }
         public PriceRange PriceRange { get; set; }
+
+        public Facility[] Facilities { get; set; }
     }
 }

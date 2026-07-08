@@ -21,7 +21,12 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         public static IEnumerable<object[]> ValidationData =>
         [
             ["EmptyParameters", new CreatePropertyCommand()],
-            ["NameTooShort", new CreatePropertyCommand { Name = "ab", Address = ValidAddress }]
+            ["NameTooShort", new CreatePropertyCommand { Name = "ab", Address = ValidAddress }],
+            ["FacilityNotPropertyScoped", new CreatePropertyCommand
+            {
+                Name = "New Property", Address = ValidAddress,
+                Facilities = [Facility.Refrigerator]
+            }]
         ];
 
         [Theory, MemberData(nameof(ValidationData))]
@@ -60,6 +65,28 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Assert.Equal("A brand new property", property.Description);
             Assert.Equal(Constants.CallerTenant, property.TenantId);
             Assert.True(property.IsActive);
+        }
+
+        [Fact]
+        public async Task Facilities_Success()
+        {
+            var command = new CreatePropertyCommand
+            {
+                Name = "Property With Facilities",
+                Address = ValidAddress,
+                Facilities = [Facility.Parking, Facility.WiFi]
+            };
+
+            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, command);
+
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+            var match = Regex.Match(response.Headers.Location.OriginalString, @".*/properties/(?<id>[0-9a-fA-F-]+)");
+            newPropertyId = Guid.Parse(match.Groups["id"].Value);
+
+            var property = await fixture.DbContext.Properties.FindAsync(newPropertyId.Value);
+            Assert.NotNull(property);
+            Assert.Equal([Facility.Parking, Facility.WiFi], property.Facilities);
         }
 
         public Task InitializeAsync() => Task.CompletedTask;

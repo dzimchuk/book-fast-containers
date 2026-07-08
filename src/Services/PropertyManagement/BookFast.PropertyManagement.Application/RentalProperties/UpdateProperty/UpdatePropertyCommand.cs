@@ -15,5 +15,7 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.UpdatePropert
         public Location Location { get; set; }
 
         public string[] Images { get; set; }
+
+        public Facility[] Facilities { get; set; }
     }
 }

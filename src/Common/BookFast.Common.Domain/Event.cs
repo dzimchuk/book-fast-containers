@@ -2,7 +2,7 @@
 
 namespace BookFast.Common.Domain
 {
-    public abstract class Event : INotification
+    public abstract record Event : INotification
     {
     }
 }

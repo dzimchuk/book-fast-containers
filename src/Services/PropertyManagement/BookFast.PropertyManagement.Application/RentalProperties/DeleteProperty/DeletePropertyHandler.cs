@@ -1,6 +1,8 @@
+using BookFast.Common.Application.Integration;
 using BookFast.Common.Application.Messaging;
 using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookFast.PropertyManagement.Application.RentalProperties.DeleteProperty
@@ -9,38 +11,51 @@ namespace BookFast.PropertyManagement.Application.RentalProperties.DeletePropert
     {
         private readonly IDbContext dbContext;
         private readonly ISecurityContext securityContext;
+        private readonly IIntegrationEventPublisher eventPublisher;
 
-        public DeletePropertyHandler(IDbContext dbContext, ISecurityContext securityContext)
+        public DeletePropertyHandler(IDbContext dbContext,
+                                     ISecurityContext securityContext,
+                                     IIntegrationEventPublisher eventPublisher)
         {
             this.dbContext = dbContext;
             this.securityContext = securityContext;
+            this.eventPublisher = eventPublisher;
         }
 
         public async Task<Result> Handle(DeletePropertyCommand request, CancellationToken cancellationToken)
         {
             var tenantId = securityContext.GetCurrentTenant();
 
-            var property = await dbContext.Properties.FirstOrDefaultAsync(
-                p => p.Id == request.PropertyId && p.TenantId == tenantId,
-                cancellationToken);
-
-            if (property == null)
+            return await dbContext.ExecuteInTransactionAsync(async ct =>
             {
-                return ErrorCodes.PropertyNotFound(request.PropertyId);
-            }
+                var property = await dbContext.Properties.FirstOrDefaultAsync(
+                    p => p.Id == request.PropertyId && p.TenantId == tenantId,
+                    ct);
 
-            if (await dbContext.Accommodations.AnyAsync(
-                accommodation => accommodation.PropertyId == request.PropertyId && accommodation.TenantId == tenantId,
-                cancellationToken: cancellationToken))
-            {
-                return ErrorCodes.PropertyNotEmpty(request.PropertyId);
-            }
+                if (property == null)
+                {
+                    return ErrorCodes.PropertyNotFound(request.PropertyId);
+                }
 
-            property.Deactivate();
+                if (await dbContext.Accommodations.AnyAsync(
+                    accommodation => accommodation.PropertyId == request.PropertyId && accommodation.TenantId == tenantId,
+                    cancellationToken: ct))
+                {
+                    return ErrorCodes.PropertyNotEmpty(request.PropertyId);
+                }
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                property.Deactivate();
 
-            return Result.Success();
+                await dbContext.SaveChangesAsync(ct);
+
+                await eventPublisher.PublishAsync(new PropertyDeactivatedEvent
+                {
+                    TenantId = tenantId,
+                    PropertyId = property.Id
+                }, ct);
+
+                return Result.Success();
+            }, cancellationToken);
         }
     }
 }

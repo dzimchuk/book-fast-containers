@@ -14,7 +14,10 @@ namespace BookFast.PropertyManagement.Tests
         public IntegrationEventHarness IntegrationEvents { get; } = new IntegrationEventHarness()
             .Observe<AccommodationCreatedEvent>()
             .Observe<AccommodationUpdatedEvent>()
-            .Observe<AccommodationDeletedEvent>();
+            .Observe<AccommodationDeletedEvent>()
+            .Observe<PropertyCreatedEvent>()
+            .Observe<PropertyUpdatedEvent>()
+            .Observe<PropertyDeactivatedEvent>();
 
         public override async Task InitializeAsync()
         {

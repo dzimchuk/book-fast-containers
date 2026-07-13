@@ -47,7 +47,7 @@ namespace BookFast.PropertyManagement.Application.Accommodations.CreateAccommoda
 
                 accommodation.Id = Guid.CreateVersion7();
 
-                await dbContext.Accommodations.AddAsync(accommodation, ct);
+                dbContext.Accommodations.Add(accommodation);
 
                 await dbContext.SaveChangesAsync(ct);
 

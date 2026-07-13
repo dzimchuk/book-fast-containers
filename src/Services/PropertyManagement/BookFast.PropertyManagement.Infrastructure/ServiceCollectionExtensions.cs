@@ -52,7 +52,7 @@ namespace BookFast.PropertyManagement.Infrastructure
         {
             busRegistrationConfigurator.AddEntityFrameworkOutbox<PropertyManagementContext>(outboxOptions =>
             {
-                outboxOptions.QueryDelay = configuration.GetValue("Outbox:QueryDelay", TimeSpan.FromMinutes(1));
+                outboxOptions.QueryDelay = configuration.GetValue("Outbox:QueryDelay", TimeSpan.FromSeconds(30));
 
                 outboxOptions.UseSqlServer();
                 outboxOptions.UseBusOutbox(cfg =>

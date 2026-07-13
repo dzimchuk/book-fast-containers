@@ -92,8 +92,13 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 e => e.AccommodationId == fixture.AccommodationId && e.Name == "Updated Room");
 
             Assert.Equal(fixture.PropertyId, publishedEvent.PropertyId);
+            Assert.NotEqual(Guid.Empty, publishedEvent.EventId);
+            Assert.NotEqual(default, publishedEvent.OccurredAt);
 
             JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "AccommodationUpdatedEvent", partial: true);
+
+            Assert.False(fixture.IntegrationEvents.HasCaptured<PropertyCreatedEvent>(e => e.PropertyId == fixture.PropertyId));
+            Assert.False(fixture.IntegrationEvents.HasCaptured<PropertyUpdatedEvent>(e => e.PropertyId == fixture.PropertyId));
         }
 
         [Fact]

@@ -3,11 +3,10 @@ using MassTransit;
 
 namespace BookFast.PropertyManagement.Integration
 {
-    [EntityName("accommodation-deleted-event")]
-    public record AccommodationDeletedEvent : IntegrationEvent
+    [EntityName("property-deactivated-event")]
+    public record PropertyDeactivatedEvent : IntegrationEvent
     {
         public string TenantId { get; init; }
         public Guid PropertyId { get; init; }
-        public Guid AccommodationId { get; init; }
     }
 }

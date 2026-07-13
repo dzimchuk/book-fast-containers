@@ -1,0 +1,15 @@
+{
+  "TenantId": "54f673c8-44a8-4d05-aeac-92ea5f18c633",
+  "Name": "New Property",
+  "Description": "A brand new property",
+  "Address": {
+    "Country": "USA",
+    "State": "Texas",
+    "City": "Austin",
+    "Street": "100 Congress Ave",
+    "ZipCode": "78701"
+  },
+  "Location": null,
+  "Facilities": [],
+  "Images": null
+}

@@ -1,9 +1,11 @@
 using BookFast.Common.TestInfrastructure;
 using BookFast.PropertyManagement.Application.RentalProperties.UpdateProperty;
 using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.RentalProperties
 {
@@ -67,6 +69,17 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Assert.NotNull(property);
             Assert.Equal("Updated Mountain Retreat", property.Name);
             Assert.Equal("Updated description", property.Description);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<PropertyUpdatedEvent>(
+                e => e.PropertyId == fixture.Property1Id && e.Name == "Updated Mountain Retreat");
+
+            Assert.NotEqual(Guid.Empty, publishedEvent.EventId);
+            Assert.NotEqual(default, publishedEvent.OccurredAt);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "PropertyUpdatedEvent", partial: true);
+
+            Assert.False(fixture.IntegrationEvents.HasCaptured<AccommodationCreatedEvent>(e => e.PropertyId == fixture.Property1Id));
+            Assert.False(fixture.IntegrationEvents.HasCaptured<AccommodationUpdatedEvent>(e => e.PropertyId == fixture.Property1Id));
         }
 
         [Fact]

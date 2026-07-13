@@ -66,6 +66,12 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
             throw new TimeoutException($"No {typeof(TEvent).Name} matching the predicate was captured within {effectiveTimeout}.");
         }
 
+        public bool HasCaptured<TEvent>(Func<TEvent, bool> predicate)
+            where TEvent : class
+        {
+            return capturedEvents.OfType<TEvent>().Any(predicate);
+        }
+
         private class CapturingConsumer<TEvent>(ConcurrentBag<object> store) : IConsumer<TEvent> where TEvent : class
         {
             public Task Consume(ConsumeContext<TEvent> context)

@@ -2,9 +2,11 @@ using BookFast.Common.TestInfrastructure;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.RentalProperties.CreateProperty;
 using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace BookFast.PropertyManagement.Tests.RentalProperties
@@ -65,6 +67,16 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             Assert.Equal("A brand new property", property.Description);
             Assert.Equal(Constants.CallerTenant, property.TenantId);
             Assert.True(property.IsActive);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<PropertyCreatedEvent>(
+                e => e.PropertyId == newPropertyId.Value);
+
+            Assert.NotEqual(Guid.Empty, publishedEvent.EventId);
+            Assert.NotEqual(default, publishedEvent.OccurredAt);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "PropertyCreatedEvent", partial: true);
+
+            Assert.False(fixture.IntegrationEvents.HasCaptured<AccommodationCreatedEvent>(e => e.PropertyId == newPropertyId.Value));
         }
 
         [Fact]

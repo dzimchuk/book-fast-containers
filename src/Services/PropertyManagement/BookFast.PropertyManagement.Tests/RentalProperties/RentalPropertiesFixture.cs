@@ -17,9 +17,13 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
 
+        private readonly PropertyManagementApiFixture apiFixture;
+
         public HttpClient HttpClient => httpClient;
 
         public IDbContext DbContext => dbContext;
+
+        public IntegrationEventHarness IntegrationEvents => apiFixture.IntegrationEvents;
 
         public Guid Property1Id { get; private set; }
         public Guid Property2Id { get; private set; }
@@ -27,6 +31,8 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
         public RentalPropertiesFixture(PropertyManagementApiFixture fixture)
         {
+            apiFixture = fixture;
+
             httpClient = fixture.CreateHttpClient(services =>
             {
                 services.AddSingleton(new TestSecurityContext

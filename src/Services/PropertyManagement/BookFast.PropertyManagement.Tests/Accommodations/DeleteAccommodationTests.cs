@@ -35,8 +35,12 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 e => e.AccommodationId == fixture.AccommodationId);
 
             Assert.Equal(fixture.PropertyId, publishedEvent.PropertyId);
+            Assert.NotEqual(Guid.Empty, publishedEvent.EventId);
+            Assert.NotEqual(default, publishedEvent.OccurredAt);
 
             JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "AccommodationDeletedEvent", partial: true);
+
+            Assert.False(fixture.IntegrationEvents.HasCaptured<PropertyDeactivatedEvent>(e => e.PropertyId == fixture.PropertyId));
         }
     }
 }

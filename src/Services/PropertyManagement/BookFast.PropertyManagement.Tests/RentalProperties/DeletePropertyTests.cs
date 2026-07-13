@@ -1,6 +1,8 @@
 using BookFast.Common.TestInfrastructure;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.RentalProperties
 {
@@ -41,6 +43,16 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
             Assert.NotNull(property);
             Assert.False(property.IsActive);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<PropertyDeactivatedEvent>(
+                e => e.PropertyId == fixture.Property2Id);
+
+            Assert.NotEqual(Guid.Empty, publishedEvent.EventId);
+            Assert.NotEqual(default, publishedEvent.OccurredAt);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "PropertyDeactivatedEvent", partial: true);
+
+            Assert.False(fixture.IntegrationEvents.HasCaptured<AccommodationDeletedEvent>(e => e.PropertyId == fixture.Property2Id));
         }
     }
 }

@@ -3,9 +3,11 @@ using BookFast.Common.TestInfrastructure;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.Accommodations.CreateAccommodation;
 using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
@@ -102,6 +104,13 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.Equal(Constants.CallerTenant, accommodation.TenantId);
             Assert.Equal(fixture.PropertyId, accommodation.PropertyId);
             Assert.True(accommodation.IsActive);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<AccommodationCreatedEvent>(
+                e => e.AccommodationId == newAccommodationId.Value);
+
+            Assert.Equal(fixture.PropertyId, publishedEvent.PropertyId);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "AccommodationCreatedEvent", partial: true);
         }
 
         [Fact]

@@ -43,16 +43,16 @@ namespace BookFast.PropertyManagement.Infrastructure
             services.AddSingleton<IFileTokenIssuer, BlobFileTokenIssuer>();
             services.AddHostedService<BlobContainerInitializer>();
 
-            services.AddMassTransit(configuration, ConfigureMassTransit);
+            services.AddMassTransit(configuration, busRegistrationConfigurator => ConfigureMassTransit(busRegistrationConfigurator, configuration));
 
             return services;
         }
 
-        private static void ConfigureMassTransit(IBusRegistrationConfigurator config)
+        private static void ConfigureMassTransit(IBusRegistrationConfigurator busRegistrationConfigurator, IConfiguration configuration)
         {
-            config.AddEntityFrameworkOutbox<PropertyManagementContext>(outboxOptions =>
+            busRegistrationConfigurator.AddEntityFrameworkOutbox<PropertyManagementContext>(outboxOptions =>
             {
-                outboxOptions.QueryDelay = TimeSpan.FromMinutes(1);
+                outboxOptions.QueryDelay = configuration.GetValue("Outbox:QueryDelay", TimeSpan.FromMinutes(1));
 
                 outboxOptions.UseSqlServer();
                 outboxOptions.UseBusOutbox(cfg =>

@@ -1,6 +1,8 @@
 using BookFast.Common.TestInfrastructure;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
 {
@@ -28,6 +30,13 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
 
             Assert.Null(accommodation);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<AccommodationDeletedEvent>(
+                e => e.AccommodationId == fixture.AccommodationId);
+
+            Assert.Equal(fixture.PropertyId, publishedEvent.PropertyId);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "AccommodationDeletedEvent", partial: true);
         }
     }
 }

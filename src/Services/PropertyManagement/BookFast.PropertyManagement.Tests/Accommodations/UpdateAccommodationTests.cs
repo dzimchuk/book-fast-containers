@@ -2,9 +2,11 @@ using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure;
 using BookFast.PropertyManagement.Application.Accommodations.UpdateAccommodation;
 using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
 {
@@ -85,6 +87,13 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             Assert.Equal(4, accommodation.Quantity);
             Assert.Equal(150m, accommodation.PriceRange.MinPrice.Amount);
             Assert.Null(accommodation.PriceRange.MaxPrice);
+
+            var publishedEvent = await fixture.IntegrationEvents.WaitForEventAsync<AccommodationUpdatedEvent>(
+                e => e.AccommodationId == fixture.AccommodationId && e.Name == "Updated Room");
+
+            Assert.Equal(fixture.PropertyId, publishedEvent.PropertyId);
+
+            JsonSerializer.SerializeToNode(publishedEvent).ShouldBeEquivalentToFile(caseName: "AccommodationUpdatedEvent", partial: true);
         }
 
         [Fact]

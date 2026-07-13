@@ -1,0 +1,16 @@
+{
+  "TenantId": "54f673c8-44a8-4d05-aeac-92ea5f18c633",
+  "Name": "Updated Room",
+  "Description": "Updated description",
+  "Bedrooms": 2,
+  "Quantity": 4,
+  "PriceRange": {
+    "MinPrice": {
+      "Amount": 150,
+      "Currency": "USD"
+    },
+    "MaxPrice": null,
+    "IsEmpty": false
+  },
+  "Facilities": []
+}

@@ -72,6 +72,12 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
             return capturedEvents.OfType<TEvent>().Any(predicate);
         }
 
+        public int CountCaptured<TEvent>(Func<TEvent, bool> predicate)
+            where TEvent : class
+        {
+            return capturedEvents.OfType<TEvent>().Count(predicate);
+        }
+
         private class CapturingConsumer<TEvent>(ConcurrentBag<object> store) : IConsumer<TEvent> where TEvent : class
         {
             public Task Consume(ConsumeContext<TEvent> context)

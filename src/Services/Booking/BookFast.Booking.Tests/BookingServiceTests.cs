@@ -15,7 +15,9 @@ public sealed class BookingServiceTests
     [Fact]
     public async Task Host_starts_successfully()
     {
-        using var response = await fixture.CreateHttpClient().GetAsync("/");
+        using var factory = fixture.GetWebApplicationFactory();
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync("/");
 
         Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
     }

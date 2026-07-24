@@ -4,6 +4,7 @@ using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure.Database;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -15,6 +16,7 @@ namespace BookFast.Identity.Tests.Tenants
         public const string TestTenantId = Constants.CallerTenant;
         public const string TestTenantName = "Test tenant";
 
+        private readonly WebApplicationFactory<Program> factory;
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly IdentityContext dbContext;
@@ -23,9 +25,9 @@ namespace BookFast.Identity.Tests.Tenants
 
         public IDbContext DbContext => dbContext;
 
-        public TenantsFixture(ApiFixture<Program> fixture)
+        public TenantsFixture(IdentityApiFixture fixture)
         {
-            httpClient = fixture.CreateHttpClient(services =>
+            factory = fixture.GetWebApplicationFactory(services =>
             {
                 services.AddSingleton(new TestSecurityContext
                 {
@@ -35,8 +37,9 @@ namespace BookFast.Identity.Tests.Tenants
 
                 services.AddSingleton(Mock.Of<IMailNotificationQueue>());
             });
+            httpClient = factory.CreateClient();
 
-            scope = fixture.ServiceProvider.CreateScope();
+            scope = factory.Services.CreateScope();
             dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         }
 
@@ -62,6 +65,7 @@ namespace BookFast.Identity.Tests.Tenants
             await dbContext.Tenants.Where(t => t.Id == TestTenantId).ExecuteDeleteAsync();
            
             scope.Dispose();
+            await factory.DisposeAsync();
         }
     }
 }

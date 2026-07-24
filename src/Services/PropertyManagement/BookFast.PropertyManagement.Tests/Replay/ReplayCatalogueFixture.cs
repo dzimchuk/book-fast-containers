@@ -3,6 +3,7 @@ using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Domain;
 using BookFast.PropertyManagement.Infrastructure.Database;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,7 @@ namespace BookFast.PropertyManagement.Tests.Replay
         public static readonly Guid Accommodation1Id = new("00000000-0000-0000-0000-000000020011");
         public static readonly Guid Accommodation2Id = new("00000000-0000-0000-0000-000000020012");
 
+        private readonly WebApplicationFactory<Program> factory;
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
@@ -28,7 +30,7 @@ namespace BookFast.PropertyManagement.Tests.Replay
         {
             IntegrationEvents = fixture.IntegrationEvents;
 
-            httpClient = fixture.CreateHttpClient(services =>
+            factory = fixture.GetWebApplicationFactory(services =>
             {
                 services.AddSingleton(new TestSecurityContext
                 {
@@ -37,8 +39,9 @@ namespace BookFast.PropertyManagement.Tests.Replay
                     TenantId = TenantId
                 });
             });
+            httpClient = factory.CreateClient();
 
-            scope = fixture.ServiceProvider.CreateScope();
+            scope = factory.Services.CreateScope();
             dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
         }
 
@@ -92,6 +95,7 @@ namespace BookFast.PropertyManagement.Tests.Replay
                 .ExecuteDeleteAsync();
 
             scope.Dispose();
+            await factory.DisposeAsync();
         }
     }
 }

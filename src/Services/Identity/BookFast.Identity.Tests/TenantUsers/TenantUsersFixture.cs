@@ -5,6 +5,7 @@ using BookFast.Identity.Core;
 using BookFast.Identity.Core.Models;
 using BookFast.Identity.Infrastructure.Database;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -28,6 +29,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         private const string TenantUserRoleId = "01960677-b45b-7c7d-9203-199c657cc7ff";
 
 
+        private readonly WebApplicationFactory<Program> factory;
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly IdentityContext dbContext;
@@ -36,9 +38,9 @@ namespace BookFast.Identity.Tests.TenantUsers
 
         public IDbContext DbContext => dbContext;
 
-        public TenantUsersFixture(ApiFixture<Program> fixture)
+        public TenantUsersFixture(IdentityApiFixture fixture)
         {
-            httpClient = fixture.CreateHttpClient(services =>
+            factory = fixture.GetWebApplicationFactory(services =>
             {
                 services.AddSingleton(new TestSecurityContext
                 {
@@ -49,8 +51,9 @@ namespace BookFast.Identity.Tests.TenantUsers
 
                 services.AddSingleton(Mock.Of<IMailNotificationQueue>());
             });
+            httpClient = factory.CreateClient();
 
-            scope = fixture.ServiceProvider.CreateScope();
+            scope = factory.Services.CreateScope();
             dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         }
 
@@ -97,6 +100,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             await dbContext.Tenants.Where(t => tenants.Contains(t.Id)).ExecuteDeleteAsync();
 
             scope.Dispose();
+            await factory.DisposeAsync();
         }
     }
 }

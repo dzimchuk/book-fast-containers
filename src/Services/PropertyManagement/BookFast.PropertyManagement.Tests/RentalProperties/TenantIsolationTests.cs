@@ -4,6 +4,7 @@ using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.PropertyManagement.Application.RentalProperties.UpdateProperty;
 using BookFast.PropertyManagement.Domain;
 using BookFast.PropertyManagement.Infrastructure.Database;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
@@ -17,6 +18,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         private const string OtherTenantId = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
         private const string baseUrl = "/api/properties";
 
+        private readonly WebApplicationFactory<Program> factory;
         private readonly HttpClient httpClient;
         private readonly IServiceScope scope;
         private readonly PropertyManagementContext dbContext;
@@ -25,7 +27,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
 
         public TenantIsolationTests(PropertyManagementApiFixture fixture)
         {
-            httpClient = fixture.CreateHttpClient(services =>
+            factory = fixture.GetWebApplicationFactory(services =>
             {
                 services.AddSingleton(new TestSecurityContext
                 {
@@ -34,8 +36,9 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                     TenantId = OtherTenantId
                 });
             });
+            httpClient = factory.CreateClient();
 
-            scope = fixture.ServiceProvider.CreateScope();
+            scope = factory.Services.CreateScope();
             dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
         }
 
@@ -107,6 +110,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 .ExecuteDeleteAsync();
 
             scope.Dispose();
+            await factory.DisposeAsync();
         }
     }
 }

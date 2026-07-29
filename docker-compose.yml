@@ -8,9 +8,12 @@ services:
     ports:
       - 5001:8081
     depends_on:
-      - bookfast.database
-      - bookfast.telemetry-dashboard
-      - bookfast.messaging
+      bookfast.database:
+        condition: service_healthy
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
 
   bookfast.property-management:
     image: ${DOCKER_REGISTRY-}bookfast-property-management
@@ -21,11 +24,15 @@ services:
     ports:
       - 5101:8081
     depends_on:
-      - bookfast.database
-      - bookfast.azurite
-      - bookfast.telemetry-dashboard
-      - bookfast.messaging
-      
+      bookfast.database:
+        condition: service_healthy
+      bookfast.azurite:
+        condition: service_started
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
+
   bookfast.search:
     image: ${DOCKER_REGISTRY-}bookfast-search
     container_name: search
@@ -35,8 +42,14 @@ services:
     ports:
       - 5201:8081
     depends_on:
-      - bookfast.telemetry-dashboard
-      - bookfast.messaging
+      bookfast.qdrant:
+        condition: service_started
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
+      bookfast.ollama-pull:
+        condition: service_completed_successfully
 
   bookfast.booking:
     image: ${DOCKER_REGISTRY-}bookfast-booking
@@ -63,7 +76,13 @@ services:
       - ./.containers/database/secrets:/var/opt/mssql/secrets
     ports:
       - "5433:1433"
-      
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
   bookfast.azurite:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: azurite
@@ -72,6 +91,41 @@ services:
       - "10000:10000"
     volumes:
       - ./.containers/azurite:/data
+
+  bookfast.qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    volumes:
+      - ./.containers/qdrant:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+
+  bookfast.ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ./.containers/ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+      
+  bookfast.ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    depends_on:
+      bookfast.ollama:
+        condition: service_healthy
+    volumes:
+      - ./.containers/ollama:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text"
 
   bookfast.telemetry-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:latest

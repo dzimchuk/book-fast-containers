@@ -1,14 +1,16 @@
 ﻿using BookFast.PropertyManagement.Integration;
+using BookFast.Search.Store;
 using MassTransit;
 
 namespace BookFast.Search.Indexer
 {
-    internal class AccommodationDeletedEventConsumer(ILogger<AccommodationDeletedEventConsumer> logger) : IConsumer<AccommodationDeletedEvent>
+    internal class AccommodationDeletedEventConsumer(AccommodationIndex index) : IConsumer<AccommodationDeletedEvent>
     {
         public Task Consume(ConsumeContext<AccommodationDeletedEvent> context)
         {
-            logger.LogInformation("Accommodation deleted: {AccommodationId}", context.Message.AccommodationId);
-            return Task.CompletedTask;
+            var message = context.Message;
+
+            return index.DeleteAsync(message.AccommodationId, message.TenantId, message.PropertyId, message.OccurredAt, context.CancellationToken);
         }
     }
 }

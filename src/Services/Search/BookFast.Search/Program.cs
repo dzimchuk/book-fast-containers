@@ -5,6 +5,7 @@ using BookFast.Common.Api.Swagger;
 using BookFast.Common.Presentation.Authorization;
 using BookFast.Common.Presentation.Endpoints;
 using BookFast.Search.Indexer;
+using BookFast.Search.Store;
 using Microsoft.AspNetCore.HttpOverrides;
 using OpenIddict.Validation.AspNetCore;
 using System.Text.Json.Serialization;
@@ -32,6 +33,8 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 
+builder.Services.AddSearchStore(builder.Configuration);
+
 builder.Services.AddSearchIndexer(builder.Configuration);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -52,6 +55,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerDefaults(app.Configuration);
 }
+
+await app.Services.EnsureSearchStoreCreatedAsync();
 
 app.UseExceptionHandler();
 

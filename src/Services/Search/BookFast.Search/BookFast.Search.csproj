@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" />
+    <PackageReference Include="CommunityToolkit.VectorData.AzureAISearch" />
+    <PackageReference Include="CommunityToolkit.VectorData.Qdrant" />
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="OllamaSharp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +21,10 @@
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Infrastructure\BookFast.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Presentation\BookFast.Common.Presentation.csproj" />
     <ProjectReference Include="..\..\PropertyManagement\BookFast.PropertyManagement.Integration\BookFast.PropertyManagement.Integration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BookFast.Search.Tests" />
   </ItemGroup>
 
 </Project>

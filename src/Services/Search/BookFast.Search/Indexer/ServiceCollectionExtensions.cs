@@ -18,10 +18,23 @@ namespace BookFast.Search.Indexer
             config.AddConsumer<AccommodationCreatedEventConsumer>();
             config.AddConsumer<AccommodationUpdatedEventConsumer>();
             config.AddConsumer<AccommodationDeletedEventConsumer>();
+            config.AddConsumer<PropertyCreatedEventConsumer>();
+            config.AddConsumer<PropertyUpdatedEventConsumer>();
+            config.AddConsumer<PropertyDeactivatedEventConsumer>();
+
+            config.AddConsumer<ReindexPropertyAccommodationsConsumer>();
+
+            var reindexEndpointName = endpointNameFormatter.Consumer<ReindexPropertyAccommodationsConsumer>();
+            EndpointConvention.Map<ReindexPropertyAccommodations>(new Uri($"queue:{reindexEndpointName}"));
 
             config.AddConfigureEndpointsCallback((name, endpointConfig) =>
             {
                 endpointConfig.UseMessageRetry(r => r.Intervals(500, 1000));
+
+                if (name.Equals(reindexEndpointName, StringComparison.OrdinalIgnoreCase))
+                {
+                    endpointConfig.ConfigureMessageTopology<ReindexPropertyAccommodations>(false); 
+                }
             });
         }
     }

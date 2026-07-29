@@ -1,7 +1,6 @@
 ﻿using BookFast.Common.Application.Queries;
 using BookFast.Common.Presentation.Endpoints;
-using BookFast.Common.Presentation.Results;
-using BookFast.Common.SeedWork;
+using BookFast.Search.Store;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookFast.Search.Endpoints
@@ -12,27 +11,38 @@ namespace BookFast.Search.Endpoints
         {
             app.MapGet("search", async (
                 string query,
-                [FromQuery(Name = "orderBy")] string orderBy,
-                [FromQuery(Name = "orderDirection")] string orderDirection,
+                [FromQuery(Name = "bedrooms")] int? bedrooms,
+                [FromQuery(Name = "facilities")] string[] facilities,
+                [FromQuery(Name = "city")] string city,
+                [FromQuery(Name = "country")] string country,
+                [FromQuery(Name = "sort")] string sort,
                 [FromQuery(Name = "pageNumber")] int? pageNumber,
-                [FromQuery(Name = "pageSize")] int? pageSize) =>
+                [FromQuery(Name = "pageSize")] int? pageSize,
+                AccommodationIndex store,
+                CancellationToken cancellationToken) =>
             {
-                if (!Enum.TryParse<OrderDirection>(orderDirection, true, out var direction))
+                if (!Enum.TryParse<SearchSort>(sort, true, out var sortBy))
                 {
-                    direction = OrderDirection.Asc;
+                    sortBy = SearchSort.Relevance;
                 }
 
-                var result = Result.Success();
+                var result = await store.SearchAsync(new SearchQuery
+                {
+                    Query = query,
+                    Bedrooms = bedrooms,
+                    Facilities = facilities ?? [],
+                    City = city,
+                    Country = country,
+                    Sort = sortBy,
+                    PageNumber = pageNumber is > 0 ? pageNumber.Value : 1,
+                    PageSize = pageSize is > 0 ? pageSize.Value : 20,
+                }, cancellationToken);
 
-                return result.Map(() => Results.Ok(new ListQueryResult<SearchItem>()), ApiResults.Problem);
+                return Results.Ok(result);
             })
-            //.RequireAuthorization(AuthorizationPolicies.TenantAdminOrUser)
-            .Produces<ListQueryResult<SearchItem>>(StatusCodes.Status200OK)
+            .Produces<ListQueryResult<SearchResult>>(StatusCodes.Status200OK)
             .WithTags("Search");
         }
     }
-
-    internal class SearchItem
-    {
-    }
 }
+

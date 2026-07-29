@@ -41,6 +41,7 @@
     <Project Path="src/Services/PropertyManagement/BookFast.PropertyManagement/BookFast.PropertyManagement.csproj" Id="773aacee-1266-47ea-a96d-3c7e0694d7cf" />
   </Folder>
   <Folder Name="/src/Services/Search/">
+    <Project Path="src/Services/Search/BookFast.Search.Tests/BookFast.Search.Tests.csproj" />
     <Project Path="src/Services/Search/BookFast.Search/BookFast.Search.csproj" Id="86b50a40-f6c9-4a79-be75-a24e47bf1422" />
   </Folder>
   <Project Path="docker-compose.dcproj">

@@ -21,6 +21,7 @@
     <Project Path="src/Services/Booking/BookFast.Booking.Application/BookFast.Booking.Application.csproj" />
     <Project Path="src/Services/Booking/BookFast.Booking.Domain/BookFast.Booking.Domain.csproj" />
     <Project Path="src/Services/Booking/BookFast.Booking.Infrastructure/BookFast.Booking.Infrastructure.csproj" />
+    <Project Path="src/Services/Booking/BookFast.Booking.Integration/BookFast.Booking.Integration.csproj" />
     <Project Path="src/Services/Booking/BookFast.Booking.Presentation/BookFast.Booking.Presentation.csproj" />
     <Project Path="src/Services/Booking/BookFast.Booking.Tests/BookFast.Booking.Tests.csproj" />
     <Project Path="src/Services/Booking/BookFast.Booking/BookFast.Booking.csproj" />

@@ -55,6 +55,9 @@ app.UseForwardedHeaders();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerDefaults(app.Configuration);
+
+    using var scope = app.Services.CreateScope();
+    BookFast.Booking.Infrastructure.MigrationExtensions.ApplyMigration(scope);
 }
 
 app.UseExceptionHandler();

@@ -2,5 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Application\BookFast.Common.Application.csproj" />
     <ProjectReference Include="..\BookFast.Booking.Domain\BookFast.Booking.Domain.csproj" />
+    <ProjectReference Include="..\BookFast.Booking.Integration\BookFast.Booking.Integration.csproj" />
   </ItemGroup>
 </Project>

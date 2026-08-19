@@ -8,7 +8,11 @@ namespace BookFast.Booking.Infrastructure.Database
 {
     internal class BookingContext(DbContextOptions<BookingContext> options) : DbContext(options), IDbContext
     {
+        private const int MaxConcurrencyRetries = 3;
+
         public DbSet<Accommodation> Accommodations { get; set; }
+
+        public DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +57,24 @@ namespace BookFast.Booking.Infrastructure.Database
 
                 return result;
             });
+        }
+
+        public async Task<Result<TResponse>> ExecuteInTransactionWithConcurrencyRetryAsync<TResponse>(
+            Func<CancellationToken, Task<Result<TResponse>>> operation, CancellationToken cancellationToken = default)
+        {
+            for (var attempt = 1; attempt <= MaxConcurrencyRetries; attempt++)
+            {
+                try
+                {
+                    return await ExecuteInTransactionAsync(operation, cancellationToken);
+                }
+                catch (DbUpdateConcurrencyException) when (attempt < MaxConcurrencyRetries)
+                {
+                    ChangeTracker.Clear();
+                }
+            }
+
+            return Result.Failure<TResponse>(Error.Conflict("Concurrency.TooManyConflicts", "Too many concurrent updates. Please try again."));
         }
     }
 }

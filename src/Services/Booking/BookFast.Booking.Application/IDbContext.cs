@@ -8,9 +8,12 @@ namespace BookFast.Booking.Application
     {
         DbSet<Accommodation> Accommodations { get; set; }
 
+        DbSet<Reservation> Reservations { get; set; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
         Task<Result> ExecuteInTransactionAsync(Func<CancellationToken, Task<Result>> operation, CancellationToken cancellationToken = default);
         Task<Result<TResponse>> ExecuteInTransactionAsync<TResponse>(Func<CancellationToken, Task<Result<TResponse>>> operation, CancellationToken cancellationToken = default);
+        Task<Result<TResponse>> ExecuteInTransactionWithConcurrencyRetryAsync<TResponse>(Func<CancellationToken, Task<Result<TResponse>>> operation, CancellationToken cancellationToken = default);
     }
 }

@@ -15,7 +15,11 @@ namespace BookFast.Booking.Domain
 
         public DateTimeOffset OccurredAt { get; private set; }
 
+        public int BookCount { get; private set; }
+
         public bool Bookable => Active && Rate is not null;
+
+        public void Book() => BookCount++;
 
         public static Accommodation NewAccommodation(Guid accommodationId, string tenantId, Guid propertyId)
         {

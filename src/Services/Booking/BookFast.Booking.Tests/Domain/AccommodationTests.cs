@@ -137,5 +137,16 @@ namespace BookFast.Booking.Tests.Domain
             Assert.False(changed);
             Assert.True(accommodation.Bookable);
         }
+
+        [Fact]
+        public void Book_IncrementsBookCount()
+        {
+            var accommodation = Accommodation.NewAccommodation(AccommodationId, TenantId, PropertyId);
+            var initialBookCount = accommodation.BookCount;
+
+            accommodation.Book();
+
+            Assert.Equal(initialBookCount + 1, accommodation.BookCount);
+        }
     }
 }

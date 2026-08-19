@@ -20,6 +20,8 @@ namespace BookFast.Booking.Infrastructure.Configurations
             builder.Property(accommodation => accommodation.Active).IsRequired(true);
             builder.Property(accommodation => accommodation.OccurredAt).IsRequired(true);
 
+            builder.Property(accommodation => accommodation.BookCount).IsConcurrencyToken();
+
             builder.OwnsOne(accommodation => accommodation.Rate, rateBuilder =>
             {
                 rateBuilder.Property(rate => rate.Amount).HasColumnName("rate_amount");

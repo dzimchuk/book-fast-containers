@@ -1,9 +1,11 @@
 ﻿using BookFast.Common.Application.Clock;
 using BookFast.Common.Application.Integration;
+using BookFast.Common.Application.Messaging;
 using BookFast.Common.Infrastructure;
 using BookFast.Common.Infrastructure.Clock;
 using BookFast.Common.Infrastructure.Filters;
 using BookFast.Common.Infrastructure.Integration;
+using BookFast.Common.Infrastructure.Messaging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +26,7 @@ namespace BookFast.Common.Infrastructure
         {
             services.TryAddTransient<IMailNotificationQueue, MailNotificationQueue>();
             services.TryAddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
+            services.TryAddTransient<ILocalBrokeredMessageSender, LocalBrokeredMessageSender>();
 
             services.AddMassTransit(config =>
             {

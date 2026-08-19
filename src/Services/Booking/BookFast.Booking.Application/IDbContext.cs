@@ -10,6 +10,8 @@ namespace BookFast.Booking.Application
 
         DbSet<Reservation> Reservations { get; set; }
 
+        DbSet<PaymentAttempt> PaymentAttempts { get; set; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
         Task<Result> ExecuteInTransactionAsync(Func<CancellationToken, Task<Result>> operation, CancellationToken cancellationToken = default);

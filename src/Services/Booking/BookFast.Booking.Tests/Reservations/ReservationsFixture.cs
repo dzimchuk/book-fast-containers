@@ -1,11 +1,15 @@
+using BookFast.Booking.Application.Reservations.ConfirmReservation;
 using BookFast.Booking.Domain;
 using BookFast.Booking.Infrastructure.Database;
+using BookFast.Booking.Infrastructure.Payments;
 using BookFast.Common.Application.Security;
 using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
+using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BookFast.Booking.Tests.Reservations
 {
@@ -86,8 +90,41 @@ namespace BookFast.Booking.Tests.Reservations
         public Task<Reservation> GetReservationAsync(Guid reservationId) =>
             dbContext.Reservations.AsNoTracking().FirstOrDefaultAsync(r => r.Id == reservationId);
 
+        public async Task<Reservation> WaitForReservationAsync(Guid reservationId, Func<Reservation, bool> predicate, TimeSpan? timeout = null)
+        {
+            var deadline = DateTime.UtcNow + (timeout ?? TimeSpan.FromSeconds(10));
+
+            while (DateTime.UtcNow < deadline)
+            {
+                var reservation = await GetReservationAsync(reservationId);
+                if (reservation is not null && predicate(reservation))
+                {
+                    return reservation;
+                }
+
+                await Task.Delay(200);
+            }
+
+            throw new TimeoutException($"No reservation {reservationId} matching the predicate was found within the timeout.");
+        }
+
         public Task SetAccommodationRateAsync(Guid accommodationId, Money rate) =>
             dbContext.Database.ExecuteSqlInterpolatedAsync(
                 $"UPDATE booking.accommodations SET rate_amount = {rate.Amount}, rate_currency = {rate.Currency} WHERE id = {accommodationId}");
+
+        public Task TriggerPaymentSweepAsync()
+        {
+            var sweepService = factory.Services.GetServices<IHostedService>().OfType<PaymentSettlementSweepService>().Single();
+
+            return sweepService.RunOnceAsync(CancellationToken.None);
+        }
+
+        public async Task SendConfirmReservationDirectlyAsync(Guid reservationId)
+        {
+            using var freshScope = factory.Services.CreateScope();
+            var sender = freshScope.ServiceProvider.GetRequiredService<ISender>();
+
+            await sender.Send(new ConfirmReservationCommand { ReservationId = reservationId });
+        }
     }
 }

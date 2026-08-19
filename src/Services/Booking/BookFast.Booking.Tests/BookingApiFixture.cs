@@ -13,6 +13,7 @@ public sealed class BookingApiFixture : ApiFixture<Program>
         await base.InitializeAsync();
 
         Environment.SetEnvironmentVariable("Outbox:QueryDelay", "00:00:01");
+        Environment.SetEnvironmentVariable("Payments:SettlementDelay", "00:00:00");
 
         await IntegrationEvents.StartAsync();
     }

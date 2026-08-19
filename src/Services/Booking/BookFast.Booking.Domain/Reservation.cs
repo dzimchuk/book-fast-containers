@@ -45,5 +45,7 @@ namespace BookFast.Booking.Domain
             Status == ReservationStatus.Confirmed && Stay.CheckOut <= asOf
                 ? ReservationStatus.Completed
                 : Status;
+
+        public void Confirm() => Status = ReservationStatus.Confirmed;
     }
 }

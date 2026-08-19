@@ -1,7 +1,8 @@
 using BookFast.Booking.Application;
-using BookFast.Booking.Application.Accommodations;
+using BookFast.Booking.Application.Payments;
 using BookFast.Booking.Infrastructure.Consumers;
 using BookFast.Booking.Infrastructure.Database;
+using BookFast.Booking.Infrastructure.Payments;
 using BookFast.Common.Infrastructure;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,10 @@ namespace BookFast.Booking.Infrastructure
 
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<BookingContext>());
 
+            services.Configure<PaymentOptions>(configuration.GetSection("Payments"));
+            services.AddScoped<IPaymentGateway, MockPaymentGateway>();
+            services.AddHostedService<PaymentSettlementSweepService>();
+
             services.AddMassTransit(configuration, busRegistrationConfigurator => ConfigureMassTransit(busRegistrationConfigurator, configuration));
 
             return services;
@@ -52,10 +57,28 @@ namespace BookFast.Booking.Infrastructure
                 //outboxOptions.DisableInboxCleanupService();
             });
 
+            var endpointNameFormatter = new KebabCaseEndpointNameFormatter(prefix: "booking", includeNamespace: false);
+            busRegistrationConfigurator.SetEndpointNameFormatter(endpointNameFormatter);
+
             busRegistrationConfigurator.AddConsumer<AccommodationCreatedEventConsumer>();
             busRegistrationConfigurator.AddConsumer<AccommodationUpdatedEventConsumer>();
             busRegistrationConfigurator.AddConsumer<AccommodationDeletedEventConsumer>();
             busRegistrationConfigurator.AddConsumer<PropertyDeactivatedEventConsumer>();
+
+            busRegistrationConfigurator.AddConsumer<PaymentSettledConsumer>();
+
+            var paymentSettledEndpointName = endpointNameFormatter.Consumer<PaymentSettledConsumer>();
+            EndpointConvention.Map<PaymentSettled>(new Uri($"queue:{paymentSettledEndpointName}"));
+
+            busRegistrationConfigurator.AddConfigureEndpointsCallback((name, endpointConfig) =>
+            {
+                endpointConfig.UseMessageRetry(r => r.Intervals(500, 1000));
+
+                if (name.Equals(paymentSettledEndpointName, StringComparison.OrdinalIgnoreCase))
+                {
+                    endpointConfig.ConfigureMessageTopology<PaymentSettled>(false);
+                }
+            });
         }
     }
 }

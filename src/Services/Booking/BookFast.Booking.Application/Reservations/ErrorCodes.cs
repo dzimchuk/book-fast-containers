@@ -12,5 +12,11 @@ namespace BookFast.Booking.Application.Reservations
 
         public static Error ReservationNotFound(Guid id) =>
             Error.NotFound("Reservations.ReservationNotFound", $"Reservation with id {id} not found.");
+
+        public static Error ReservationNotPending() =>
+            Error.Conflict("Reservations.ReservationNotPending", "Reservation is not awaiting payment.");
+
+        public static Error PaymentAlreadyInProgress() =>
+            Error.Conflict("Reservations.PaymentAlreadyInProgress", "A payment is already being processed for this reservation.");
     }
 }

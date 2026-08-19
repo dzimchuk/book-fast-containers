@@ -14,6 +14,8 @@ namespace BookFast.Booking.Infrastructure.Database
 
         public DbSet<Reservation> Reservations { get; set; }
 
+        public DbSet<PaymentAttempt> PaymentAttempts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

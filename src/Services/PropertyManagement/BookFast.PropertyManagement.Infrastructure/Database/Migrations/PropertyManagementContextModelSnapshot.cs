@@ -18,7 +18,7 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("property_management")
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -291,12 +291,6 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
                     b.HasKey("SequenceNumber")
                         .HasName("pk_outbox_message");
 
-                    b.HasIndex("EnqueueTime")
-                        .HasDatabaseName("ix_outbox_message_enqueue_time");
-
-                    b.HasIndex("ExpirationTime")
-                        .HasDatabaseName("ix_outbox_message_expiration_time");
-
                     b.HasIndex("OutboxId", "SequenceNumber")
                         .IsUnique()
                         .HasDatabaseName("ix_outbox_message_outbox_id_sequence_number")
@@ -346,9 +340,6 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
 
                     b.HasKey("OutboxId")
                         .HasName("pk_outbox_state");
-
-                    b.HasIndex("Created")
-                        .HasDatabaseName("ix_outbox_state_created");
 
                     b.HasIndex("BusName", "Created")
                         .HasDatabaseName("ix_outbox_state_bus_name_created");

@@ -148,7 +148,8 @@ namespace BookFast.Identity
                         {
                             "Identity",
                             "PropertyManagement",
-                            "Search"
+                            "Search",
+                            "Booking"
                         }
                     }, cancellationToken);
                 }

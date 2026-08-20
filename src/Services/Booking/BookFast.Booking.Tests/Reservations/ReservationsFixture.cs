@@ -2,6 +2,7 @@ using BookFast.Booking.Application.Reservations.ConfirmReservation;
 using BookFast.Booking.Domain;
 using BookFast.Booking.Infrastructure.Database;
 using BookFast.Booking.Infrastructure.Payments;
+using BookFast.Booking.Infrastructure.Reservations;
 using BookFast.Common.Application.Security;
 using BookFast.Common.Domain;
 using BookFast.Common.TestInfrastructure.IntegrationTest;
@@ -70,10 +71,10 @@ namespace BookFast.Booking.Tests.Reservations
 
         public async Task<Guid> SeedReservationAsync(
             Guid accommodationId, string guestId, DateOnly checkIn, DateOnly checkOut, int units, Money rate,
-            string tenantId = TenantId, ReservationStatus status = ReservationStatus.Pending)
+            string tenantId = TenantId, ReservationStatus status = ReservationStatus.Pending, DateTimeOffset? expiresAt = null)
         {
             var reservation = Reservation.NewReservation(
-                Guid.NewGuid(), guestId, accommodationId, tenantId, new Stay(checkIn, checkOut), units, rate, DateTimeOffset.UtcNow.AddMinutes(15));
+                Guid.NewGuid(), guestId, accommodationId, tenantId, new Stay(checkIn, checkOut), units, rate, expiresAt ?? DateTimeOffset.UtcNow.AddMinutes(15));
 
             dbContext.Reservations.Add(reservation);
             await dbContext.SaveChangesAsync();
@@ -115,6 +116,13 @@ namespace BookFast.Booking.Tests.Reservations
         public Task TriggerPaymentSweepAsync()
         {
             var sweepService = factory.Services.GetServices<IHostedService>().OfType<PaymentSettlementSweepService>().Single();
+
+            return sweepService.RunOnceAsync(CancellationToken.None);
+        }
+
+        public Task TriggerExpirationSweepAsync()
+        {
+            var sweepService = factory.Services.GetServices<IHostedService>().OfType<ReservationExpirationSweepService>().Single();
 
             return sweepService.RunOnceAsync(CancellationToken.None);
         }

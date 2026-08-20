@@ -3,6 +3,7 @@ using BookFast.Booking.Application.Payments;
 using BookFast.Booking.Infrastructure.Consumers;
 using BookFast.Booking.Infrastructure.Database;
 using BookFast.Booking.Infrastructure.Payments;
+using BookFast.Booking.Infrastructure.Reservations;
 using BookFast.Common.Infrastructure;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,9 @@ namespace BookFast.Booking.Infrastructure
             services.Configure<PaymentOptions>(configuration.GetSection("Payments"));
             services.AddScoped<IPaymentGateway, MockPaymentGateway>();
             services.AddHostedService<PaymentSettlementSweepService>();
+
+            services.Configure<ReservationExpirationOptions>(configuration.GetSection("ReservationExpiration"));
+            services.AddHostedService<ReservationExpirationSweepService>();
 
             services.AddMassTransit(configuration, busRegistrationConfigurator => ConfigureMassTransit(busRegistrationConfigurator, configuration));
 

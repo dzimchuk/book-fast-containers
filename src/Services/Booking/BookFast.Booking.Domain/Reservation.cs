@@ -47,5 +47,7 @@ namespace BookFast.Booking.Domain
                 : Status;
 
         public void Confirm() => Status = ReservationStatus.Confirmed;
+
+        public void Expire() => Status = ReservationStatus.Expired;
     }
 }

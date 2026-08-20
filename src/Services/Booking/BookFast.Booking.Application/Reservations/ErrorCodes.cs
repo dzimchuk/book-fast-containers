@@ -18,5 +18,8 @@ namespace BookFast.Booking.Application.Reservations
 
         public static Error PaymentAlreadyInProgress() =>
             Error.Conflict("Reservations.PaymentAlreadyInProgress", "A payment is already being processed for this reservation.");
+
+        public static Error ReservationNotCancellable() =>
+            Error.Conflict("Reservations.ReservationNotCancellable", "Only a confirmed reservation whose stay has not ended can be cancelled.");
     }
 }

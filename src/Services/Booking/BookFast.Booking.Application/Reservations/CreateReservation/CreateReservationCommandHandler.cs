@@ -67,6 +67,8 @@ namespace BookFast.Booking.Application.Reservations.CreateReservation
             dbContext.Reservations.Add(reservation);
             accommodation.Book();
 
+            await dbContext.SaveChangesAsync(cancellationToken);
+
             return Result.Success(reservation);
         }
 

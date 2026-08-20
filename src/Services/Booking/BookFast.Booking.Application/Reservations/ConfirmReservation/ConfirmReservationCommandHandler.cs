@@ -24,6 +24,8 @@ namespace BookFast.Booking.Application.Reservations.ConfirmReservation
                 reservation.Confirm();
             }
 
+            await dbContext.SaveChangesAsync(cancellationToken);
+
             return Result.Success(true);
         }
     }

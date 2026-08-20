@@ -21,7 +21,6 @@ namespace BookFast.Search
         public double? Latitude { get; init; }
         public double? Longitude { get; init; }
 
-        public Money MinPrice { get; init; }
-        public Money MaxPrice { get; init; }
+        public Money Price { get; init; }
     }
 }

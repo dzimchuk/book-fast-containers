@@ -1,3 +1,5 @@
+using BookFast.Booking.Integration;
+using BookFast.Common.Domain;
 using BookFast.Search.Store;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -66,6 +68,29 @@ namespace BookFast.Search.Tests.Search
             var publishEndpoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
 
             await publishEndpoint.Publish(message, cancellationToken);
+        }
+
+        /// <summary>Publishes Booking's <see cref="AccommodationBookableChanged"/> - the signal Search joins
+        /// on <c>AccommodationId</c> to source the displayed price and gate result inclusion. Waits for the
+        /// accommodation to already exist in the index first: PropertyManagement's and Booking's events are
+        /// independent producers consumed concurrently, and a bare publish right after seeding the
+        /// accommodation can otherwise race the two consumers into a lost update on the same record.</summary>
+        public async Task PublishBookableAsync(
+            Guid accommodationId,
+            bool bookable = true,
+            Money rate = null,
+            DateTimeOffset? occurredAt = null,
+            CancellationToken cancellationToken = default)
+        {
+            await WaitForAccommodationRecordAsync(accommodationId, r => r is not null);
+
+            await PublishAsync(new AccommodationBookableChanged
+            {
+                AccommodationId = accommodationId,
+                Bookable = bookable,
+                Rate = rate ?? new Money(100m, "USD"),
+                OccurredAt = occurredAt ?? DateTimeOffset.UtcNow,
+            }, cancellationToken);
         }
 
         public async Task ResetAsync()

@@ -18,8 +18,7 @@ namespace BookFast.Search.Tests.Search
         string Country,
         double? Latitude,
         double? Longitude,
-        Money MinPrice,
-        Money MaxPrice);
+        Money Price);
 
     [Collection(nameof(IntegrationTestCollection))]
     public class SearchTests(SearchFixture fixture) : IClassFixture<SearchFixture>, IAsyncLifetime
@@ -79,6 +78,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
 
             Assert.Contains(result.Records, r => r.AccommodationId == accommodationId && r.Name == $"{keyword} Suite");
@@ -119,6 +120,9 @@ namespace BookFast.Search.Tests.Search
                 Facilities = ["Parking"],
             });
 
+            await fixture.PublishBookableAsync(matchingId);
+            await fixture.PublishBookableAsync(nonMatchingId);
+
             await WaitForAsync($"query={keyword}", r => r.Records.Count() == 2);
 
             var result = await GetAsync($"query={keyword}&bedrooms=3&facilities=Pool&facilities=WiFi");
@@ -150,6 +154,8 @@ namespace BookFast.Search.Tests.Search
                     PriceRange = new PriceRange(new Money(100m + i, "USD"), new Money(100m + i, "USD")),
                     Facilities = [],
                 });
+
+                await fixture.PublishBookableAsync(id);
             }
 
             await WaitForAsync($"query={keyword}", r => r.Records.Count() == 3);
@@ -190,6 +196,7 @@ namespace BookFast.Search.Tests.Search
             };
 
             await fixture.PublishAsync(evt);
+            await fixture.PublishBookableAsync(accommodationId);
 
             await WaitForAsync($"query={keyword}", r => r.Records.Any());
 
@@ -222,6 +229,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
                 OccurredAt = now,
             });
+
+            await fixture.PublishBookableAsync(accommodationId);
 
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.Name == $"{keyword} Newer"));
 
@@ -267,6 +276,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
 
             Assert.Contains(result.Records, r => r.AccommodationId == accommodationId && r.Name == $"{keyword} FromUpdate");
@@ -294,6 +305,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
                 OccurredAt = now,
             });
+
+            await fixture.PublishBookableAsync(accommodationId);
 
             await WaitForAsync($"query={keyword}", r => r.Records.Any());
 
@@ -347,6 +360,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             await WaitForAsync($"query={keyword}", r => r.Records.Any());
 
             var response = await fixture.HttpClient.GetAsync($"/api/search?query={keyword}");
@@ -393,6 +408,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = ["WiFi"],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.City == "Barcelona"));
             var record = result.Records.Single(r => r.AccommodationId == accommodationId);
 
@@ -438,6 +455,8 @@ namespace BookFast.Search.Tests.Search
                 PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")),
                 Facilities = [],
             });
+
+            await fixture.PublishBookableAsync(accommodationId);
 
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.City == "Barcelona"));
 
@@ -517,6 +536,9 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(barcelonaAccommodationId);
+            await fixture.PublishBookableAsync(lisbonAccommodationId);
+
             await WaitForAsync($"query={keyword}", r => r.Records.Count() == 2 && r.Records.All(rec => !string.IsNullOrEmpty(rec.City)));
 
             var byCity = await GetAsync($"query={keyword}&city=Barcelona");
@@ -559,6 +581,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = ["WiFi"],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.Facilities.Contains("Pool")));
 
             var byPropertyFacility = await GetAsync($"query={keyword}&facilities=Pool");
@@ -590,6 +614,8 @@ namespace BookFast.Search.Tests.Search
                 PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")),
                 Facilities = [],
             });
+
+            await fixture.PublishBookableAsync(accommodationId);
 
             var beforeBackfill = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
             Assert.Null(beforeBackfill.Records.Single().City);
@@ -641,6 +667,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.City == "Barcelona"));
 
             await fixture.PublishAsync(new PropertyDeactivatedEvent
@@ -689,6 +717,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
             });
 
+            await fixture.PublishBookableAsync(accommodationId);
+
             // wait for indexing via the (keyword-based) Name match, unaffected by the rigging above
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
 
@@ -719,6 +749,8 @@ namespace BookFast.Search.Tests.Search
                 Facilities = [],
                 OccurredAt = now,
             });
+
+            await fixture.PublishBookableAsync(accommodationId);
 
             await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
 
@@ -753,6 +785,145 @@ namespace BookFast.Search.Tests.Search
 
             Assert.Equal(4, result.Records.Single(r => r.AccommodationId == accommodationId).Bedrooms);
             Assert.Equal(documentCallsAfterCreate, DocumentEmbedCalls());
+        }
+
+        [Fact]
+        public async Task AccommodationCreated_BeforeBookableEventArrives_ExcludedFromResults()
+        {
+            var keyword = Keyword();
+            var accommodationId = Guid.NewGuid();
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = Guid.NewGuid(),
+                Name = $"{keyword} Suite",
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(150m, "USD")),
+                Facilities = [],
+            });
+
+            // no AccommodationBookableChanged has been published for this accommodation yet
+            await fixture.WaitForAccommodationRecordAsync(accommodationId, r => r is not null);
+
+            var result = await GetAsync($"query={keyword}");
+
+            Assert.DoesNotContain(result.Records, r => r.AccommodationId == accommodationId);
+        }
+
+        [Fact]
+        public async Task AccommodationBookableChanged_ShowsBookingRateInPlaceOfPropertyManagementPriceRangeMin()
+        {
+            var keyword = Keyword();
+            var accommodationId = Guid.NewGuid();
+            var bookingRate = new Money(222m, "USD");
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = Guid.NewGuid(),
+                Name = $"{keyword} Suite",
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(150m, "USD")),
+                Facilities = [],
+            });
+
+            await fixture.PublishBookableAsync(accommodationId, rate: bookingRate);
+
+            var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
+
+            Assert.Equal(bookingRate, result.Records.Single(r => r.AccommodationId == accommodationId).Price);
+        }
+
+        [Fact]
+        public async Task AccommodationBookableChanged_NotBookableIsExcluded_BookableIsIncluded()
+        {
+            var keyword = Keyword();
+            var bookableId = Guid.NewGuid();
+            var notBookableId = Guid.NewGuid();
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = bookableId,
+                TenantId = "tenant-1",
+                PropertyId = Guid.NewGuid(),
+                Name = $"{keyword} Bookable",
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")),
+                Facilities = [],
+            });
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = notBookableId,
+                TenantId = "tenant-1",
+                PropertyId = Guid.NewGuid(),
+                Name = $"{keyword} NotBookable",
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")),
+                Facilities = [],
+            });
+
+            await fixture.PublishBookableAsync(bookableId, bookable: true);
+            await fixture.PublishBookableAsync(notBookableId, bookable: false);
+
+            await fixture.WaitForAccommodationRecordAsync(notBookableId, r => r is not null && !r.Bookable);
+
+            var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == bookableId));
+
+            Assert.Contains(result.Records, r => r.AccommodationId == bookableId);
+            Assert.DoesNotContain(result.Records, r => r.AccommodationId == notBookableId);
+        }
+
+        [Fact]
+        public async Task AccommodationBookableChanged_DuplicateOrOutOfOrderDelivery_DoesNotCorruptTheRecord()
+        {
+            var keyword = Keyword();
+            var accommodationId = Guid.NewGuid();
+            var now = DateTimeOffset.UtcNow;
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = Guid.NewGuid(),
+                Name = $"{keyword} Suite",
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")),
+                Facilities = [],
+            });
+
+            var newerRate = new Money(300m, "USD");
+            await fixture.PublishBookableAsync(accommodationId, rate: newerRate, occurredAt: now);
+
+            var result = await WaitForAsync($"query={keyword}", r => r.Records.Any(rec => rec.AccommodationId == accommodationId));
+            Assert.Equal(newerRate, result.Records.Single(r => r.AccommodationId == accommodationId).Price);
+
+            // a stale, older Rate arriving after the newer one must not overwrite it
+            await fixture.PublishBookableAsync(accommodationId, rate: new Money(50m, "USD"), occurredAt: now.AddMinutes(-5));
+            await Task.Delay(500);
+
+            var afterStale = await GetAsync($"query={keyword}");
+            Assert.Equal(newerRate, afterStale.Records.Single(r => r.AccommodationId == accommodationId).Price);
+
+            // an exact duplicate redelivery (same OccurredAt) is a no-op too
+            await fixture.PublishBookableAsync(accommodationId, rate: newerRate, occurredAt: now);
+            await Task.Delay(500);
+
+            var afterDuplicate = await GetAsync($"query={keyword}");
+            Assert.Equal(newerRate, afterDuplicate.Records.Single(r => r.AccommodationId == accommodationId).Price);
         }
     }
 }

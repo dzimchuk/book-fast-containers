@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Api\BookFast.Common.Api.csproj" />
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Infrastructure\BookFast.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Common\BookFast.Common.Presentation\BookFast.Common.Presentation.csproj" />
+    <ProjectReference Include="..\..\Booking\BookFast.Booking.Integration\BookFast.Booking.Integration.csproj" />
     <ProjectReference Include="..\..\PropertyManagement\BookFast.PropertyManagement.Integration\BookFast.PropertyManagement.Integration.csproj" />
   </ItemGroup>
 

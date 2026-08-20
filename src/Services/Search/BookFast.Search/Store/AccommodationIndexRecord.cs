@@ -58,17 +58,12 @@ namespace BookFast.Search.Store
         [VectorStoreData]
         public double? Longitude { get; set; }
 
+        /// <summary>The price a guest will actually pay, sourced from Booking's published Rate</summary>
         [VectorStoreData]
-        public double? MinPriceAmount { get; set; }
+        public double? RateAmount { get; set; }
 
         [VectorStoreData]
-        public string MinPriceCurrency { get; set; }
-
-        [VectorStoreData]
-        public double? MaxPriceAmount { get; set; }
-
-        [VectorStoreData]
-        public string MaxPriceCurrency { get; set; }
+        public string RateCurrency { get; set; }
 
         [VectorStoreData(IsFullTextIndexed = true)]
         public string SearchText { get; set; }
@@ -85,9 +80,15 @@ namespace BookFast.Search.Store
         public bool Active { get; set; } = true;
 
         [VectorStoreData(IsIndexed = true)]
+        public bool Bookable { get; set; }
+
+        [VectorStoreData(IsIndexed = true)]
         public DateTimeOffset AccommodationOccurredAt { get; set; }
 
         [VectorStoreData(IsIndexed = true)]
         public DateTimeOffset? PropertyOccurredAt { get; set; }
+
+        [VectorStoreData(IsIndexed = true)]
+        public DateTimeOffset? BookableOccurredAt { get; set; }
     }
 }

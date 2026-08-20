@@ -20,10 +20,6 @@ namespace BookFast.Search.Indexer
                 Bedrooms = message.Bedrooms,
                 OwnImages = message.Images ?? [],
                 OwnFacilities = message.Facilities ?? [],
-                MinPriceAmount = (double?)message.PriceRange?.MinPrice?.Amount,
-                MinPriceCurrency = message.PriceRange?.MinPrice?.Currency,
-                MaxPriceAmount = (double?)message.PriceRange?.MaxPrice?.Amount,
-                MaxPriceCurrency = message.PriceRange?.MaxPrice?.Currency,
                 AccommodationOccurredAt = message.OccurredAt,
             }, context.CancellationToken);
         }

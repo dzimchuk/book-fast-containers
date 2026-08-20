@@ -31,7 +31,47 @@ namespace BookFast.Search.Store
 
             record.Active = true;
 
+            // Booking's Rate/Bookable are a separate event stream, unknown to a PropertyManagement-triggered upsert.
+            // Carry them forward from the existing record rather than clobbering them with defaults.
+            record.Bookable = existing?.Bookable ?? false;
+            record.RateAmount = existing?.RateAmount;
+            record.RateCurrency = existing?.RateCurrency;
+            record.BookableOccurredAt = existing?.BookableOccurredAt;
+
             await ApplySearchTextAndEmbeddingAsync(record, existing, cancellationToken);
+
+            await collection.UpsertAsync(record, cancellationToken);
+        }
+
+        public async Task ApplyBookableChangedAsync(Guid accommodationId, bool bookable, Money rate, DateTimeOffset occurredAt, CancellationToken cancellationToken = default)
+        {
+            var existing = await collection.GetAsync(
+                accommodationId,
+                new RecordRetrievalOptions { IncludeVectors = true },
+                cancellationToken);
+
+            if (existing is not null && existing.BookableOccurredAt is { } watermark && watermark >= occurredAt)
+            {
+                return;
+            }
+
+            // Booking's event can arrive before Search has ever seen the accommodation from PropertyManagement;
+            // a minimal placeholder is later backfilled once the PM event arrives (same pattern as DeleteAsync).
+            // Active stays false until then, there is no Name/PropertyId yet to show a meaningful result for.
+            var record = existing ?? new AccommodationIndexRecord
+            {
+                AccommodationId = accommodationId,
+                Name = string.Empty,
+                SearchText = string.Empty,
+                ContentHash = ComputeHash(string.Empty),
+                Embedding = await GenerateEmbeddingAsync(string.Empty, cancellationToken),
+                Active = false,
+            };
+
+            record.Bookable = bookable;
+            record.RateAmount = (double?)rate?.Amount;
+            record.RateCurrency = rate?.Currency;
+            record.BookableOccurredAt = occurredAt;
 
             await collection.UpsertAsync(record, cancellationToken);
         }
@@ -166,7 +206,7 @@ namespace BookFast.Search.Store
 
         private static Expression<Func<AccommodationIndexRecord, bool>> BuildFilter(SearchQuery query)
         {
-            Expression<Func<AccommodationIndexRecord, bool>> filter = r => r.Active;
+            Expression<Func<AccommodationIndexRecord, bool>> filter = r => r.Active && r.Bookable;
 
             if (query.Bedrooms.HasValue)
             {
@@ -296,8 +336,7 @@ namespace BookFast.Search.Store
             Country = record.Country,
             Latitude = record.Latitude,
             Longitude = record.Longitude,
-            MinPrice = record.MinPriceAmount.HasValue ? new Money((decimal)record.MinPriceAmount.Value, record.MinPriceCurrency) : null,
-            MaxPrice = record.MaxPriceAmount.HasValue ? new Money((decimal)record.MaxPriceAmount.Value, record.MaxPriceCurrency) : null,
+            Price = record.RateAmount.HasValue ? new Money((decimal)record.RateAmount.Value, record.RateCurrency) : null,
         };
     }
 }

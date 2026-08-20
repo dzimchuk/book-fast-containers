@@ -22,6 +22,8 @@ namespace BookFast.Search.Indexer
             config.AddConsumer<PropertyUpdatedEventConsumer>();
             config.AddConsumer<PropertyDeactivatedEventConsumer>();
 
+            config.AddConsumer<AccommodationBookableChangedEventConsumer>();
+
             config.AddConsumer<ReindexPropertyAccommodationsConsumer>();
 
             var reindexEndpointName = endpointNameFormatter.Consumer<ReindexPropertyAccommodationsConsumer>();

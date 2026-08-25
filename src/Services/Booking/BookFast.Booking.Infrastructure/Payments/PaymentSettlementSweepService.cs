@@ -37,7 +37,7 @@ namespace BookFast.Booking.Infrastructure.Payments
         {
             try
             {
-                using var scope = scopeFactory.CreateScope();
+                await using var scope = scopeFactory.CreateAsyncScope();
 
                 var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
                 var dateTimeProvider = scope.ServiceProvider.GetRequiredService<IDateTimeProvider>();

@@ -60,8 +60,19 @@ services:
     ports:
       - 5301:8081
     depends_on:
-      - bookfast.telemetry-dashboard
-      - bookfast.messaging
+      bookfast.database:
+        condition: service_healthy
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
+
+  bookfast.database-init:
+    image: busybox
+    container_name: database-init
+    volumes:
+      - database:/var/opt/mssql
+    command: ["sh", "-c", "chown -R 10001:10001 /var/opt/mssql"]
 
   bookfast.database:
     image: "mcr.microsoft.com/mssql/server:2025-latest"
@@ -70,10 +81,11 @@ services:
       - MSSQL_SA_PASSWORD=P@ssw0rd
       - ACCEPT_EULA=Y
       - MSSQL_PID=Developer
+    depends_on:
+      bookfast.database-init:
+        condition: service_completed_successfully
     volumes:
-      - ./.containers/database/data:/var/opt/mssql/data
-      - ./.containers/database/log:/var/opt/mssql/log
-      - ./.containers/database/secrets:/var/opt/mssql/secrets
+      - database:/var/opt/mssql
     ports:
       - "5433:1433"
     healthcheck:
@@ -149,3 +161,6 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+volumes:
+  database:

@@ -19,7 +19,7 @@ WORKDIR /src
 
 COPY ["Directory.Packages.props", "."]
 COPY ["Directory.Build.props", "."]
-COPY "BookFast.sln" "BookFast.sln"
+COPY "BookFast.slnx" "BookFast.slnx"
 
 COPY "src/Common/BookFast.Common.Api/BookFast.Common.Api.csproj" "src/Common/BookFast.Common.Api/BookFast.Common.Api.csproj"
 COPY "src/Common/BookFast.Common.Application/BookFast.Common.Application.csproj" "src/Common/BookFast.Common.Application/BookFast.Common.Application.csproj"
@@ -32,7 +32,7 @@ COPY "src/Services/Identity/BookFast.Identity/BookFast.Identity.csproj" "src/Ser
 COPY "src/Services/Identity/BookFast.Identity.Core/BookFast.Identity.Core.csproj" "src/Services/Identity/BookFast.Identity.Core/BookFast.Identity.Core.csproj"
 COPY "src/Services/Identity/BookFast.Identity.Infrastructure/BookFast.Identity.Infrastructure.csproj" "src/Services/Identity/BookFast.Identity.Infrastructure/BookFast.Identity.Infrastructure.csproj"
 
-RUN dotnet restore "BookFast.sln"
+RUN dotnet restore "BookFast.slnx"
 
 COPY ["src/", "src/"]
 

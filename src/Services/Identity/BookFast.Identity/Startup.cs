@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using BookFast.Common.Api;
+using BookFast.Common.Api.HealthChecks;
 using BookFast.Common.Api.SecurityContext;
 using BookFast.Common.Api.Swagger;
 using BookFast.Common.Application;
@@ -50,6 +51,8 @@ namespace BookFast.Identity
             services.AddCommonInfrastructure(configuration);
 
             services.AddIdentityInfrastructure(configuration);
+
+            services.AddHealthCheckServices();
 
             services
                 .AddControllersWithViews(options => options.Conventions.Add(new ApiPrefixConvention("api")))
@@ -275,6 +278,7 @@ namespace BookFast.Identity
 
             app.UseEndpoints(endpointRouteBuilder =>
             {
+                endpointRouteBuilder.MapHealthCheckEndpoints();
                 endpointRouteBuilder.MapRazorPages();
                 endpointRouteBuilder.MapControllers();
             });

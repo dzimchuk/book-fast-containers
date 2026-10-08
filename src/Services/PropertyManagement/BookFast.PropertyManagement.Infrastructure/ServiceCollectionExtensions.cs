@@ -34,6 +34,8 @@ namespace BookFast.PropertyManagement.Infrastructure
 
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<PropertyManagementContext>());
 
+            services.AddDatabaseReadinessCheck<PropertyManagementContext>("property-management-db");
+
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
             services.AddSingleton(serviceProvider =>
             {

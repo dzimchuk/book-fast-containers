@@ -1,4 +1,5 @@
 using BookFast.Common.Api;
+using BookFast.Common.Api.HealthChecks;
 using BookFast.Common.Api.JsonConverters;
 using BookFast.Common.Api.SecurityContext;
 using BookFast.Common.Api.Swagger;
@@ -40,6 +41,8 @@ builder.Services.AddCommonInfrastructure(builder.Configuration);
 
 builder.Services.AddPropertyManagementInfrastructure(builder.Configuration);
 
+builder.Services.AddHealthCheckServices();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
@@ -70,6 +73,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSecurityContext();
+
+app.MapHealthCheckEndpoints();
 
 app.MapEndpoints(app.MapGroup("api"));
 

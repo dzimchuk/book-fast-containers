@@ -34,6 +34,8 @@ namespace BookFast.Booking.Infrastructure
 
             services.AddScoped<IDbContext>(sp => sp.GetRequiredService<BookingContext>());
 
+            services.AddDatabaseReadinessCheck<BookingContext>("booking-db");
+
             services.Configure<PaymentOptions>(configuration.GetSection("Payments"));
             services.AddScoped<IPaymentGateway, MockPaymentGateway>();
             services.AddHostedService<PaymentSettlementSweepService>();

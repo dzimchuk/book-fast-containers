@@ -34,6 +34,8 @@ namespace BookFast.Identity.Infrastructure
 
             services.AddScoped<IDbContext>(serviceProvider => serviceProvider.GetRequiredService<IdentityContext>());
 
+            services.AddDatabaseReadinessCheck<IdentityContext>("identity-db");
+
             services.Configure<CommunicationServiceOptions>(configuration.GetSection("CommunicationService"));
 
             services.AddMassTransit(configuration, ConfigureMassTransit);

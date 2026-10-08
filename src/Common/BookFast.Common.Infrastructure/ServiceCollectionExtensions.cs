@@ -7,6 +7,7 @@ using BookFast.Common.Infrastructure.Filters;
 using BookFast.Common.Infrastructure.Integration;
 using BookFast.Common.Infrastructure.Messaging;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,6 +21,13 @@ namespace BookFast.Common.Infrastructure
             services.TryAddSingleton<IDateTimeProvider, DateTimeProvider>();
         }
 
+        public static IServiceCollection AddDatabaseReadinessCheck<TContext>(this IServiceCollection services, string name)
+            where TContext : DbContext
+        {
+            services.AddHealthChecks().AddDbContextCheck<TContext>(name, tags: ["ready"]);
+            return services;
+        }
+
         public static void AddMassTransit(this IServiceCollection services,
             IConfiguration configuration,
             Action<IBusRegistrationConfigurator> configureServiceSpecifics)
@@ -28,31 +36,41 @@ namespace BookFast.Common.Infrastructure
             services.TryAddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
             services.TryAddTransient<ILocalBrokeredMessageSender, LocalBrokeredMessageSender>();
 
+            var connectionString = configuration.GetConnectionString("MessageBus");
+            var transport = configuration["Messaging:Transport"];
+
             services.AddMassTransit(config =>
             {
                 configureServiceSpecifics?.Invoke(config);
 
-                //config.UsingInMemory((context, cfg) =>
-                //{
-                //    cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
-                //    cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
-
-                //    cfg.ConfigureEndpoints(context);
-                //});
-
-                config.UsingRabbitMq((context, cfg) =>
+                if (string.Equals(transport, MessagingTransports.AzureServiceBus, StringComparison.OrdinalIgnoreCase))
                 {
-                    cfg.Host(new Uri(configuration.GetConnectionString("MessageBus")), hostConfig =>
+                    config.UsingAzureServiceBus((context, cfg) =>
                     {
-                        //hostConfig.Username("");
-                        //hostConfig.Password("");
+                        cfg.Host(connectionString);
+
+                        cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
+                        cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
+
+                        cfg.ConfigureEndpoints(context);
                     });
+                }
+                else
+                {
+                    config.UsingRabbitMq((context, cfg) =>
+                    {
+                        cfg.Host(new Uri(connectionString), hostConfig =>
+                        {
+                            //hostConfig.Username("");
+                            //hostConfig.Password("");
+                        });
 
-                    cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
-                    cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
+                        cfg.UseSendFilter(typeof(MessageSizeFilter<>), context);
+                        cfg.UsePublishFilter(typeof(MessageSizeFilter<>), context);
 
-                    cfg.ConfigureEndpoints(context);
-                });
+                        cfg.ConfigureEndpoints(context);
+                    });
+                }
             });
         }
     }

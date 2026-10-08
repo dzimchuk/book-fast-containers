@@ -48,13 +48,16 @@ namespace BookFast.Search.Tests.Search
                         ? null
                         : (IEmbeddingGenerator<string, Embedding<float>>)descriptor.ImplementationFactory(sp);
 
-                    EmbeddingGenerator = new TestEmbeddingGenerator(realGenerator);
-
-                    return EmbeddingGenerator;
+                    return new TestEmbeddingGenerator(realGenerator);
                 });
             });
 
             HttpClient = factory.CreateClient();
+
+            // Resolve the generator eagerly. The singleton factory only runs on first resolution, which would
+            // otherwise be whenever the app happens to need an embedding - racing the first test's ResetAsync.
+            EmbeddingGenerator = (TestEmbeddingGenerator)factory.Services
+                .GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
             return Task.CompletedTask;
         }

@@ -15,10 +15,10 @@ namespace BookFast.Booking.Tests.Reservations
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
 
             var mineId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2027-01-01"), DateOnly.Parse("2027-01-03"), 1, new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), 1, new Money(100m, "USD"));
 
             var othersId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.OtherGuestId, DateOnly.Parse("2027-01-05"), DateOnly.Parse("2027-01-07"), 1, new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(5), StayDates.Upcoming(7), 1, new Money(100m, "USD"));
 
             var reservations = await fixture.HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations");
 
@@ -31,7 +31,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2027-02-01"), DateOnly.Parse("2027-02-03"), 1, new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(10), StayDates.Upcoming(12), 1, new Money(100m, "USD"));
 
             var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
 
@@ -45,7 +45,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.OtherGuestId, DateOnly.Parse("2027-03-01"), DateOnly.Parse("2027-03-03"), 1, new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(20), StayDates.Upcoming(22), 1, new Money(100m, "USD"));
 
             var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
 
@@ -65,7 +65,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2020-01-01"), DateOnly.Parse("2020-01-03"), 1, new Money(100m, "USD"),
+                accommodationId, ReservationsFixture.GuestId, StayDates.Past(30), StayDates.Past(28), 1, new Money(100m, "USD"),
                 status: ReservationStatus.Confirmed);
 
             var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");

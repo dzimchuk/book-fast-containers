@@ -78,9 +78,9 @@ namespace BookFast.Booking.Tests.Reservations
             var otherAccommodationId = await SeedAccommodationAsync(OtherTenantId);
 
             var mineId = await SeedReservationAsync(
-                myAccommodationId, TenantId, DateOnly.Parse("2027-01-01"), DateOnly.Parse("2027-01-03"));
+                myAccommodationId, TenantId, StayDates.Upcoming(1), StayDates.Upcoming(3));
             var othersId = await SeedReservationAsync(
-                otherAccommodationId, OtherTenantId, DateOnly.Parse("2027-02-01"), DateOnly.Parse("2027-02-03"));
+                otherAccommodationId, OtherTenantId, StayDates.Upcoming(5), StayDates.Upcoming(7));
 
             var reservations = await HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations/provider");
 

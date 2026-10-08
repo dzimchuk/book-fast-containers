@@ -13,7 +13,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 1, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1,
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1,
                 rate: new Money(100m, "USD"), expiresAt: DateTimeOffset.UtcNow.AddMinutes(-1));
 
             await fixture.TriggerExpirationSweepAsync();
@@ -25,8 +25,8 @@ namespace BookFast.Booking.Tests.Reservations
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-01",
-                CheckOut = "2026-09-03",
+                CheckIn = StayDates.Upcoming(1),
+                CheckOut = StayDates.Upcoming(3),
                 Units = 1
             });
 
@@ -38,7 +38,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 1, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1,
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1,
                 rate: new Money(100m, "USD"), expiresAt: DateTimeOffset.UtcNow.AddMinutes(15));
 
             await fixture.TriggerExpirationSweepAsync();
@@ -54,7 +54,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 1, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1,
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1,
                 rate: new Money(100m, "USD"), status: status, expiresAt: DateTimeOffset.UtcNow.AddMinutes(-1));
 
             await fixture.TriggerExpirationSweepAsync();
@@ -68,7 +68,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 1, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1,
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1,
                 rate: new Money(100m, "USD"), expiresAt: DateTimeOffset.UtcNow.AddMinutes(-1));
 
             await fixture.TriggerExpirationSweepAsync();

@@ -13,7 +13,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
             var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
             Assert.Equal(HttpStatusCode.Accepted, payResponse.StatusCode);
@@ -31,7 +31,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
             var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay?outcome=Decline", null);
             Assert.Equal(HttpStatusCode.Accepted, payResponse.StatusCode);
@@ -48,7 +48,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.OtherGuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"));
+                accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
             var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
 
@@ -60,7 +60,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"),
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"),
                 status: ReservationStatus.Confirmed);
 
             var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
@@ -73,7 +73,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"),
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"),
                 status: ReservationStatus.Confirmed);
 
             await fixture.SendConfirmReservationDirectlyAsync(reservationId);
@@ -90,7 +90,7 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 5, rate: new Money(100m, "USD"));
             var reservationId = await fixture.SeedReservationAsync(
-                accommodationId, ReservationsFixture.GuestId, DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"),
+                accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"),
                 status: status);
 
             await fixture.SendConfirmReservationDirectlyAsync(reservationId);

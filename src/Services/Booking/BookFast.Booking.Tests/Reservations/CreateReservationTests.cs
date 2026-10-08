@@ -16,8 +16,8 @@ namespace BookFast.Booking.Tests.Reservations
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-01",
-                CheckOut = "2026-09-04", // 3 nights
+                CheckIn = StayDates.Upcoming(1),
+                CheckOut = StayDates.Upcoming(4), // 3 nights
                 Units = 2
             });
 
@@ -39,8 +39,8 @@ namespace BookFast.Booking.Tests.Reservations
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-01",
-                CheckOut = "2026-09-03",
+                CheckIn = StayDates.Upcoming(1),
+                CheckOut = StayDates.Upcoming(3),
                 Units = 1
             });
 
@@ -55,8 +55,8 @@ namespace BookFast.Booking.Tests.Reservations
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-01",
-                CheckOut = "2026-09-03",
+                CheckIn = StayDates.Upcoming(1),
+                CheckOut = StayDates.Upcoming(3),
                 Units = 1
             });
 
@@ -68,16 +68,16 @@ namespace BookFast.Booking.Tests.Reservations
         {
             var accommodationId = await fixture.SeedAccommodationAsync(quantity: 2, rate: new Money(100m, "USD"));
 
-            // Holds both units for one night (Sep 2) in the middle of the requested stay.
+            // Holds both units for the one night in the middle of the requested stay.
             await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.OtherGuestId,
-                DateOnly.Parse("2026-09-02"), DateOnly.Parse("2026-09-03"), units: 2, rate: new Money(100m, "USD"));
+                StayDates.Upcoming(2), StayDates.Upcoming(3), units: 2, rate: new Money(100m, "USD"));
 
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-01",
-                CheckOut = "2026-09-04",
+                CheckIn = StayDates.Upcoming(1),
+                CheckOut = StayDates.Upcoming(4),
                 Units = 1
             });
 
@@ -94,14 +94,14 @@ namespace BookFast.Booking.Tests.Reservations
 
             await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.OtherGuestId,
-                DateOnly.Parse("2026-09-01"), DateOnly.Parse("2026-09-03"), units: 1, rate: new Money(100m, "USD"));
+                StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
             // Checks in the very day the other reservation checks out - must not conflict.
             var response = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-09-03",
-                CheckOut = "2026-09-05",
+                CheckIn = StayDates.Upcoming(3),
+                CheckOut = StayDates.Upcoming(5),
                 Units = 1
             });
 
@@ -116,8 +116,8 @@ namespace BookFast.Booking.Tests.Reservations
             var requestBody = new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-10-01",
-                CheckOut = "2026-10-03",
+                CheckIn = StayDates.Upcoming(31),
+                CheckOut = StayDates.Upcoming(33),
                 Units = 1
             };
 
@@ -137,8 +137,8 @@ namespace BookFast.Booking.Tests.Reservations
             var createResponse = await fixture.HttpClient.PostAsJsonAsync("/api/reservations", new
             {
                 AccommodationId = accommodationId,
-                CheckIn = "2026-11-01",
-                CheckOut = "2026-11-02",
+                CheckIn = StayDates.Upcoming(62),
+                CheckOut = StayDates.Upcoming(63),
                 Units = 1
             });
 

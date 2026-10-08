@@ -1,0 +1,238 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  BUILD_CONFIGURATION: Release
+  EF_TOOL_VERSION: '10.0.11'
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', 'Directory.Packages.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore BookFast.slnx
+
+      - name: Build
+        run: dotnet build BookFast.slnx --no-restore --configuration ${{ env.BUILD_CONFIGURATION }}
+
+      - name: Test Booking
+        id: test_booking
+        continue-on-error: true
+        run: >
+          dotnet test src/Services/Booking/BookFast.Booking.Tests/BookFast.Booking.Tests.csproj
+          --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger "trx;LogFileName=Booking.trx" --results-directory ./TestResults
+
+      - name: Test Identity
+        id: test_identity
+        continue-on-error: true
+        run: >
+          dotnet test src/Services/Identity/BookFast.Identity.Tests/BookFast.Identity.Tests.csproj
+          --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger "trx;LogFileName=Identity.trx" --results-directory ./TestResults
+
+      - name: Test PropertyManagement
+        id: test_propertymanagement
+        continue-on-error: true
+        run: >
+          dotnet test src/Services/PropertyManagement/BookFast.PropertyManagement.Tests/BookFast.PropertyManagement.Tests.csproj
+          --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger "trx;LogFileName=PropertyManagement.trx" --results-directory ./TestResults
+
+      - name: Test Search
+        id: test_search
+        continue-on-error: true
+        run: >
+          dotnet test src/Services/Search/BookFast.Search.Tests/BookFast.Search.Tests.csproj
+          --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
+          --logger "trx;LogFileName=Search.trx" --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: ./TestResults/*.trx
+          retention-days: 14
+
+      - name: Install dotnet-ef
+        run: dotnet tool install --global dotnet-ef --version ${{ env.EF_TOOL_VERSION }}
+
+      - name: Generate Booking migration script
+        id: migrate_booking
+        continue-on-error: true
+        working-directory: src/Services/Booking/BookFast.Booking.Infrastructure
+        run: dotnet ef migrations script --no-build --configuration ${{ env.BUILD_CONFIGURATION }} -i -o ../Booking.sql
+
+      - name: Generate PropertyManagement migration script
+        id: migrate_propertymanagement
+        continue-on-error: true
+        working-directory: src/Services/PropertyManagement/BookFast.PropertyManagement.Infrastructure
+        run: dotnet ef migrations script --no-build --configuration ${{ env.BUILD_CONFIGURATION }} -i -o ../PropertyManagement.sql
+
+      - name: Generate Identity migration script
+        id: migrate_identity
+        continue-on-error: true
+        working-directory: src/Services/Identity/BookFast.Identity.Infrastructure
+        run: dotnet ef migrations script --no-build --configuration ${{ env.BUILD_CONFIGURATION }} -i -o ../Identity.sql
+
+      - name: Upload migration scripts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: migration-scripts
+          path: |
+            src/Services/Booking/Booking.sql
+            src/Services/PropertyManagement/PropertyManagement.sql
+            src/Services/Identity/Identity.sql
+          retention-days: 14
+
+      - name: Fail if any test or migration step failed
+        if: always()
+        run: |
+          outcomes=(
+            "${{ steps.test_booking.outcome }}"
+            "${{ steps.test_identity.outcome }}"
+            "${{ steps.test_propertymanagement.outcome }}"
+            "${{ steps.test_search.outcome }}"
+            "${{ steps.migrate_booking.outcome }}"
+            "${{ steps.migrate_propertymanagement.outcome }}"
+            "${{ steps.migrate_identity.outcome }}"
+          )
+
+          failed=false
+          for outcome in "${outcomes[@]}"; do
+            if [ "$outcome" = "failure" ]; then
+              failed=true
+            fi
+          done
+
+          if [ "$failed" = "true" ]; then
+            echo "One or more test/migration steps failed - see the step logs above."
+            exit 1
+          fi
+
+  publish-images:
+    name: Build & push image (${{ matrix.service }})
+    needs: build_and_test
+    if: success() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: booking
+            dockerfile: src/Services/Booking/BookFast.Booking/Dockerfile
+          - service: identity
+            dockerfile: src/Services/Identity/BookFast.Identity/Dockerfile
+          - service: property-management
+            dockerfile: src/Services/PropertyManagement/BookFast.PropertyManagement/Dockerfile
+          - service: search
+            dockerfile: src/Services/Search/BookFast.Search/Dockerfile
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Compute image tags
+        id: tags
+        run: |
+          image="ghcr.io/${{ github.repository_owner }}/bookfast/${{ matrix.service }}"
+          sha_tag="$image:sha-${GITHUB_SHA::7}"
+
+          if [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            echo "tags=$sha_tag,$image:latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "tags=$sha_tag" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  manifest:
+    name: Deployment manifest
+    needs: [build_and_test, publish-images]
+    if: always() && needs.build_and_test.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build deployment manifest
+        env:
+          DEPLOYABLE: ${{ needs.publish-images.result == 'success' }}
+        run: |
+          namespace="ghcr.io/${{ github.repository_owner }}/bookfast"
+          sha_short="${GITHUB_SHA::7}"
+
+          if [ "$DEPLOYABLE" = "true" ]; then
+            images=$(jq -n \
+              --arg booking "$namespace/booking:sha-$sha_short" \
+              --arg identity "$namespace/identity:sha-$sha_short" \
+              --arg propertyManagement "$namespace/property-management:sha-$sha_short" \
+              --arg search "$namespace/search:sha-$sha_short" \
+              '{booking: $booking, identity: $identity, "property-management": $propertyManagement, search: $search}')
+          else
+            images='{}'
+          fi
+
+          jq -n \
+            --argjson deployable "$DEPLOYABLE" \
+            --arg ref "${{ github.ref }}" \
+            --arg sha "${{ github.sha }}" \
+            --argjson images "$images" \
+            '{deployable: $deployable, ref: $ref, sha: $sha, images: $images}' | tee deployment-manifest.json
+
+      - name: Upload deployment manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: deployment-manifest
+          path: deployment-manifest.json
+          retention-days: 14

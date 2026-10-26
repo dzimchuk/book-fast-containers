@@ -184,9 +184,14 @@ namespace BookFast.Identity
                     {
                         options.AddSigningCertificate(X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(authServerSettings.SigningCertificate), string.Empty));
                     }
-                    else
+                    else if (!string.IsNullOrWhiteSpace(authServerSettings.SigningCertificateThumbprint))
                     {
                         options.AddSigningCertificate(authServerSettings.SigningCertificateThumbprint, StoreName.My, StoreLocation.CurrentUser);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(
+                            "Outside of Development a stable signing certificate is required: set 'AuthServer:SigningCertificate' to a base64-encoded PKCS12 blob or 'AuthServer:SigningCertificateThumbprint' to a certificate available in the host store.");
                     }
 
                     if (authServerSettings.EnableAccessTokenEncryption)

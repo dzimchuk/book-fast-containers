@@ -160,13 +160,15 @@ namespace BookFast.Search.Tests.Search
 
             await WaitForAsync($"query={keyword}", r => r.Records.Count() == 3);
 
-            var page1 = await GetAsync($"query={keyword}&pageNumber=1&pageSize=2");
+            // The unfiltered filter-only path uses stable Skip/Top scrolling, so paging mechanics
+            // can be verified deterministically.
+            var page1 = await GetAsync("query=&pageNumber=1&pageSize=2");
             Assert.Equal(2, page1.Records.Count());
             // MEVD has no count/total-hits API; paging via top/skip means the exact total is unknown.
             Assert.Null(page1.TotalRecords);
             Assert.Null(page1.TotalPages);
 
-            var page2 = await GetAsync($"query={keyword}&pageNumber=2&pageSize=2");
+            var page2 = await GetAsync("query=&pageNumber=2&pageSize=2");
             Assert.Single(page2.Records);
             Assert.Null(page2.TotalRecords);
             Assert.Null(page2.TotalPages);

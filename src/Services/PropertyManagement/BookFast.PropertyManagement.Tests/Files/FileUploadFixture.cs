@@ -84,7 +84,7 @@ namespace BookFast.PropertyManagement.Tests.Files
                 .ExecuteDeleteAsync();
 
             scope.Dispose();
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
     }
 }

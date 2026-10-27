@@ -45,7 +45,7 @@ namespace BookFast.Booking.Tests.Reservations
         public async Task DisposeAsync()
         {
             scope.Dispose();
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
 
         private async Task<Guid> SeedAccommodationAsync(string tenantId)

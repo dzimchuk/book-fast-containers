@@ -53,6 +53,8 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
 
             Environment.SetEnvironmentVariable($"ConnectionStrings:Sql", dbContainer.GetConnectionString());
             Environment.SetEnvironmentVariable($"ConnectionStrings:MessageBus", rabbitMqContainer.GetConnectionString());
+
+            Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", " ");
         }
 
         public virtual async Task DisposeAsync()

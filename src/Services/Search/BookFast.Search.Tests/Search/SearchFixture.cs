@@ -1,5 +1,6 @@
 using BookFast.Booking.Integration;
 using BookFast.Common.Domain;
+using BookFast.Common.TestInfrastructure.IntegrationTest;
 using BookFast.Search.Store;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -62,7 +63,7 @@ namespace BookFast.Search.Tests.Search
             return Task.CompletedTask;
         }
 
-        public async Task DisposeAsync() => await factory.DisposeAsync();
+        public async Task DisposeAsync() => await factory.DisposeSafelyAsync();
 
         public async Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
             where TEvent : class

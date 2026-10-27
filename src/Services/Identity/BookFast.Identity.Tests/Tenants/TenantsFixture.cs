@@ -65,7 +65,7 @@ namespace BookFast.Identity.Tests.Tenants
             await dbContext.Tenants.Where(t => t.Id == TestTenantId).ExecuteDeleteAsync();
            
             scope.Dispose();
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
     }
 }

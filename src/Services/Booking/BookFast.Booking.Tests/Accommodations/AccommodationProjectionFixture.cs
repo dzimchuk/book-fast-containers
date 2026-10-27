@@ -39,7 +39,7 @@ namespace BookFast.Booking.Tests.Accommodations
         {
             await publishBus.StopAsync();
 
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
 
         /// <summary>

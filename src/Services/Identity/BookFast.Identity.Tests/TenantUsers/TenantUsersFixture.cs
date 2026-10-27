@@ -100,7 +100,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             await dbContext.Tenants.Where(t => tenants.Contains(t.Id)).ExecuteDeleteAsync();
 
             scope.Dispose();
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
     }
 }

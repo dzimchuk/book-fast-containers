@@ -97,7 +97,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 .ExecuteDeleteAsync();
 
             scope.Dispose();
-            await factory.DisposeAsync();
+            await factory.DisposeSafelyAsync();
         }
     }
 }

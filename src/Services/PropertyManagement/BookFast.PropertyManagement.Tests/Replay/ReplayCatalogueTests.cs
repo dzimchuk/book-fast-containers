@@ -13,6 +13,15 @@ namespace BookFast.PropertyManagement.Tests.Replay
 
             Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
 
+            await fixture.IntegrationEvents.WaitForEventAsync<PropertyCreatedEvent>(
+                e => e.PropertyId == ReplayCatalogueFixture.Property1Id);
+            await fixture.IntegrationEvents.WaitForEventAsync<PropertyCreatedEvent>(
+                e => e.PropertyId == ReplayCatalogueFixture.Property2Id);
+            await fixture.IntegrationEvents.WaitForEventAsync<AccommodationCreatedEvent>(
+                e => e.AccommodationId == ReplayCatalogueFixture.Accommodation1Id);
+            await fixture.IntegrationEvents.WaitForEventAsync<AccommodationCreatedEvent>(
+                e => e.AccommodationId == ReplayCatalogueFixture.Accommodation2Id);
+
             Assert.Equal(1, fixture.IntegrationEvents.CountCaptured<PropertyCreatedEvent>(
                 e => e.PropertyId == ReplayCatalogueFixture.Property1Id));
             Assert.Equal(1, fixture.IntegrationEvents.CountCaptured<PropertyCreatedEvent>(

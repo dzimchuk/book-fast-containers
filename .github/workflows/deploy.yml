@@ -1,0 +1,74 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment.
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+      run-id:
+        description: Run id of the Build workflow to deploy. Leave empty to use the latest successful build of this branch.
+        required: false
+        type: string
+      deploy-infrastructure:
+        description: Also deploy/update the Azure infrastructure (bookfast.env.bicep).
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  resolve-build:
+    name: Resolve build run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      run-id: ${{ steps.resolve.outputs.run-id }}
+    steps:
+      - name: Resolve run id
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_RUN_ID: ${{ inputs.run-id }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "$REQUESTED_RUN_ID" ]; then
+            run_id="$REQUESTED_RUN_ID"
+          else
+            run_id=$(gh run list \
+              --repo "${{ github.repository }}" \
+              --workflow Build \
+              --branch "${{ github.ref_name }}" \
+              --status success \
+              --limit 1 \
+              --json databaseId \
+              --jq '.[0].databaseId')
+          fi
+
+          if [ -z "$run_id" ] || [ "$run_id" = "null" ]; then
+            echo "::error::Could not resolve a successful Build run to deploy"
+            exit 1
+          fi
+
+          echo "Deploying artifacts from Build run $run_id"
+          echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy
+    needs: resolve-build
+    uses: ./.github/workflows/deploy-environment.yml
+    with:
+      environment: ${{ inputs.environment }}
+      env-suffix: ${{ inputs.environment }}
+      run-id: ${{ needs.resolve-build.outputs.run-id }}
+      deploy-infrastructure: ${{ inputs.deploy-infrastructure }}
+    secrets: inherit

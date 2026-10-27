@@ -398,5 +398,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 *.sql
+!.infrastructure/sql/*.sql
 
 /.containers/

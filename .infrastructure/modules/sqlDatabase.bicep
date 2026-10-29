@@ -1,8 +1,5 @@
 param location string
 
-@description('Region for the SQL server and database. Defaults to the main location; override when the region is not accepting new SQL servers. The private endpoint stays in the main location, next to the virtual network.')
-param sqlServerLocation string = location
-
 param solutionName string
 param environment string
 
@@ -32,7 +29,7 @@ var name = sqlDatabaseParameters.prefix != '' ? '${sqlDatabaseParameters.prefix}
 
 resource sqlServer 'Microsoft.Sql/servers@2025-02-01-preview' = {
   name: name
-  location: sqlServerLocation
+  location: location
   properties: {
     administratorLogin: sqlServerAdministratorLogin
     administratorLoginPassword: sqlServerAdministratorPassword
@@ -54,7 +51,7 @@ resource sqlFirewallRules 'Microsoft.Sql/servers/firewallRules@2025-02-01-previe
 resource sqlDatabase 'Microsoft.Sql/servers/databases@2025-02-01-preview' = {
   parent: sqlServer
   name: name
-  location: sqlServerLocation
+  location: location
   sku: sqlDatabaseParameters.sku
   properties: {
     minCapacity: json('${sqlDatabaseParameters.minCapacity}')

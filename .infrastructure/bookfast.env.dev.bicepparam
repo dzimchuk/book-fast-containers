@@ -21,9 +21,10 @@ param sqlServerAdministratorPassword = az.getSecret(sourceKeyVaultSubscriptionId
 param identitySigningCertificate = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-identity-signing-certificate')
 param identityEncryptionKey = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-identity-encryption-key')
 
-param sqlServerLocation = 'northeurope'
-
-param searchServiceLocation = 'switzerlandnorth'
+param searchServiceParameters = {
+  location: 'switzerlandnorth'
+  sku: 'serverless'
+}
 
 param sqlDatabaseParameters = {
   prefix: ''

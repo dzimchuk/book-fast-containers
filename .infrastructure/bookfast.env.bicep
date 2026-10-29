@@ -1,3 +1,5 @@
+import { searchServiceParametersBundle } from 'modules/aiSearch.bicep'
+
 param solutionName string = 'bookfast'
 
 @allowed([
@@ -43,9 +45,6 @@ param sqlServerAdministratorPassword string
 @description('SQL database SKU and other parameters.')
 param sqlDatabaseParameters object
 
-@description('Region for the SQL server and database. Defaults to the resource group location.')
-param sqlServerLocation string = ''
-
 @description('Identity signing certificate.')
 @secure()
 param identitySigningCertificate string
@@ -71,11 +70,8 @@ param serviceBusSku string = 'Standard'
 @description('Zone redundancy for the Service Bus namespace.')
 param serviceBusZoneRedundant bool = false
 
-@description('Azure AI Search SKU.')
-param searchServiceSku string = 'serverless'
-
-@description('Region for the Azure AI Search service. Defaults to the resource group location.')
-param searchServiceLocation string = ''
+@description('Azure AI Search SKU, location and capacity.')
+param searchServiceParameters searchServiceParametersBundle
 
 @description('Blob containers to create.')
 param storageContainerNames array = [
@@ -186,7 +182,6 @@ module sqlDatabase 'modules/sqlDatabase.bicep' = {
   scope: rg
   params: {
     location: location
-    sqlServerLocation: empty(sqlServerLocation) ? location : sqlServerLocation
     solutionName: solutionName
     environment: environment
     sqlServerAdministratorLogin: sqlServerAdministratorLogin
@@ -236,9 +231,8 @@ module aiSearch 'modules/aiSearch.bicep' = {
   scope: rg
   params: {
     location: location
-    searchServiceLocation: empty(searchServiceLocation) ? location : searchServiceLocation
     searchServiceName: 'search-${envSuffix}'
-    searchServiceSku: searchServiceSku
+    searchServiceParameters: searchServiceParameters
     virtualNetworkId: virtualNetwork.outputs.virtualNetworkId
     virtualNetworkServicesSubnetId: virtualNetwork.outputs.servicesSubnetId
     publicNetworkAccess: publicNetworkAccess

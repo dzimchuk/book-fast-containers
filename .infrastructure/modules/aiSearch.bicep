@@ -1,23 +1,23 @@
-param location string
+@export()
+@description('Azure AI Search service settings.')
+type searchServiceParametersBundle = {
+  @description('Region for the Search service. Defaults to the main location; override when the service is not available there. The private endpoint stays in the main location, next to the virtual network.')
+  location: string?
 
-@description('Region for the Search service. Defaults to the main location; override when the service is not available there. The private endpoint stays in the main location, next to the virtual network.')
-param searchServiceLocation string = location
+  sku: 'basic' | 'standard' | 'standard2' | 'standard3' | 'serverless'
+
+  @description('Defaults to 1. Ignored for the serverless SKU.')
+  replicaCount: int?
+
+  @description('Defaults to 1. Ignored for the serverless SKU.')
+  partitionCount: int?
+}
+
+param location string
 
 param searchServiceName string
 
-@allowed([
-  'basic'
-  'standard'
-  'standard2'
-  'standard3'
-  'serverless'
-])
-param searchServiceSku string = 'basic'
-
-@description('Ignored for the serverless SKU.')
-param replicaCount int = 1
-@description('Ignored for the serverless SKU.')
-param partitionCount int = 1
+param searchServiceParameters searchServiceParametersBundle
 
 param virtualNetworkId string
 param virtualNetworkServicesSubnetId string
@@ -27,15 +27,17 @@ param publicNetworkAccess bool
 param keyVaultName string
 param adminKeySecretName string
 
+var isServerless = searchServiceParameters.sku == 'serverless'
+
 resource searchService 'Microsoft.Search/searchServices@2026-09-01-preview' = {
   name: searchServiceName
-  location: searchServiceLocation
+  location: searchServiceParameters.?location ?? location
   sku: {
-    name: searchServiceSku
+    name: searchServiceParameters.sku
   }
   properties: {
-    replicaCount: searchServiceSku == 'serverless' ? null : replicaCount
-    partitionCount: searchServiceSku == 'serverless' ? null : partitionCount
+    replicaCount: isServerless ? null : (searchServiceParameters.?replicaCount ?? 1)
+    partitionCount: isServerless ? null : (searchServiceParameters.?partitionCount ?? 1)
     hostingMode: 'Default'
     // the Search service is reached with an admin key, so key-based auth has to stay enabled
     disableLocalAuth: false

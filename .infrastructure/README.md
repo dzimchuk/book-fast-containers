@@ -148,6 +148,36 @@ The job runs the `bookfast/migrations` image, which the build pipeline assembles
 
 It reads the SQL connection string from Key Vault through the `bookfast-<env>-secret-access` user-assigned identity, and receives the four service URLs as environment variables.
 
+# Resource names and regions
+
+Most resources, including the Key Vault, are named `bookfast-<env>`. Resources with globally unique names use a suffix derived from the resource group ID instead (`envSuffix`, defaulting to `uniqueString(resourceGroup().id)`):
+
+| Resource | Name |
+| --- | --- |
+| AI Search | `search-<suffix>` |
+| Service Bus namespace | `servicebus-<suffix>` |
+| Storage account | `bookfast<suffix>` |
+
+All resources are deployed to the resource group's region. AI Search and AI Foundry are the exceptions: they may be deployed elsewhere when the service or model is not available in the main region (`searchServiceParameters.location`, `aiFoundryResources[].location`). Their private endpoints are still deployed in the main region, next to the virtual network.
+
+## Recreating an environment
+
+Key Vaults and AI Foundry accounts are soft-deleted, so deleting the resource group leaves their names reserved. Redeploying fails until the old resources are purged.
+
+**Key Vault** is retained for 90 days by default. If purge protection is not enabled, the vault can be purged right away:
+
+```
+az keyvault list-deleted --query "[].{name:name, location:properties.location}" -o table
+az keyvault purge -n bookfast-<env>
+```
+
+**AI Foundry** accounts are retained for 48 hours. Purging needs the account's original region and resource group:
+
+```
+az cognitiveservices account list-deleted -o table
+az cognitiveservices account purge -n <account name> -g <resource group> -l <original location>
+```
+
 # Networking and firewalls
 
 `publicNetworkAccess` controls whether the supporting services are reachable from the internet. Key Vault, SQL Database, AI Search and AI Foundry all get private endpoints in the `services-subnet` regardless; the flag governs whether the public endpoint stays open alongside them.

@@ -1,0 +1,6 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "title": "Properties.AccommodationNotFound",
+  "status": 404,
+  "detail": "Accommodation with id 00000000-0000-0000-0000-000000000000 not found."
+}

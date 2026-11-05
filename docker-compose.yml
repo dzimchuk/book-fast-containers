@@ -1,45 +1,166 @@
-version: '3.4'
-
 services:
-  bookfast-facility:
-    image: ${DOCKER_REGISTRY-}bookfast-facility
+  bookfast.identity:
+    image: ${DOCKER_REGISTRY-}bookfast-identity
+    container_name: identity
     build:
       context: .
-      dockerfile: BookFast.Facility/Dockerfile
-
-  bookfast-facility-rpc:
-    image: ${DOCKER_REGISTRY-}bookfast-facility-rpc
-    build:
-      context: .
-      dockerfile: BookFast.Facility.Rpc/Dockerfile
-
-  bookfast-files:
-    image: ${DOCKER_REGISTRY-}bookfast-files
-    build:
-      context: .
-      dockerfile: BookFast.Files/Dockerfile
+      dockerfile: src/Services/Identity/BookFast.Identity/Dockerfile
+    ports:
+      - 5001:8081
     depends_on:
-      - bookfast-facility
+      bookfast.database:
+        condition: service_healthy
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
 
-  bookfast-booking:
-    image: ${DOCKER_REGISTRY-}bookfast-booking
+  bookfast.property-management:
+    image: ${DOCKER_REGISTRY-}bookfast-property-management
+    container_name: property-management
     build:
       context: .
-      dockerfile: BookFast.Booking/Dockerfile
+      dockerfile: src/Services/PropertyManagement/BookFast.PropertyManagement/Dockerfile
+    ports:
+      - 5101:8081
     depends_on:
-      - bookfast-facility
+      bookfast.database:
+        condition: service_healthy
+      bookfast.azurite:
+        condition: service_started
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
 
-  bookfast-search-indexer:
-    image: ${DOCKER_REGISTRY-}bookfast-search-indexer
-    build:
-      context: .
-      dockerfile: BookFast.Search.Indexer/Dockerfile
-    depends_on:
-      - bookfast-facility
-
-  bookfast-search:
+  bookfast.search:
     image: ${DOCKER_REGISTRY-}bookfast-search
+    container_name: search
     build:
       context: .
-      dockerfile: BookFast.Search/Dockerfile
+      dockerfile: src/Services/Search/BookFast.Search/Dockerfile
+    ports:
+      - 5201:8081
+    depends_on:
+      bookfast.qdrant:
+        condition: service_started
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
+      bookfast.ollama-pull:
+        condition: service_completed_successfully
+
+  bookfast.booking:
+    image: ${DOCKER_REGISTRY-}bookfast-booking
+    container_name: booking
+    build:
+      context: .
+      dockerfile: src/Services/Booking/BookFast.Booking/Dockerfile
+    ports:
+      - 5301:8081
+    depends_on:
+      bookfast.database:
+        condition: service_healthy
+      bookfast.telemetry-dashboard:
+        condition: service_started
+      bookfast.messaging:
+        condition: service_started
+
+  bookfast.database-init:
+    image: busybox
+    container_name: database-init
+    volumes:
+      - database:/var/opt/mssql
+    command: ["sh", "-c", "chown -R 10001:10001 /var/opt/mssql"]
+
+  bookfast.database:
+    image: "mcr.microsoft.com/mssql/server:2025-latest"
+    container_name: database
+    environment:
+      - MSSQL_SA_PASSWORD=P@ssw0rd
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+    depends_on:
+      bookfast.database-init:
+        condition: service_completed_successfully
+    volumes:
+      - database:/var/opt/mssql
+    ports:
+      - "5433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  bookfast.azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./.containers/azurite:/data
+
+  bookfast.qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    volumes:
+      - ./.containers/qdrant:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+
+  bookfast.ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ./.containers/ollama:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
       
+  bookfast.ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    depends_on:
+      bookfast.ollama:
+        condition: service_healthy
+    volumes:
+      - ./.containers/ollama:/root/.ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - "OLLAMA_HOST=ollama:11434 ollama pull nomic-embed-text"
+
+  bookfast.telemetry-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:latest
+    container_name: telemetry-dashboard
+    environment:
+      ASPIRE_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
+    ports:
+      - 18889:18889
+      - 18888:18888
+
+  bookfast.messaging:
+    image: rabbitmq:management-alpine
+    container_name: messaging
+    hostname: messaging
+    volumes:
+        - ./.containers/rabbitmq/data/:/var/lib/rabbitmq
+        - ./.containers/rabbitmq/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+volumes:
+  database:

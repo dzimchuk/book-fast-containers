@@ -1,0 +1,6 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\BookFast.Common.Presentation\BookFast.Common.Presentation.csproj" />
+    <ProjectReference Include="..\BookFast.PropertyManagement.Application\BookFast.PropertyManagement.Application.csproj" />
+  </ItemGroup>
+</Project>

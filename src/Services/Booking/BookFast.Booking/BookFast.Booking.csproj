@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  
+  <PropertyGroup>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\BookFast.Common.Api\BookFast.Common.Api.csproj" />
+    <ProjectReference Include="..\BookFast.Booking.Infrastructure\BookFast.Booking.Infrastructure.csproj" />
+    <ProjectReference Include="..\BookFast.Booking.Presentation\BookFast.Booking.Presentation.csproj" />
+  </ItemGroup>
+  
+</Project>

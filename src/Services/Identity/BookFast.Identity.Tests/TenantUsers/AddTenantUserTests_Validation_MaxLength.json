@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "General.Validation",
+  "status": 400,
+  "detail": "One or more validation errors occurred",
+  "MaximumLengthValidator": "The length of \u0027User Name\u0027 must be 256 characters or fewer. You entered 257 characters.",
+  "PredicateValidator": "The specified condition was not met for \u0027Role\u0027."
+}

@@ -1,0 +1,21 @@
+{
+  "id": "00000000-0000-0000-0000-000000010021",
+  "propertyId": "00000000-0000-0000-0000-000000010011",
+  "name": "Standard Room",
+  "bedrooms": 1,
+  "quantity": 5,
+  "priceRange": {
+    "minPrice": {
+      "amount": "100",
+      "currency": "USD"
+    },
+    "maxPrice": {
+      "amount": "100",
+      "currency": "USD"
+    }
+  },
+  "facilities": [
+    "WiFi"
+  ],
+  "isActive": true
+}

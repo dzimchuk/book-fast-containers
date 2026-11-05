@@ -1,0 +1,193 @@
+name: Deploy (environment)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: GitHub environment to deploy to (gates approvals and scopes variables).
+        required: true
+        type: string
+      env-suffix:
+        description: Environment suffix used to select the .bicepparam files (e.g. dev).
+        required: true
+        type: string
+      run-id:
+        description: Run id of the Build workflow whose artifacts should be deployed.
+        required: true
+        type: string
+      deploy-infrastructure:
+        description: Deploy bookfast.env.bicep before deploying the applications.
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    defaults:
+      run:
+        working-directory: .infrastructure
+    env:
+      RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+      ACR_NAME: ${{ vars.AZURE_CONTAINER_REGISTRY }}
+      ENV_SUFFIX: ${{ inputs.env-suffix }}
+      # consumed by readEnvironmentVariable() when the .bicepparam files are compiled
+      BOOKFAST_SOURCE_KEYVAULT_SUBSCRIPTION_ID: ${{ vars.BOOKFAST_SOURCE_KEYVAULT_SUBSCRIPTION_ID }}
+      BOOKFAST_SOURCE_KEYVAULT_RESOURCE_GROUP: ${{ vars.BOOKFAST_SOURCE_KEYVAULT_RESOURCE_GROUP }}
+      BOOKFAST_SOURCE_KEYVAULT_NAME: ${{ vars.BOOKFAST_SOURCE_KEYVAULT_NAME }}
+      BOOKFAST_ACR_PULL_IDENTITY_SUBSCRIPTION_ID: ${{ vars.BOOKFAST_ACR_PULL_IDENTITY_SUBSCRIPTION_ID }}
+      BOOKFAST_ACR_PULL_IDENTITY_RESOURCE_GROUP: ${{ vars.BOOKFAST_ACR_PULL_IDENTITY_RESOURCE_GROUP }}
+      BOOKFAST_ACR_PULL_IDENTITY_NAME: ${{ vars.BOOKFAST_ACR_PULL_IDENTITY_NAME }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download deployment manifest
+        uses: actions/download-artifact@v6
+        with:
+          name: deployment-manifest
+          path: ${{ github.workspace }}/manifest
+          run-id: ${{ inputs.run-id }}
+          github-token: ${{ github.token }}
+
+      - name: Check if build is deployable
+        id: manifest
+        working-directory: ${{ github.workspace }}/manifest
+        run: |
+          set -euo pipefail
+          cat deployment-manifest.json
+
+          if [ "$(jq -r '.deployable' deployment-manifest.json)" != "true" ]; then
+            echo "::error::Build ${{ inputs.run-id }} is not deployable"
+            exit 1
+          fi
+
+          echo "image-tag=$(jq -r '.imageTag' deployment-manifest.json)" >> "$GITHUB_OUTPUT"
+          echo "sha=$(jq -r '.sha' deployment-manifest.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Container Apps CLI extension
+        run: az extension add --name containerapp --upgrade --yes --only-show-errors
+
+      - name: Deploy infrastructure
+        if: ${{ inputs.deploy-infrastructure }}
+        run: |
+          az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "bookfast-env-${{ github.run_id }}" \
+            --parameters "bookfast.env.${ENV_SUFFIX}.bicepparam"
+
+      - name: Import images into ACR
+        env:
+          IMAGE_TAG: ${{ steps.manifest.outputs.image-tag }}
+          GHCR_USERNAME: ${{ github.actor }}
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}
+        run: |
+          set -euo pipefail
+          namespace="ghcr.io/${{ github.repository_owner }}/bookfast"
+
+          credentials=()
+          if [ -n "${GHCR_PAT:-}" ]; then
+            credentials=(--username "$GHCR_USERNAME" --password "$GHCR_PAT")
+          fi
+
+          for image in identity property-management search booking migrations; do
+            echo "==> Importing ${image}:${IMAGE_TAG}"
+            az acr import \
+              --name "$ACR_NAME" \
+              --source "${namespace}/${image}:${IMAGE_TAG}" \
+              --image "bookfast/${image}:${IMAGE_TAG}" \
+              --force \
+              "${credentials[@]}"
+          done
+
+      - name: Deploy migrations job
+        env:
+          IMAGE_TAG: ${{ steps.manifest.outputs.image-tag }}
+        run: |
+          az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "bookfast-migrations-${{ github.run_id }}" \
+            --parameters "bookfast.migrations.${ENV_SUFFIX}.bicepparam" \
+            --parameters acrName="$ACR_NAME" imageTag="$IMAGE_TAG"
+
+      - name: Apply database migrations
+        run: |
+          set -euo pipefail
+          job="bookfast-migrations-${ENV_SUFFIX}"
+
+          execution=$(az containerapp job start \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "$job" \
+            --query name -o tsv)
+          echo "Started execution $execution"
+
+          # the job template sets replicaTimeout to 30 minutes; poll a little longer than that
+          for _ in $(seq 1 240); do
+            status=$(az containerapp job execution show \
+              --resource-group "$RESOURCE_GROUP" \
+              --name "$job" \
+              --job-execution-name "$execution" \
+              --query properties.status -o tsv)
+            echo "status=$status"
+
+            case "$status" in
+              Succeeded)
+                exit 0
+                ;;
+              Failed|Cancelled)
+                echo "::error::Migration job execution $execution finished with status $status"
+                az containerapp job logs show \
+                  --resource-group "$RESOURCE_GROUP" \
+                  --name "$job" \
+                  --container "bookfast-migrations" \
+                  --tail 200 || true
+                exit 1
+                ;;
+            esac
+            sleep 10
+          done
+
+          echo "::error::Timed out waiting for migration job execution $execution"
+          exit 1
+
+      - name: Deploy container apps
+        id: apps
+        env:
+          IMAGE_TAG: ${{ steps.manifest.outputs.image-tag }}
+        run: |
+          az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "bookfast-apps-${{ github.run_id }}" \
+            --parameters "bookfast.apps.${ENV_SUFFIX}.bicepparam" \
+            --parameters acrName="$ACR_NAME" imageTag="$IMAGE_TAG" \
+            --query properties.outputs -o json > outputs.json
+          cat outputs.json
+
+      - name: Summarise deployment
+        run: |
+          {
+            echo "### BookFast deployed to ${{ inputs.environment }}"
+            echo ""
+            echo "| Service | URL |"
+            echo "| --- | --- |"
+            jq -r 'to_entries[] | "| \(.key) | https://\(.value.value) |"' outputs.json
+            echo ""
+            echo "Commit: \`${{ steps.manifest.outputs.sha }}\` · Image tag: \`${{ steps.manifest.outputs.image-tag }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

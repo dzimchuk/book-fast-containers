@@ -1,0 +1,7 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "Properties.PropertyNotEmpty",
+  "status": 400,
+  "detail": "Property with id 15 contains accommodations.",
+  "traceId": "00-6d6a23faeb0b45a018ae8524a21f4500-d2fa4656f754a4dc-01"
+}

@@ -1,0 +1,6 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "Tenants.Duplicate",
+  "status": 400,
+  "detail": "Tenant \u0027Test tenant\u0027 already exists."
+}

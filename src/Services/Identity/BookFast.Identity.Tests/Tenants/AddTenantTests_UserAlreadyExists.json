@@ -1,0 +1,7 @@
+{
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "title": "General.MultipleErrors",
+  "status": 400,
+  "detail": "One or more errors occurred",
+  "DuplicateUserName": "Username \u0027user@test.com\u0027 is already taken."
+}

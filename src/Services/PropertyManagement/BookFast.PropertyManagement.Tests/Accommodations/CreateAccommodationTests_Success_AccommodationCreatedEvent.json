@@ -1,0 +1,19 @@
+{
+  "TenantId": "54f673c8-44a8-4d05-aeac-92ea5f18c633",
+  "Name": "Deluxe Suite",
+  "Description": "A spacious deluxe suite",
+  "Bedrooms": 2,
+  "Quantity": 3,
+  "PriceRange": {
+    "MinPrice": {
+      "Amount": 150,
+      "Currency": "USD"
+    },
+    "MaxPrice": {
+      "Amount": 200,
+      "Currency": "USD"
+    },
+    "IsEmpty": false
+  },
+  "Facilities": []
+}

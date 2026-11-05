@@ -1,0 +1,91 @@
+using BookFast.Common.Application.Security;
+using BookFast.Common.Domain;
+using BookFast.Common.TestInfrastructure.IntegrationTest;
+using BookFast.PropertyManagement.Application;
+using BookFast.PropertyManagement.Domain;
+using BookFast.PropertyManagement.Infrastructure.Database;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace BookFast.PropertyManagement.Tests.Accommodations
+{
+    public class AccommodationsFixture : IAsyncLifetime
+    {
+        private readonly WebApplicationFactory<Program> factory;
+        private readonly HttpClient httpClient;
+        private readonly IServiceScope scope;
+        private readonly PropertyManagementContext dbContext;
+
+        private readonly PropertyManagementApiFixture apiFixture;
+
+        public HttpClient HttpClient => httpClient;
+
+        public IDbContext DbContext => dbContext;
+
+        public IntegrationEventHarness IntegrationEvents => apiFixture.IntegrationEvents;
+
+        public Guid PropertyId { get; private set; }
+        public Guid AccommodationId { get; private set; }
+
+        public AccommodationsFixture(PropertyManagementApiFixture fixture)
+        {
+            apiFixture = fixture;
+
+            factory = fixture.GetWebApplicationFactory(services =>
+            {
+                services.AddSingleton(new TestSecurityContext
+                {
+                    UserId = Constants.UserId,
+                    Role = Roles.TenantUser,
+                    TenantId = Constants.CallerTenant
+                });
+            });
+            httpClient = factory.CreateClient();
+
+            scope = factory.Services.CreateScope();
+            dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
+        }
+
+        public async Task InitializeAsync()
+        {
+            var property = Property.NewProperty(
+                Constants.CallerTenant,
+                "Test Property",
+                "A property for accommodation tests",
+                new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701"),
+                new Location(30.2672, -97.7431),
+                null,
+                null);
+
+            property.Id = Guid.CreateVersion7();
+
+            dbContext.Properties.Add(property);
+            await dbContext.SaveChangesAsync();
+
+            PropertyId = property.Id;
+
+            var accommodation = Accommodation.NewAccommodation(Constants.CallerTenant, PropertyId, "Standard Room", null, 1, null, 5, new PriceRange(new Money(100m, "USD"), new Money(100m, "USD")), null);
+            accommodation.Id = Guid.CreateVersion7();
+            
+            dbContext.Accommodations.Add(accommodation);
+            await dbContext.SaveChangesAsync();
+
+            AccommodationId = accommodation.Id;
+        }
+
+        public async Task DisposeAsync()
+        {
+            await dbContext.Accommodations
+                .Where(a => a.PropertyId == PropertyId)
+                .ExecuteDeleteAsync();
+
+            await dbContext.Properties
+                .Where(p => p.Id == PropertyId)
+                .ExecuteDeleteAsync();
+
+            scope.Dispose();
+            await factory.DisposeSafelyAsync();
+        }
+    }
+}

@@ -249,7 +249,7 @@ module serviceBusNamespace 'modules/serviceBus.bicep' = {
     serviceBusNamespaceName: 'servicebus-${envSuffix}'
     serviceBusSku: serviceBusSku
     zoneRedundant: serviceBusZoneRedundant
-    publicNetworkAccess: false
+    publicNetworkAccess: true
     keyVaultName: keyVault.outputs.keyVaultName
     connectionStringSecretName: 'servicebus-connection-string'
   }

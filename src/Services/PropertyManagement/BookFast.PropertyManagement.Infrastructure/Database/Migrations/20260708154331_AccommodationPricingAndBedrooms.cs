@@ -49,13 +49,15 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
 
             // Backfill: the former single price becomes both MinPrice and MaxPrice.
             // Historical data carried no currency, so USD is used as the backfill default.
+            // EXEC is required: idempotent scripts wrap the migration in one batch, and the
+            // new columns don't exist yet when that batch is compiled.
             migrationBuilder.Sql(
                 """
-                UPDATE [property_management].[accommodations]
+                EXEC(N'UPDATE [property_management].[accommodations]
                 SET [min_price_amount] = [price],
-                    [min_price_currency] = 'USD',
+                    [min_price_currency] = ''USD'',
                     [max_price_amount] = [price],
-                    [max_price_currency] = 'USD';
+                    [max_price_currency] = ''USD'';');
                 """);
 
             migrationBuilder.DropColumn(
@@ -90,8 +92,8 @@ namespace BookFast.PropertyManagement.Infrastructure.Database.Migrations
 
             migrationBuilder.Sql(
                 """
-                UPDATE [property_management].[accommodations]
-                SET [price] = COALESCE([min_price_amount], [max_price_amount], 0);
+                EXEC(N'UPDATE [property_management].[accommodations]
+                SET [price] = COALESCE([min_price_amount], [max_price_amount], 0);');
                 """);
 
             migrationBuilder.DropColumn(

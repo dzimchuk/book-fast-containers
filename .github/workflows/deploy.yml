@@ -11,7 +11,7 @@ on:
         options:
           - dev
       run-id:
-        description: Run id of the Build workflow to deploy. Leave empty to use the latest successful build of this branch.
+        description: Run id or run number of the Build workflow to deploy. Leave empty to use the latest successful build of this branch.
         required: false
         type: string
       deploy-infrastructure:
@@ -42,7 +42,17 @@ jobs:
           set -euo pipefail
 
           if [ -n "$REQUESTED_RUN_ID" ]; then
-            run_id="$REQUESTED_RUN_ID"
+            run_id="${REQUESTED_RUN_ID#\#}"
+            # Short values are run numbers as shown in the Actions UI, not run ids
+            if [[ "$run_id" =~ ^[0-9]{1,8}$ ]]; then
+              run_number="$run_id"
+              run_id=$(gh run list \
+                --repo "${{ github.repository }}" \
+                --workflow Build \
+                --limit 1000 \
+                --json databaseId,number \
+                --jq ".[] | select(.number == $run_number) | .databaseId")
+            fi
           else
             run_id=$(gh run list \
               --repo "${{ github.repository }}" \
@@ -66,6 +76,10 @@ jobs:
     name: Deploy
     needs: resolve-build
     uses: ./.github/workflows/deploy-environment.yml
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
     with:
       environment: ${{ inputs.environment }}
       env-suffix: ${{ inputs.environment }}

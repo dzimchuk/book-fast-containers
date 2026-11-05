@@ -32,7 +32,7 @@ COPY "src/Services/Identity/BookFast.Identity/BookFast.Identity.csproj" "src/Ser
 COPY "src/Services/Identity/BookFast.Identity.Core/BookFast.Identity.Core.csproj" "src/Services/Identity/BookFast.Identity.Core/BookFast.Identity.Core.csproj"
 COPY "src/Services/Identity/BookFast.Identity.Infrastructure/BookFast.Identity.Infrastructure.csproj" "src/Services/Identity/BookFast.Identity.Infrastructure/BookFast.Identity.Infrastructure.csproj"
 
-RUN dotnet restore "BookFast.slnx"
+RUN dotnet restore "src/Services/Identity/BookFast.Identity/BookFast.Identity.csproj"
 
 COPY ["src/", "src/"]
 

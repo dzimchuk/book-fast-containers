@@ -20,7 +20,7 @@ Nothing reads the master KeyVault at runtime. The application gets its secrets f
 
 1. Select between RBAC (recommended) or 'Vault access policy' on the **Access configuration** page.
 2. Enable 'Azure Resource Manager for template deployment' on the same page.
-3. Grant the deployment principal the **Key Vault Secrets User** role on the vault, or a `get` secret access policy.
+3. Grant the deployment principal the **Key Vault Secrets User** role on the vault, or a `get` secret access policy. For the pipeline, the deployment principal is the identity described in [Pipelines](../.github/workflows/README.md#2-azure-permissions), which also lists its other required roles.
 
 ## Required secrets
 
@@ -76,7 +76,7 @@ The parameter files resolve Azure subscription (and optionally other resource na
 | `BOOKFAST_ACR_PULL_IDENTITY_RESOURCE_GROUP` | `TestContainerRegistry` | as above |
 | `BOOKFAST_ACR_PULL_IDENTITY_NAME` | `ACRPullIdentity` | as above |
 
-In GitHub Actions these come from environment-scoped **variables** (not secrets), see the root README.
+In GitHub Actions these come from environment-scoped **variables** (not secrets), see [Pipelines](../.github/workflows/README.md#variables).
 
 When running locally:
 
@@ -126,16 +126,7 @@ Service URLs are derived from the Container Apps environment default domain, so 
 
 ## GHCR access for `az acr import`
 
-`az acr import` pulls straight from GitHub Container Registry. If the `bookfast/*` packages are **public**, no credentials are needed.
-
-If they are private, create a token and pass it with `--username`/`--password`:
-
-1. GitHub → Settings → Developer settings → **Personal access tokens**.
-2. Either a **classic** token with the `read:packages` scope, or a **fine-grained** token with *Packages: Read-only* permission.
-3. Store it as a GitHub Actions **environment secret** named `GHCR_PAT` on the target environment. The deploy workflow only passes credentials when this secret is present.
-4. For local imports: `az acr import ... --username <github-username> --password <token>`.
-
-To make the packages public instead: GitHub → your profile/org → Packages → select package → Package settings → Change visibility.
+`az acr import` pulls straight from GitHub Container Registry. If the `bookfast/*` packages are **public**, no credentials are needed. If they are private, pass `--username <github-username> --password <classic PAT with read:packages>`. See [GHCR access](../.github/workflows/README.md#4-ghcr-access) for how to create the token and configure the pipeline.
 
 # Database migrations
 

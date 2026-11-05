@@ -1,8 +1,13 @@
 using 'bookfast.env.bicep'
 
 var sourceKeyVaultSubscriptionId = readEnvironmentVariable('BOOKFAST_SOURCE_KEYVAULT_SUBSCRIPTION_ID')
-var sourceKeyVaultResourceGroup = readEnvironmentVariable('BOOKFAST_SOURCE_KEYVAULT_RESOURCE_GROUP', 'Common')
-var sourceKeyVaultName = readEnvironmentVariable('BOOKFAST_SOURCE_KEYVAULT_NAME', 'source-keyvault')
+
+// GitHub Actions exports unset variables as empty strings, which readEnvironmentVariable does not treat as unset
+var sourceKeyVaultResourceGroupRaw = readEnvironmentVariable('BOOKFAST_SOURCE_KEYVAULT_RESOURCE_GROUP', 'Common')
+var sourceKeyVaultNameRaw = readEnvironmentVariable('BOOKFAST_SOURCE_KEYVAULT_NAME', 'source-keyvault')
+
+var sourceKeyVaultResourceGroup = empty(sourceKeyVaultResourceGroupRaw) ? 'Common' : sourceKeyVaultResourceGroupRaw
+var sourceKeyVaultName = empty(sourceKeyVaultNameRaw) ? 'source-keyvault' : sourceKeyVaultNameRaw
 
 param environment = 'dev'
 

@@ -20,7 +20,7 @@ Nothing reads the master KeyVault at runtime. The application gets its secrets f
 
 1. Select between RBAC (recommended) or 'Vault access policy' on the **Access configuration** page.
 2. Enable 'Azure Resource Manager for template deployment' on the same page.
-3. Grant the deployment principal the **Key Vault Secrets User** role on the vault, or a `get` secret access policy. For the pipeline, the deployment principal is the identity described in [Pipelines](../.github/workflows/README.md#2-azure-permissions), which also lists its other required roles.
+3. Grant the deployment principal access to read secrets: a `get` secret access policy (Vault access policy model), or the custom role in [Pipelines](../.github/workflows/README.md#custom-role-for-the-master-key-vault) (RBAC model). For the pipeline, the deployment principal is the identity described in [Pipelines](../.github/workflows/README.md#2-azure-permissions), which also lists its other required roles.
 
 ## Required secrets
 

@@ -55,7 +55,7 @@ Grant the service principal the following roles.
 | **Contributor** | The environment's resource group | Deploying `bookfast.env`, `bookfast.migrations` and `bookfast.apps`, including Key Vault access policies, and starting the migrations job |
 | **Container Registry Data Importer and Data Reader** | The Azure Container Registry | `az acr import` (needs `Microsoft.ContainerRegistry/registries/importImage/action`). Not needed separately if the ACR is in the resource group above |
 | **Managed Identity Operator** | The ACR pull user-assigned identity (`BOOKFAST_ACR_PULL_IDENTITY_*`) | Assigning that identity to the container apps and the migrations job. Not needed separately if it is in the resource group above |
-| **Key Vault Secrets User** | The master Key Vault | `az.getSecret()` reads the SQL credentials, signing certificate and encryption key during template deployment. See [The master Key Vault](../../.infrastructure/README.md#the-master-key-vault) |
+| **BookFast Key Vault Template Deployer** (custom role with `Microsoft.KeyVault/vaults/deploy/action`) | The master Key Vault | `az.getSecret()` reads the SQL credentials, signing certificate and encryption key during template deployment. See [Custom role for the master Key Vault](#custom-role-for-the-master-key-vault) |
 
 Example:
 
@@ -66,11 +66,33 @@ az role assignment create --assignee <client id> --role "Container Registry Data
     --scope $(az acr show -n <acr> --query id -o tsv)
 az role assignment create --assignee <client id> --role "Managed Identity Operator" \
     --scope $(az identity show -g <acr pull identity rg> -n <acr pull identity> --query id -o tsv)
-az role assignment create --assignee <client id> --role "Key Vault Secrets User" \
+az role assignment create --assignee <client id> --role "BookFast Key Vault Template Deployer" \
     --scope $(az keyvault show -n <master vault> --query id -o tsv)
 ```
 
 The resource group must exist beforehand, and the master Key Vault must have **Azure Resource Manager for template deployment** enabled and its secrets provisioned (see [.infrastructure/README.md](../../.infrastructure/README.md)).
+
+### Custom role for the master Key Vault
+
+Passing a Key Vault secret to a deployment through `az.getSecret()` or a `reference` in a parameter file requires the `Microsoft.KeyVault/vaults/deploy/action` permission on the vault. No built-in role includes it, and **Key Vault Secrets User** is not enough as it lacks the `deploy/action` permission. See [Use Azure Key Vault to pass a secret as a parameter during Bicep deployment](https://learn.microsoft.com/azure/azure-resource-manager/bicep/key-vault-parameter).
+
+This applies to RBAC vaults. Create the role once (save as `bookfast-keyvault-template-deployer.json`):
+
+```json
+{
+  "Name": "BookFast Key Vault Template Deployer",
+  "Description": "Lets ARM template deployments read secrets from the vault as parameter values.",
+  "Actions": [ "Microsoft.KeyVault/vaults/deploy/action" ],
+  "DataActions": [ "Microsoft.KeyVault/vaults/secrets/getSecret/action" ],
+  "AssignableScopes": [ "/subscriptions/<sub>/resourceGroups/<master vault rg>/providers/Microsoft.KeyVault/vaults/<master vault>" ]
+}
+```
+
+```
+az role definition create --role-definition bookfast-keyvault-template-deployer.json
+```
+
+Then assign it with the `az role assignment create` command above.
 
 ## 3. GitHub Environment
 
@@ -115,5 +137,5 @@ Actions → **Deploy** → Run workflow. Pick the environment, optionally a Buil
 | --- | --- |
 | `AADSTS700213` / no matching federated identity record | Federated credential subject does not match `repo:<owner>/<repo>:environment:<env>` |
 | `AuthorizationFailed` during a deployment step | Missing role from the table above on the resource group, ACR or ACR pull identity |
-| Template deployment fails reading a secret from the master vault | Missing **Key Vault Secrets User**, or ARM template deployment access not enabled on the vault |
+| Template deployment fails reading a secret from the master vault | `KeyVaultParameterReferenceAuthorizationFailed`: missing `Microsoft.KeyVault/vaults/deploy/action` (assign the custom role), or ARM template deployment access not enabled on the vault |
 | `az acr import` reports unauthorized or not found for the GHCR source | Packages are private and `GHCR_PAT` is missing, expired, or lacks `read:packages` |

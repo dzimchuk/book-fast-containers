@@ -20,6 +20,9 @@ param containerAppsConfig object
 @description('AI Foundry account name.')
 param aiFoundryAccountName string = '${solutionName}-${environment}'
 
+@description('Fallback sender address when containerAppsConfig.identity.mailFromAddress is not set: the Azure-managed domain sender username.')
+param managedMailSenderUserName string = 'donotreply'
+
 var rg = resourceGroup()
 var location = rg.location
 
@@ -42,6 +45,14 @@ resource secretAccessIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
 
 resource appEnvironment 'Microsoft.App/managedEnvironments@2025-01-01' existing = {
   name: '${solutionName}-${environment}'
+}
+
+resource emailService 'Microsoft.Communication/emailServices@2023-03-31' existing = {
+  name: '${solutionName}-${environment}'
+
+  resource managedDomain 'domains' existing = {
+    name: 'AzureManagedDomain'
+  }
 }
 
 var urlPrefix = 'https://${keyVault.name}${az.environment().suffixes.keyvaultDns}/secrets'
@@ -187,7 +198,8 @@ var resourceServerAuthEnv = [
   }
 ]
 
-var identityMailFromAddress = contains(containerAppsConfig.identity, 'mailFromAddress') ? containerAppsConfig.identity.mailFromAddress : ''
+var configuredMailFromAddress = containerAppsConfig.identity.?mailFromAddress ?? ''
+var identityMailFromAddress = empty(configuredMailFromAddress) ? '${managedMailSenderUserName}@${emailService::managedDomain.properties.mailFromSenderDomain}' : configuredMailFromAddress
 
 var identitySecrets = concat(commonSecrets, [
   secretSqlConnection
@@ -197,7 +209,6 @@ var identitySecrets = concat(commonSecrets, [
     keyVaultUrl: '${urlPrefix}/${kvIdentitySigningCertificate}'
     identity: secretAccessIdentity.id
   }
-], empty(identityMailFromAddress) ? [] : [
   {
     name: 'communication-service-connection'
     keyVaultUrl: '${urlPrefix}/${kvCommunicationServiceConnection}'
@@ -226,7 +237,6 @@ var identityEnv = concat(commonEnv, [
     name: 'AuthServer__EnableAccessTokenEncryption'
     value: 'true'
   }
-], empty(identityMailFromAddress) ? [] : [
   {
     name: 'CommunicationService__ConnectionString'
     secretRef: 'communication-service-connection'

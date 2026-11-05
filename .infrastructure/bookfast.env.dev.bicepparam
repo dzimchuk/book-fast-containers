@@ -44,6 +44,8 @@ param sqlDatabaseParameters = {
 
 param storageAccountSku = 'Standard_LRS'
 
+param emailCustomDomain = null
+
 param aiFoundryResources = [
   {
     name: 'bookfast-dev'

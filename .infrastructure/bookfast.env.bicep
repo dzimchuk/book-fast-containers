@@ -1,4 +1,5 @@
 import { searchServiceParametersBundle } from 'modules/aiSearch.bicep'
+import { customDomainType } from 'modules/emailCustomDomain.bicep'
 
 param solutionName string = 'bookfast'
 
@@ -53,9 +54,8 @@ param identitySigningCertificate string
 @secure()
 param identityEncryptionKey string
 
-@secure()
-@description('Azure Communication Services connection string. Optional.')
-param communicationServiceConnectionString string = ''
+@description('Optional customer-managed email sender domain. Leave null to send from the Azure-managed domain only. The domain DNS records must be verified in Azure before it can be used.')
+param emailCustomDomain customDomainType?
 
 @description('Array of AI Foundry resources and models to deploy')
 param aiFoundryResources array = []
@@ -167,13 +167,15 @@ module identityEncryptionKeySecret 'modules/keyVaultSecret.bicep' = {
   }
 }
 
-module communicationServiceSecret 'modules/keyVaultSecret.bicep' = if (!empty(communicationServiceConnectionString)) {
-  name: '${solutionName}-${environment}-communication-service-connection'
+module emailService 'modules/emailService.bicep' = {
+  name: '${solutionName}-${environment}-email'
   scope: rg
   params: {
+    solutionName: solutionName
+    environment: environment
     keyVaultName: keyVault.outputs.keyVaultName
-    secretName: 'communication-service-connection-string'
-    secretValue: communicationServiceConnectionString
+    connectionStringSecretName: 'communication-service-connection-string'
+    customDomain: emailCustomDomain
   }
 }
 
@@ -278,3 +280,6 @@ output sqlDatabaseName string = sqlDatabase.outputs.sqlDatabaseName
 output storageAccountName string = storageAccount.outputs.name
 output serviceBusNamespaceName string = serviceBusNamespace.outputs.name
 output searchServiceEndpoint string = aiSearch.outputs.endpoint
+output mailFromAddress string = emailService.outputs.mailFromAddress
+output customDomainMailFromAddress string = emailService.outputs.customDomainMailFromAddress
+output customDomainVerificationRecords object = emailService.outputs.customDomainVerificationRecords

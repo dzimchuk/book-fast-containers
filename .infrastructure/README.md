@@ -30,7 +30,6 @@ Nothing reads the master KeyVault at runtime. The application gets its secrets f
 | `bookfast-<env>-sql-admin-password` | SQL Server administrator password |
 | `bookfast-<env>-identity-signing-certificate` | Base64-encoded PKCS12 used by Identity to sign tokens |
 | `bookfast-<env>-identity-encryption-key` | Base64-encoded key used by Identity to encrypt access tokens |
-| `bookfast-<env>-communication-service-connection` | *(optional)* Azure Communication Services connection string for outgoing email |
 
 > The SQL administrator password must not contain a `;`. It is embedded in the connection string that the migrations job parses.
 

@@ -1,20 +1,14 @@
-# Book Fast (Containers)
-A sample demonstrating how to implement a containerized multitenant facility management and accommodation booking application.
-
-## Features
-
-### Architecture
-- 4 bounded contexts as standalone microservices
-- Clean Architecture
-- CQRS and DDD (with [reliable domain events](https://dzimchuk.net/reliable-domain-events/))
-- ASP.NET Core, EF Core, Blazor, gRPC
-- MediatR, FluentValidation, MassTransit
-- OpenTelemetry tracing and metrics
-- Azure Infrastructure as code (IaC) with Bicep
-
-## Running the applicaton
+# Book Fast
+A sample multitenant hotel and accommodation booking platform built with .NET using a services-based architecture.
 
 The application can be run locally in Docker Compose. It can also be deployed to Azure Container Apps.
+
+## Setting up local environment
+
+Prerequisites:
+
+- [Docker](https://www.docker.com/products/docker-desktop/) (with Docker Compose)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ### Install and trust ASP.NET Core HTTPS development certificate
 

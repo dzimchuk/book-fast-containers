@@ -1,7 +1,6 @@
 ﻿using CsvHelper;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using System.Globalization;
 
 namespace BookFast.Common.TestInfrastructure
 {
@@ -26,8 +25,7 @@ namespace BookFast.Common.TestInfrastructure
                 ? Path.Combine(path, $"{Path.GetFileNameWithoutExtension(sourceFilePath)}_{memberName}_{caseName}_actual.csv")
                 : Path.Combine(path, $"{Path.GetFileNameWithoutExtension(sourceFilePath)}_{memberName}_actual.csv");
 
-            using (var writer = new StreamWriter(fileName))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            using (var csv = CsvWriter.ToFile(fileName))
             {
                 csv.WriteRecords(records);
             }
@@ -42,10 +40,14 @@ namespace BookFast.Common.TestInfrastructure
 
             if (Path.Exists(fileName))
             {
-                using (var reader = new StreamReader(fileName))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                var options = new CsvReaderOptions
                 {
-                    csv.Context.TypeConverterOptionsCache.GetOptions<string>().NullValues.Add(string.Empty);
+                    Separator = ',',
+                    NullValues = [string.Empty]
+                };
+
+                using (var csv = CsvReader.FromFile(fileName, options))
+                {
                     return csv.GetRecords<T>().ToArray();
                 }
             }

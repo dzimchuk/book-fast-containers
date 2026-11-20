@@ -76,6 +76,8 @@ namespace BookFast.Common.Infrastructure.Integration
             if (!fluidParser.TryParse(markup, out var template, out var error))
             {
                 logger.LogError($"Cannot render email template. {error}");
+
+                return null;
             }
 
             var payloadObject = DeserializePayload(message.PayloadJson, message.PayloadType);

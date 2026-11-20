@@ -81,7 +81,7 @@ namespace BookFast.Booking.Tests.Reservations
 
             if (status != ReservationStatus.Pending)
             {
-                await dbContext.Database.ExecuteSqlInterpolatedAsync(
+                await dbContext.Database.ExecuteSqlAsync(
                     $"UPDATE booking.reservations SET status = {status.ToString()} WHERE id = {reservation.Id}");
             }
 
@@ -110,7 +110,7 @@ namespace BookFast.Booking.Tests.Reservations
         }
 
         public Task SetAccommodationRateAsync(Guid accommodationId, Money rate) =>
-            dbContext.Database.ExecuteSqlInterpolatedAsync(
+            dbContext.Database.ExecuteSqlAsync(
                 $"UPDATE booking.accommodations SET rate_amount = {rate.Amount}, rate_currency = {rate.Currency} WHERE id = {accommodationId}");
 
         public Task TriggerPaymentSweepAsync()

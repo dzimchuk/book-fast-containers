@@ -7,7 +7,7 @@ namespace BookFast.Search.Tests
     {
         private readonly QdrantContainer qdrantContainer = new QdrantBuilder("qdrant/qdrant:latest").Build();
 
-        public override async Task InitializeAsync()
+        public override async ValueTask InitializeAsync()
         {
             await base.InitializeAsync();
 
@@ -16,7 +16,7 @@ namespace BookFast.Search.Tests
             Environment.SetEnvironmentVariable("Store:Qdrant:ConnectionString", qdrantContainer.GetGrpcConnectionString());
         }
 
-        public override async Task DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
             await qdrantContainer.StopAsync();
 

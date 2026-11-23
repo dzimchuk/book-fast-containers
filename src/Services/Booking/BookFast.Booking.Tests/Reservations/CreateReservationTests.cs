@@ -5,7 +5,6 @@ using System.Text.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class CreateReservationTests(ReservationsFixture fixture) : IClassFixture<ReservationsFixture>
     {
         [Fact]
@@ -19,11 +18,11 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(4), // 3 nights
                 Units = 2
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
+            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
 
             Assert.Equal("Pending", payload.GetProperty("status").GetString());
             Assert.Equal(600m, decimal.Parse(payload.GetProperty("price").GetProperty("amount").GetString()));
@@ -42,7 +41,7 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(3),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -58,7 +57,7 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(3),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -79,11 +78,11 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(4),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
-            var reservations = await fixture.HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations");
+            var reservations = await fixture.HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations", cancellationToken: TestContext.Current.CancellationToken);
             Assert.DoesNotContain(reservations, r => r.GetProperty("accommodationId").GetGuid() == accommodationId);
         }
 
@@ -103,7 +102,7 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(3),
                 CheckOut = StayDates.Upcoming(5),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
@@ -122,8 +121,8 @@ namespace BookFast.Booking.Tests.Reservations
             };
 
             var responses = await Task.WhenAll(
-                fixture.HttpClient.PostAsJsonAsync("/api/reservations", requestBody),
-                fixture.HttpClient.PostAsJsonAsync("/api/reservations", requestBody));
+                fixture.HttpClient.PostAsJsonAsync("/api/reservations", requestBody, TestContext.Current.CancellationToken),
+                fixture.HttpClient.PostAsJsonAsync("/api/reservations", requestBody, TestContext.Current.CancellationToken));
 
             Assert.Single(responses, r => r.StatusCode == HttpStatusCode.Created);
             Assert.Single(responses, r => r.StatusCode != HttpStatusCode.Created);
@@ -140,17 +139,17 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(62),
                 CheckOut = StayDates.Upcoming(63),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-            var created = JsonDocument.Parse(await createResponse.Content.ReadAsStringAsync()).RootElement;
+            var created = JsonDocument.Parse(await createResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
             var reservationId = created.GetProperty("id").GetGuid();
 
             // Simulates a later catalogue-driven Rate change on the accommodation - must not move the existing Price.
             await fixture.SetAccommodationRateAsync(accommodationId, new Money(500m, "USD"));
 
-            var getResponse = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
-            var fetched = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync()).RootElement;
+            var getResponse = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}", TestContext.Current.CancellationToken);
+            var fetched = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
 
             Assert.Equal(100m, decimal.Parse(fetched.GetProperty("price").GetProperty("amount").GetString()));
         }

@@ -32,7 +32,7 @@ namespace BookFast.Search.Tests.Search
 
         public int EmbedCallCount(Func<string, bool> matches) => EmbeddingGenerator.Calls.Count(matches);
 
-        public Task InitializeAsync()
+        public ValueTask InitializeAsync()
         {
             factory = apiFixture.GetWebApplicationFactory(services =>
             {
@@ -60,10 +60,10 @@ namespace BookFast.Search.Tests.Search
             EmbeddingGenerator = (TestEmbeddingGenerator)factory.Services
                 .GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
 
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DisposeAsync() => await factory.DisposeSafelyAsync();
+        public async ValueTask DisposeAsync() => await factory.DisposeSafelyAsync();
 
         public async Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
             where TEvent : class

@@ -43,9 +43,9 @@ namespace BookFast.Booking.Tests.Reservations
             dbContext = scope.ServiceProvider.GetRequiredService<BookingContext>();
         }
 
-        public Task InitializeAsync() => Task.CompletedTask;
+        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             scope.Dispose();
             await factory.DisposeSafelyAsync();

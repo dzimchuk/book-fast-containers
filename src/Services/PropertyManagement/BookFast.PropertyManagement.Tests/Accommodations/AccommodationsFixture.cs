@@ -47,7 +47,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
         }
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             var property = Property.NewProperty(
                 Constants.CallerTenant,
@@ -74,7 +74,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
             AccommodationId = accommodation.Id;
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await dbContext.Accommodations
                 .Where(a => a.PropertyId == PropertyId)

@@ -6,13 +6,11 @@ using BookFast.PropertyManagement.Domain;
 using BookFast.PropertyManagement.Integration;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class CreateAccommodationTests(AccommodationsFixture fixture) : IClassFixture<AccommodationsFixture>, IAsyncLifetime
     {
         private Guid? newAccommodationId = null;
@@ -46,7 +44,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, CreateAccommodationCommand command)
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -64,7 +62,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(100m, "USD"), new Money(100m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{Guid.Empty}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{Guid.Empty}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -83,7 +81,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(150m, "USD"), new Money(200m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(response.Headers.Location);
@@ -93,7 +91,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
 
             newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
-            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(new object[] { newAccommodationId.Value }, TestContext.Current.CancellationToken);
             Assert.NotNull(accommodation);
             Assert.Equal("Deluxe Suite", accommodation.Name);
             Assert.Equal("A spacious deluxe suite", accommodation.Description);
@@ -127,14 +125,14 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 Quantity = 1
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
             var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
             newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
-            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(new object[] { newAccommodationId.Value }, TestContext.Current.CancellationToken);
             Assert.NotNull(accommodation);
             Assert.True(accommodation.PriceRange.IsEmpty);
         }
@@ -149,14 +147,14 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(80m, "USD"), null)
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
             var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
             newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
-            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(new object[] { newAccommodationId.Value }, TestContext.Current.CancellationToken);
             Assert.NotNull(accommodation);
             Assert.Equal(80m, accommodation.PriceRange.MinPrice.Amount);
             Assert.Null(accommodation.PriceRange.MaxPrice);
@@ -172,14 +170,14 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(null, new Money(300m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
             var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
             newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
-            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(new object[] { newAccommodationId.Value }, TestContext.Current.CancellationToken);
             Assert.NotNull(accommodation);
             Assert.Null(accommodation.PriceRange.MinPrice);
             Assert.Equal(300m, accommodation.PriceRange.MaxPrice.Amount);
@@ -195,21 +193,21 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 Facilities = [Facility.WiFi, Facility.Refrigerator]
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
             var match = Regex.Match(response.Headers.Location.OriginalString, @".*/accommodations/(?<id>[0-9a-fA-F-]+)");
             newAccommodationId = Guid.Parse(match.Groups["id"].Value);
 
-            var accommodation = await fixture.DbContext.Accommodations.FindAsync(newAccommodationId.Value);
+            var accommodation = await fixture.DbContext.Accommodations.FindAsync(new object[] { newAccommodationId.Value }, TestContext.Current.CancellationToken);
             Assert.NotNull(accommodation);
             Assert.Equal([Facility.WiFi, Facility.Refrigerator], accommodation.Facilities);
         }
 
-        public Task InitializeAsync() => Task.CompletedTask;
+        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             if (newAccommodationId.HasValue)
             {

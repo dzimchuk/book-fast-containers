@@ -5,7 +5,6 @@ using System.Net.Http.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class ExpireReservationTests(ReservationsFixture fixture) : IClassFixture<ReservationsFixture>
     {
         [Fact]
@@ -28,7 +27,7 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(3),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }

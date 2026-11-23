@@ -6,7 +6,6 @@ using System.Text.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class ReservationVisibilityTests(ReservationsFixture fixture) : IClassFixture<ReservationsFixture>
     {
         [Fact]
@@ -20,7 +19,7 @@ namespace BookFast.Booking.Tests.Reservations
             var othersId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(5), StayDates.Upcoming(7), 1, new Money(100m, "USD"));
 
-            var reservations = await fixture.HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations");
+            var reservations = await fixture.HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations", cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Contains(reservations, r => r.GetProperty("id").GetGuid() == mineId);
             Assert.DoesNotContain(reservations, r => r.GetProperty("id").GetGuid() == othersId);
@@ -33,10 +32,10 @@ namespace BookFast.Booking.Tests.Reservations
             var reservationId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(10), StayDates.Upcoming(12), 1, new Money(100m, "USD"));
 
-            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
+            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
+            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
             Assert.Equal(reservationId, payload.GetProperty("id").GetGuid());
         }
 
@@ -47,7 +46,7 @@ namespace BookFast.Booking.Tests.Reservations
             var reservationId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(20), StayDates.Upcoming(22), 1, new Money(100m, "USD"));
 
-            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
+            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -55,7 +54,7 @@ namespace BookFast.Booking.Tests.Reservations
         [Fact]
         public async Task Get_UnknownReservation_ReturnsNotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{Guid.NewGuid()}");
+            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{Guid.NewGuid()}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -68,9 +67,9 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.GuestId, StayDates.Past(30), StayDates.Past(28), 1, new Money(100m, "USD"),
                 status: ReservationStatus.Confirmed);
 
-            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
+            var response = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}", TestContext.Current.CancellationToken);
 
-            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
+            var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
             Assert.Equal("Completed", payload.GetProperty("status").GetString());
         }
     }

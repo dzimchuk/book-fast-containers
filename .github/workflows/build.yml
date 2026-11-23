@@ -50,33 +50,33 @@ jobs:
         id: test_booking
         continue-on-error: true
         run: >
-          dotnet test src/Services/Booking/BookFast.Booking.Tests/BookFast.Booking.Tests.csproj
+          dotnet test --project src/Services/Booking/BookFast.Booking.Tests/BookFast.Booking.Tests.csproj
           --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
-          --logger "trx;LogFileName=Booking.trx" --results-directory ./TestResults
+          --report-xunit-trx --report-xunit-trx-filename Booking.trx --results-directory ./TestResults
 
       - name: Test Identity
         id: test_identity
         continue-on-error: true
         run: >
-          dotnet test src/Services/Identity/BookFast.Identity.Tests/BookFast.Identity.Tests.csproj
+          dotnet test --project src/Services/Identity/BookFast.Identity.Tests/BookFast.Identity.Tests.csproj
           --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
-          --logger "trx;LogFileName=Identity.trx" --results-directory ./TestResults
+          --report-xunit-trx --report-xunit-trx-filename Identity.trx --results-directory ./TestResults
 
       - name: Test PropertyManagement
         id: test_propertymanagement
         continue-on-error: true
         run: >
-          dotnet test src/Services/PropertyManagement/BookFast.PropertyManagement.Tests/BookFast.PropertyManagement.Tests.csproj
+          dotnet test --project src/Services/PropertyManagement/BookFast.PropertyManagement.Tests/BookFast.PropertyManagement.Tests.csproj
           --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
-          --logger "trx;LogFileName=PropertyManagement.trx" --results-directory ./TestResults
+          --report-xunit-trx --report-xunit-trx-filename PropertyManagement.trx --results-directory ./TestResults
 
       - name: Test Search
         id: test_search
         continue-on-error: true
         run: >
-          dotnet test src/Services/Search/BookFast.Search.Tests/BookFast.Search.Tests.csproj
+          dotnet test --project src/Services/Search/BookFast.Search.Tests/BookFast.Search.Tests.csproj
           --no-build --configuration ${{ env.BUILD_CONFIGURATION }}
-          --logger "trx;LogFileName=Search.trx" --results-directory ./TestResults
+          --report-xunit-trx --report-xunit-trx-filename Search.trx --results-directory ./TestResults
 
       - name: Upload test results
         if: always()
@@ -84,6 +84,14 @@ jobs:
         with:
           name: test-results
           path: ./TestResults/*.trx
+          retention-days: 14
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: ./TestResults/*.cobertura.*.xml
           retention-days: 14
 
       - name: Install dotnet-ef

@@ -2,7 +2,6 @@ using System.Net;
 
 namespace BookFast.Booking.Tests;
 
-[Collection(nameof(IntegrationTestCollection))]
 public sealed class BookingServiceTests
 {
     private readonly BookingApiFixture fixture;
@@ -17,7 +16,7 @@ public sealed class BookingServiceTests
     {
         using var factory = fixture.GetWebApplicationFactory();
         using var client = factory.CreateClient();
-        using var response = await client.GetAsync("/");
+        using var response = await client.GetAsync("/", TestContext.Current.CancellationToken);
 
         Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
     }

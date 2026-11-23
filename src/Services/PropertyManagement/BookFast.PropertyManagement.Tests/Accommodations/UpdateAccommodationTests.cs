@@ -10,7 +10,6 @@ using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class UpdateAccommodationTests(AccommodationsFixture fixture) : IClassFixture<AccommodationsFixture>
     {
         public static IEnumerable<object[]> ValidationData =>
@@ -42,7 +41,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, UpdateAccommodationCommand command)
         {
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -54,7 +53,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         {
             var command = new UpdateAccommodationCommand { Name = "Updated Room", Bedrooms = 1, Quantity = 1 };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{Guid.Empty}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{Guid.Empty}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -73,12 +72,12 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(150m, "USD"), null)
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(accommodation);
             Assert.Equal("Updated Room", accommodation.Name);
@@ -111,12 +110,12 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 Quantity = 1
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(accommodation);
             Assert.True(accommodation.PriceRange.IsEmpty);
@@ -133,12 +132,12 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(null, new Money(300m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(accommodation);
             Assert.Null(accommodation.PriceRange.MinPrice);
@@ -156,12 +155,12 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 Facilities = [Facility.WiFi, Facility.Refrigerator]
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var accommodation = await fixture.DbContext.Accommodations.AsNoTracking()
-                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId);
+                .FirstOrDefaultAsync(a => a.Id == fixture.AccommodationId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(accommodation);
             Assert.Equal([Facility.WiFi, Facility.Refrigerator], accommodation.Facilities);

@@ -40,7 +40,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
         }
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             var property1 = Property.NewProperty(
                 Constants.CallerTenant,
@@ -86,7 +86,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await dbContext.Properties
                 .Where(p => new[] { Property1Id, Property2Id, Property3Id }.Contains(p.Id))

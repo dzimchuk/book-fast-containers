@@ -6,7 +6,6 @@ using System.Text.Json.Nodes;
 
 namespace BookFast.Identity.Tests.TenantUsers
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class QueryTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
         private const string baseUrl = "/api/users";
@@ -14,7 +13,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task Find_NotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/test");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/test", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             await response.ShouldBeEquivalentToFile();
@@ -23,7 +22,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task Find_WrongTenant()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{TenantUsersFixture.Tenant2Admin}");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{TenantUsersFixture.Tenant2Admin}", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
             await response.ShouldBeEquivalentToFile();
@@ -32,7 +31,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task Find_Success()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{TenantUsersFixture.Tenant1Admin}");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{TenantUsersFixture.Tenant1Admin}", TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             await response.ShouldBeEquivalentToFile();
@@ -56,7 +55,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             var parameters = query.ToUrlEncodedString();
             var url = !string.IsNullOrWhiteSpace(parameters) ? $"{baseUrl}?{parameters}" : baseUrl;
 
-            var response = await fixture.HttpClient.GetAsync(url);
+            var response = await fixture.HttpClient.GetAsync(url, TestContext.Current.CancellationToken);
 
             Assert.True(response.IsSuccessStatusCode);
 

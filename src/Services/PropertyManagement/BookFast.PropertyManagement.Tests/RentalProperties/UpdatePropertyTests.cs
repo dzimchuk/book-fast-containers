@@ -9,7 +9,6 @@ using System.Text.Json;
 
 namespace BookFast.PropertyManagement.Tests.RentalProperties
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class UpdatePropertyTests(RentalPropertiesFixture fixture) : IClassFixture<RentalPropertiesFixture>
     {
         private const string baseUrl = "/api/properties";
@@ -30,7 +29,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, UpdatePropertyCommand command)
         {
-            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -42,7 +41,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         {
             var command = new UpdatePropertyCommand { Name = "Updated", Address = ValidAddress };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{Guid.Empty}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{Guid.Empty}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -59,12 +58,12 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 Address = ValidAddress
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var property = await fixture.DbContext.Properties.AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == fixture.Property1Id);
+                .FirstOrDefaultAsync(p => p.Id == fixture.Property1Id, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(property);
             Assert.Equal("Updated Mountain Retreat", property.Name);
@@ -92,12 +91,12 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
                 Facilities = [Facility.Parking, Facility.WiFi]
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"{baseUrl}/{fixture.Property1Id}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             var property = await fixture.DbContext.Properties.AsNoTracking()
-                .FirstOrDefaultAsync(p => p.Id == fixture.Property1Id);
+                .FirstOrDefaultAsync(p => p.Id == fixture.Property1Id, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(property);
             Assert.Equal([Facility.Parking, Facility.WiFi], property.Facilities);

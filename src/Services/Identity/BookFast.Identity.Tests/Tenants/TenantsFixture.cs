@@ -43,7 +43,7 @@ namespace BookFast.Identity.Tests.Tenants
             dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         }
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             dbContext.Tenants.AddRange(
                 [
@@ -59,7 +59,7 @@ namespace BookFast.Identity.Tests.Tenants
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await dbContext.Users.Where(u => u.TenantId == TestTenantId).ExecuteDeleteAsync();
             await dbContext.Tenants.Where(t => t.Id == TestTenantId).ExecuteDeleteAsync();

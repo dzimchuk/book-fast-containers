@@ -3,7 +3,6 @@ using System.Net;
 
 namespace BookFast.PropertyManagement.Tests.RentalProperties
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class QueryTests(RentalPropertiesQueryFixture fixture) : IClassFixture<RentalPropertiesQueryFixture>
     {
         private const string baseUrl = "/api/properties";
@@ -11,7 +10,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task GetProperty_NotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{Guid.Empty}");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{Guid.Empty}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -21,7 +20,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task GetProperty_Success()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{RentalPropertiesQueryFixture.Property1Id}");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}/{RentalPropertiesQueryFixture.Property1Id}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -31,7 +30,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task ListProperties_DefaultSort()
         {
-            var response = await fixture.HttpClient.GetAsync(baseUrl);
+            var response = await fixture.HttpClient.GetAsync(baseUrl, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -41,7 +40,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task ListProperties_SortByNameDesc()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}?orderBy=Name&orderDirection=Desc");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}?orderBy=Name&orderDirection=Desc", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -51,7 +50,7 @@ namespace BookFast.PropertyManagement.Tests.RentalProperties
         [Fact]
         public async Task ListProperties_Paged()
         {
-            var response = await fixture.HttpClient.GetAsync($"{baseUrl}?orderBy=Name&pageSize=2&pageNumber=1");
+            var response = await fixture.HttpClient.GetAsync($"{baseUrl}?orderBy=Name&pageSize=2&pageNumber=1", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 

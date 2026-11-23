@@ -5,14 +5,12 @@ using System.Text.Json.Nodes;
 
 namespace BookFast.PropertyManagement.Tests.Files
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class IssuePropertyFileUploadTokenTests(FileUploadFixture fixture) : IClassFixture<FileUploadFixture>
     {
         [Fact]
         public async Task Validation()
         {
-            var response = await fixture.HttpClient.GetAsync(
-                $"/api/properties/{fixture.PropertyId}/upload-token");
+            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/upload-token", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -24,8 +22,7 @@ namespace BookFast.PropertyManagement.Tests.Files
         {
             var nonExistentId = Guid.NewGuid();
 
-            var response = await fixture.HttpClient.GetAsync(
-                $"/api/properties/{nonExistentId}/upload-token?originalFileName=test.jpg");
+            var response = await fixture.HttpClient.GetAsync($"/api/properties/{nonExistentId}/upload-token?originalFileName=test.jpg", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -35,12 +32,11 @@ namespace BookFast.PropertyManagement.Tests.Files
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.GetAsync(
-                $"/api/properties/{fixture.PropertyId}/upload-token?originalFileName=photo.jpg");
+            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/upload-token?originalFileName=photo.jpg", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var json = await response.Content.ReadFromJsonAsync<JsonNode>();
+            var json = await response.Content.ReadFromJsonAsync<JsonNode>(cancellationToken: TestContext.Current.CancellationToken);
             Assert.NotNull(json);
 
             var accessPermission = json["accessPermission"]?.ToString();

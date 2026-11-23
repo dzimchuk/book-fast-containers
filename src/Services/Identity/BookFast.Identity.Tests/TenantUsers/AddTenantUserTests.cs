@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 
 namespace BookFast.Identity.Tests.TenantUsers
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class AddTenantUserTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
         private const string baseUrl = "/api/users";
@@ -16,7 +15,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, AddTenantUserCommand command)
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, command);
+            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -33,7 +32,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task UnsupportedRole()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "user1@test1.com", Role: "test"));
+            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "user1@test1.com", Role: "test"), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -43,7 +42,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task UserAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "user1@test1.com", Role: Roles.TenantUser));
+            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "user1@test1.com", Role: Roles.TenantUser), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -53,7 +52,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "new@test1.com", Role: Roles.TenantUser));
+            var response = await fixture.HttpClient.PostAsJsonAsync(baseUrl, new AddTenantUserCommand(UserName: "new@test1.com", Role: Roles.TenantUser), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 

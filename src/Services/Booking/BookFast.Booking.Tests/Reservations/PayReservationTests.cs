@@ -5,7 +5,6 @@ using System.Text.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class PayReservationTests(ReservationsFixture fixture) : IClassFixture<ReservationsFixture>
     {
         [Fact]
@@ -15,7 +14,7 @@ namespace BookFast.Booking.Tests.Reservations
             var reservationId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
-            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
+            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Accepted, payResponse.StatusCode);
 
             await fixture.TriggerPaymentSweepAsync();
@@ -33,13 +32,13 @@ namespace BookFast.Booking.Tests.Reservations
             var reservationId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
-            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay?outcome=Decline", null);
+            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay?outcome=Decline", null, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.Accepted, payResponse.StatusCode);
 
             await fixture.TriggerPaymentSweepAsync();
 
-            var getResponse = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}");
-            var payload = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync()).RootElement;
+            var getResponse = await fixture.HttpClient.GetAsync($"/api/reservations/{reservationId}", TestContext.Current.CancellationToken);
+            var payload = JsonDocument.Parse(await getResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken)).RootElement;
             Assert.Equal("Pending", payload.GetProperty("status").GetString());
         }
 
@@ -50,7 +49,7 @@ namespace BookFast.Booking.Tests.Reservations
             var reservationId = await fixture.SeedReservationAsync(
                 accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"));
 
-            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
+            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, payResponse.StatusCode);
         }
@@ -63,7 +62,7 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1, rate: new Money(100m, "USD"),
                 status: ReservationStatus.Confirmed);
 
-            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null);
+            var payResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/pay", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Conflict, payResponse.StatusCode);
         }

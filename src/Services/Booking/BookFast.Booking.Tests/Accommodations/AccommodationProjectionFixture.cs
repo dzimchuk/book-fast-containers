@@ -21,7 +21,7 @@ namespace BookFast.Booking.Tests.Accommodations
 
         public IntegrationEventHarness IntegrationEvents => fixture.IntegrationEvents;
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             factory = fixture.GetWebApplicationFactory();
 
@@ -35,7 +35,7 @@ namespace BookFast.Booking.Tests.Accommodations
             await publishBus.StartAsync();
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await publishBus.StopAsync();
 

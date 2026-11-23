@@ -8,7 +8,7 @@ public sealed class BookingApiFixture : ApiFixture<Program>
     public IntegrationEventHarness IntegrationEvents { get; } = new IntegrationEventHarness()
         .Observe<AccommodationBookableChanged>();
 
-    public override async Task InitializeAsync()
+    public override async ValueTask InitializeAsync()
     {
         await base.InitializeAsync();
 
@@ -18,7 +18,7 @@ public sealed class BookingApiFixture : ApiFixture<Program>
         await IntegrationEvents.StartAsync();
     }
 
-    public override async Task DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await IntegrationEvents.StopAsync();
 

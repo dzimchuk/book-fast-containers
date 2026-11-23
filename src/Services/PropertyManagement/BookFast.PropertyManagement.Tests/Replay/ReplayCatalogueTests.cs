@@ -3,13 +3,12 @@ using System.Net;
 
 namespace BookFast.PropertyManagement.Tests.Replay
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class ReplayCatalogueTests(ReplayCatalogueFixture fixture) : IClassFixture<ReplayCatalogueFixture>
     {
         [Fact]
         public async Task Replay_PublishesCreatedEventsForExistingData()
         {
-            var response = await fixture.HttpClient.PostAsync("/api/replay", null);
+            var response = await fixture.HttpClient.PostAsync("/api/replay", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
 

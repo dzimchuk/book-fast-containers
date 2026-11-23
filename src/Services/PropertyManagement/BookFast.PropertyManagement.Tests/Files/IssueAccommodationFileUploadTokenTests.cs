@@ -5,7 +5,6 @@ using System.Text.Json.Nodes;
 
 namespace BookFast.PropertyManagement.Tests.Files
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class IssueAccommodationFileUploadTokenTests(FileUploadFixture fixture) : IClassFixture<FileUploadFixture>
     {
         private string BaseUrl(Guid propertyId, Guid accommodationId) =>
@@ -14,8 +13,7 @@ namespace BookFast.PropertyManagement.Tests.Files
         [Fact]
         public async Task Validation()
         {
-            var response = await fixture.HttpClient.GetAsync(
-                BaseUrl(fixture.PropertyId, fixture.AccommodationId));
+            var response = await fixture.HttpClient.GetAsync(BaseUrl(fixture.PropertyId, fixture.AccommodationId), TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -27,8 +25,7 @@ namespace BookFast.PropertyManagement.Tests.Files
         {
             var nonExistentId = Guid.NewGuid();
 
-            var response = await fixture.HttpClient.GetAsync(
-                $"{BaseUrl(nonExistentId, fixture.AccommodationId)}?originalFileName=test.jpg");
+            var response = await fixture.HttpClient.GetAsync($"{BaseUrl(nonExistentId, fixture.AccommodationId)}?originalFileName=test.jpg", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -40,8 +37,7 @@ namespace BookFast.PropertyManagement.Tests.Files
         {
             var nonExistentId = Guid.NewGuid();
 
-            var response = await fixture.HttpClient.GetAsync(
-                $"{BaseUrl(fixture.PropertyId, nonExistentId)}?originalFileName=test.jpg");
+            var response = await fixture.HttpClient.GetAsync($"{BaseUrl(fixture.PropertyId, nonExistentId)}?originalFileName=test.jpg", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -51,12 +47,11 @@ namespace BookFast.PropertyManagement.Tests.Files
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.GetAsync(
-                $"{BaseUrl(fixture.PropertyId, fixture.AccommodationId)}?originalFileName=image.png");
+            var response = await fixture.HttpClient.GetAsync($"{BaseUrl(fixture.PropertyId, fixture.AccommodationId)}?originalFileName=image.png", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var json = await response.Content.ReadFromJsonAsync<JsonNode>();
+            var json = await response.Content.ReadFromJsonAsync<JsonNode>(cancellationToken: TestContext.Current.CancellationToken);
             Assert.NotNull(json);
 
             var accessPermission = json["accessPermission"]?.ToString();

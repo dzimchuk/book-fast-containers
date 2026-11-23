@@ -5,7 +5,6 @@ using System.Net.Http.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class CancelReservationTests(ReservationsFixture fixture) : IClassFixture<ReservationsFixture>
     {
         [Fact]
@@ -16,7 +15,7 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(1), StayDates.Upcoming(3), units: 1,
                 rate: new Money(100m, "USD"), status: ReservationStatus.Confirmed);
 
-            var cancelResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null);
+            var cancelResponse = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, cancelResponse.StatusCode);
 
             var reservation = await fixture.GetReservationAsync(reservationId);
@@ -29,7 +28,7 @@ namespace BookFast.Booking.Tests.Reservations
                 CheckIn = StayDates.Upcoming(1),
                 CheckOut = StayDates.Upcoming(3),
                 Units = 1
-            });
+            }, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
@@ -42,7 +41,7 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.OtherGuestId, StayDates.Upcoming(10), StayDates.Upcoming(12), units: 1,
                 rate: new Money(100m, "USD"), status: ReservationStatus.Confirmed);
 
-            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null);
+            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -50,7 +49,7 @@ namespace BookFast.Booking.Tests.Reservations
         [Fact]
         public async Task Cancel_UnknownReservation_ReturnsNotFound()
         {
-            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{Guid.NewGuid()}/cancel", null);
+            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{Guid.NewGuid()}/cancel", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -66,7 +65,7 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.GuestId, StayDates.Upcoming(20), StayDates.Upcoming(22), units: 1,
                 rate: new Money(100m, "USD"), status: status);
 
-            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null);
+            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }
@@ -79,7 +78,7 @@ namespace BookFast.Booking.Tests.Reservations
                 accommodationId, ReservationsFixture.GuestId, StayDates.Past(30), StayDates.Past(28), units: 1,
                 rate: new Money(100m, "USD"), status: ReservationStatus.Confirmed);
 
-            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null);
+            var response = await fixture.HttpClient.PostAsync($"/api/reservations/{reservationId}/cancel", null, TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }

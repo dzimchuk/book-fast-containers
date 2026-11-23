@@ -6,7 +6,6 @@ using System.Net.Http.Json;
 
 namespace BookFast.PropertyManagement.Tests.Replay
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class ReplayConcurrentTrafficTests(ReplayConcurrentTrafficFixture fixture) : IClassFixture<ReplayConcurrentTrafficFixture>
     {
         [Fact]
@@ -19,9 +18,8 @@ namespace BookFast.PropertyManagement.Tests.Replay
                 Address = new Address("USA", "Texas", "Austin", "100 Congress Ave", "78701")
             };
 
-            var replayTask = fixture.HttpClient.PostAsync("/api/replay", null);
-            var updateTask = fixture.HttpClient.PutAsJsonAsync(
-                $"/api/properties/{ReplayConcurrentTrafficFixture.ExistingPropertyId}", updateCommand);
+            var replayTask = fixture.HttpClient.PostAsync("/api/replay", null, TestContext.Current.CancellationToken);
+            var updateTask = fixture.HttpClient.PutAsJsonAsync($"/api/properties/{ReplayConcurrentTrafficFixture.ExistingPropertyId}", updateCommand, cancellationToken: TestContext.Current.CancellationToken);
 
             await Task.WhenAll(replayTask, updateTask);
 

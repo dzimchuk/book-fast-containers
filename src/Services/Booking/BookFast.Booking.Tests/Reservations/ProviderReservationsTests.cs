@@ -11,7 +11,6 @@ using System.Text.Json;
 
 namespace BookFast.Booking.Tests.Reservations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class ProviderReservationsTests : IAsyncLifetime
     {
         private const string TenantId = "tenant-1";
@@ -40,9 +39,9 @@ namespace BookFast.Booking.Tests.Reservations
             dbContext = scope.ServiceProvider.GetRequiredService<BookingContext>();
         }
 
-        public Task InitializeAsync() => Task.CompletedTask;
+        public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             scope.Dispose();
             await factory.DisposeSafelyAsync();
@@ -82,7 +81,7 @@ namespace BookFast.Booking.Tests.Reservations
             var othersId = await SeedReservationAsync(
                 otherAccommodationId, OtherTenantId, StayDates.Upcoming(5), StayDates.Upcoming(7));
 
-            var reservations = await HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations/provider");
+            var reservations = await HttpClient.GetFromJsonAsync<JsonElement[]>("/api/reservations/provider", cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Contains(reservations, r => r.GetProperty("id").GetGuid() == mineId);
             Assert.DoesNotContain(reservations, r => r.GetProperty("id").GetGuid() == othersId);

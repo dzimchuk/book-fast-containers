@@ -19,7 +19,7 @@ namespace BookFast.PropertyManagement.Tests
             .Observe<PropertyUpdatedEvent>()
             .Observe<PropertyDeactivatedEvent>();
 
-        public override async Task InitializeAsync()
+        public override async ValueTask InitializeAsync()
         {
             await base.InitializeAsync();
 
@@ -31,7 +31,7 @@ namespace BookFast.PropertyManagement.Tests
             await IntegrationEvents.StartAsync();
         }
 
-        public override async Task DisposeAsync()
+        public override async ValueTask DisposeAsync()
         {
             await IntegrationEvents.StopAsync();
 

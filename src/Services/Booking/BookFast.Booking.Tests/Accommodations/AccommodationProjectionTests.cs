@@ -4,7 +4,6 @@ using BookFast.PropertyManagement.Integration;
 
 namespace BookFast.Booking.Tests.Accommodations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class AccommodationProjectionTests(AccommodationProjectionFixture fixture) : IClassFixture<AccommodationProjectionFixture>
     {
         private static readonly DateTimeOffset Now = DateTimeOffset.UtcNow;
@@ -27,7 +26,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = occurredAt,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -58,7 +57,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = Now,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -82,7 +81,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = Now,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => a.Quantity == 3);
 
@@ -109,7 +108,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -124,7 +123,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => a.Quantity == 9);
 
@@ -150,7 +149,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId, a => a.Quantity == 3);
 
@@ -165,7 +164,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -195,7 +194,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -205,7 +204,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 TenantId = "tenant-1",
                 PropertyId = propertyId,
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             var accommodation = await fixture.WaitForAccommodationAsync(accommodationId, a => !a.Bookable);
 
@@ -236,7 +235,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.PublishAsync(new AccommodationCreatedEvent
             {
@@ -249,7 +248,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId1, a => a.Bookable);
             await fixture.WaitForAccommodationAsync(accommodationId2, a => a.Bookable);
@@ -259,7 +258,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 TenantId = "tenant-1",
                 PropertyId = propertyId,
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId1, a => !a.Bookable);
             await fixture.WaitForAccommodationAsync(accommodationId2, a => !a.Bookable);
@@ -287,7 +286,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -303,11 +302,11 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
             // give the (no-op) consumer time to run, then assert state never changed
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            var accommodation = await fixture.GetAccommodationAsync(accommodationId);
+            await Task.Delay(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
+            var accommodation = await fixture.GetAccommodationAsync(accommodationId, TestContext.Current.CancellationToken);
 
             Assert.Equal(5, accommodation.Quantity);
             Assert.Equal(new Money(100m, "USD"), accommodation.Rate);
@@ -333,7 +332,7 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t2,
-            });
+            }, TestContext.Current.CancellationToken);
 
             await fixture.WaitForAccommodationAsync(accommodationId, a => a.Bookable);
 
@@ -349,10 +348,10 @@ namespace BookFast.Booking.Tests.Accommodations
                 Facilities = [],
                 Images = [],
                 OccurredAt = t1,
-            });
+            }, TestContext.Current.CancellationToken);
 
-            await Task.Delay(TimeSpan.FromSeconds(3));
-            var accommodation = await fixture.GetAccommodationAsync(accommodationId);
+            await Task.Delay(TimeSpan.FromSeconds(3), TestContext.Current.CancellationToken);
+            var accommodation = await fixture.GetAccommodationAsync(accommodationId, TestContext.Current.CancellationToken);
 
             Assert.Equal(5, accommodation.Quantity);
             Assert.Equal(new Money(100m, "USD"), accommodation.Rate);

@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace BookFast.Identity.Tests.Tenants
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class AddTenantTests(TenantsFixture fixture) : IClassFixture<TenantsFixture>, IAsyncLifetime
     {
         private string newTenantId = null;
@@ -23,7 +22,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Theory, MemberData(nameof(ValidationData))]
         public async Task Validation(string caseName, AddTenantCommand command)
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -33,7 +32,7 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task TenantAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "user@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: TenantsFixture.TestTenantName, TenantAdmin: "user@test.com"), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -43,20 +42,20 @@ namespace BookFast.Identity.Tests.Tenants
         [Fact]
         public async Task UserAlreadyExists()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "user@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "user@test.com"), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
             await response.ShouldBeEquivalentToFile();
 
-            var tenant = await fixture.DbContext.Tenants.FirstOrDefaultAsync(t => t.Name == "New tenant");
+            var tenant = await fixture.DbContext.Tenants.FirstOrDefaultAsync(t => t.Name == "New tenant", cancellationToken: TestContext.Current.CancellationToken);
             Assert.Null(tenant);
         }
 
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "test@test.com"));
+            var response = await fixture.HttpClient.PostAsJsonAsync("/api/tenants", new AddTenantCommand(Name: "New tenant", TenantAdmin: "test@test.com"), cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
@@ -66,24 +65,24 @@ namespace BookFast.Identity.Tests.Tenants
             Assert.True(match.Success);
 
             newTenantId = match.Groups["id"].Value;
-            var tenant = await fixture.DbContext.Tenants.FirstOrDefaultAsync(t => t.Id == newTenantId);
+            var tenant = await fixture.DbContext.Tenants.FirstOrDefaultAsync(t => t.Id == newTenantId, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(tenant);
             Assert.Equal("New tenant", tenant.Name);
 
-            var tenantAdmin = await fixture.DbContext.Users.FirstOrDefaultAsync(user => user.UserName == "test@test.com");
+            var tenantAdmin = await fixture.DbContext.Users.FirstOrDefaultAsync(user => user.UserName == "test@test.com", cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.NotNull(tenantAdmin);
 
             newTenantAdminId = tenantAdmin.Id;
         }
 
-        public Task InitializeAsync()
+        public ValueTask InitializeAsync()
         {
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             if (!string.IsNullOrWhiteSpace(newTenantId))
             {

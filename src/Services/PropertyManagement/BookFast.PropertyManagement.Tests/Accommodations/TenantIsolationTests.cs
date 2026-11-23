@@ -7,7 +7,6 @@ using System.Net.Http.Json;
 
 namespace BookFast.PropertyManagement.Tests.Accommodations
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class TenantIsolationTests(TenantIsolationFixture fixture) : IClassFixture<TenantIsolationFixture>
     {
         [Fact]
@@ -21,7 +20,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(50m, "USD"), new Money(50m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command);
+            var response = await fixture.HttpClient.PostAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             await response.ShouldBeEquivalentToFile(partial: true);
@@ -30,7 +29,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task GetAccommodation_ReturnsNotFound()
         {
-            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}");
+            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             await response.ShouldBeEquivalentToFile(partial: true);
@@ -47,7 +46,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
                 PriceRange = new PriceRange(new Money(50m, "USD"), new Money(50m, "USD"))
             };
 
-            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command);
+            var response = await fixture.HttpClient.PutAsJsonAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", command, cancellationToken: TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             await response.ShouldBeEquivalentToFile(partial: true);
@@ -56,7 +55,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task DeleteAccommodation_ReturnsNotFound()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}");
+            var response = await fixture.HttpClient.DeleteAsync($"/api/properties/{fixture.PropertyId}/accommodations/{fixture.AccommodationId}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
             await response.ShouldBeEquivalentToFile(partial: true);
@@ -65,7 +64,7 @@ namespace BookFast.PropertyManagement.Tests.Accommodations
         [Fact]
         public async Task ListAccommodations_ReturnsEmpty()
         {
-            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/accommodations");
+            var response = await fixture.HttpClient.GetAsync($"/api/properties/{fixture.PropertyId}/accommodations", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             await response.ShouldBeEquivalentToFile();

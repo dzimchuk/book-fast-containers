@@ -3,7 +3,6 @@ using System.Net;
 
 namespace BookFast.Identity.Tests.TenantUsers
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class RemoveTenantUserTests(TenantUsersFixture fixture) : IClassFixture<TenantUsersFixture>
     {
         private const string baseUrl = "/api/users";
@@ -11,7 +10,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task UserNotFound()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/10");
+            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/10", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -21,7 +20,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task WrongTenant()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant2Admin}");
+            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant2Admin}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
@@ -31,7 +30,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task SelfRemoval()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant1Admin}");
+            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant1Admin}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
@@ -41,7 +40,7 @@ namespace BookFast.Identity.Tests.TenantUsers
         [Fact]
         public async Task Success()
         {
-            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant1User}");
+            var response = await fixture.HttpClient.DeleteAsync($"{baseUrl}/{TenantUsersFixture.Tenant1User}", TestContext.Current.CancellationToken);
 
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 

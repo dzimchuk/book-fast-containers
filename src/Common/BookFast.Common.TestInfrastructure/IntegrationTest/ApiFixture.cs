@@ -46,7 +46,7 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
             });
         }
 
-        public virtual async Task InitializeAsync()
+        public virtual async ValueTask InitializeAsync()
         {
             await dbContainer.StartAsync();
             await rabbitMqContainer.StartAsync();
@@ -57,7 +57,7 @@ namespace BookFast.Common.TestInfrastructure.IntegrationTest
             Environment.SetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT", " ");
         }
 
-        public virtual async Task DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             await dbContainer.StopAsync();
             await rabbitMqContainer.StopAsync();

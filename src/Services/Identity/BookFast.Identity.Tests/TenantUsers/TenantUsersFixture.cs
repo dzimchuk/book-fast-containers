@@ -57,7 +57,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
         }
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             dbContext.Tenants.AddRange(
                 [
@@ -92,7 +92,7 @@ namespace BookFast.Identity.Tests.TenantUsers
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             var tenants = new[] { TestTenant1Id, TestTenant2Id };
 

@@ -41,7 +41,7 @@ namespace BookFast.PropertyManagement.Tests.Replay
             dbContext = scope.ServiceProvider.GetRequiredService<PropertyManagementContext>();
         }
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             var property = Property.NewProperty(
                 TenantId,
@@ -57,7 +57,7 @@ namespace BookFast.PropertyManagement.Tests.Replay
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await dbContext.Properties
                 .Where(p => p.Id == ExistingPropertyId)

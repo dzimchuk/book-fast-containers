@@ -4,12 +4,11 @@ using BookFast.Search.Store;
 
 namespace BookFast.Search.Tests.Search
 {
-    [Collection(nameof(IntegrationTestCollection))]
     public class PurgeTests(SearchFixture fixture) : IClassFixture<SearchFixture>, IAsyncLifetime
     {
-        public Task InitializeAsync() => fixture.ResetAsync();
+        public ValueTask InitializeAsync() => new(fixture.ResetAsync());
 
-        public Task DisposeAsync() => Task.CompletedTask;
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         private readonly DateTimeOffset occurredAt = DateTimeOffset.UtcNow;
 
@@ -53,11 +52,11 @@ namespace BookFast.Search.Tests.Search
         {
             var accommodationId = await CreateAndTombstoneAsync();
 
-            await Task.Delay(1000);
+            await Task.Delay(1000, TestContext.Current.CancellationToken);
 
-            await fixture.PurgeAsync(occurredAt.AddSeconds(1));
+            await fixture.PurgeAsync(occurredAt.AddSeconds(1), TestContext.Current.CancellationToken);
 
-            var record = await fixture.GetRecordAsync<AccommodationIndexRecord>(accommodationId);
+            var record = await fixture.GetRecordAsync<AccommodationIndexRecord>(accommodationId, TestContext.Current.CancellationToken);
 
             Assert.Null(record);
         }
@@ -67,11 +66,11 @@ namespace BookFast.Search.Tests.Search
         {
             var accommodationId = await CreateAndTombstoneAsync();
 
-            await Task.Delay(1000);
+            await Task.Delay(1000, TestContext.Current.CancellationToken);
 
-            await fixture.PurgeAsync(occurredAt.AddSeconds(-1));
+            await fixture.PurgeAsync(occurredAt.AddSeconds(-1), TestContext.Current.CancellationToken);
 
-            var record = await fixture.GetRecordAsync<AccommodationIndexRecord>(accommodationId);
+            var record = await fixture.GetRecordAsync<AccommodationIndexRecord>(accommodationId, TestContext.Current.CancellationToken);
 
             Assert.NotNull(record);
             Assert.False(record.Active);

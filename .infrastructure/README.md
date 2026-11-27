@@ -183,7 +183,7 @@ Note that a non-empty allowlist forces the public endpoint to `Enabled`, since I
 
 Two exceptions deliberately remain publicly reachable:
 
-- **Storage account**: PropertyManagement hands SAS upload URLs to browser clients, which have to be able to reach blob storage.
+- **Storage account**: PropertyManagement hands SAS upload URLs to browser clients, which have to be able to reach blob storage. The `property-images` container also allows anonymous blob-level read because stored image URLs carry no SAS.
 - **Service Bus**: private endpoints require the Premium SKU; the Standard namespace is protected by SAS authentication only.
 
 ## Address space

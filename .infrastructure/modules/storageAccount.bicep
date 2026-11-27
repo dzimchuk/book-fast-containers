@@ -1,7 +1,16 @@
+@export()
+@description('Blob container to create.')
+type blobContainerType = {
+  name: string
+
+  @description('Anonymous read access: Container (blobs and listing), Blob (blobs only) or None. Defaults to None.')
+  publicAccess: ('Container' | 'Blob' | 'None')?
+}
+
 param location string
 param storageAccountName string
 
-param containerNames array
+param blobContainers blobContainerType[]
 param queueNames array
 param fileShareNames array
 
@@ -15,6 +24,8 @@ param virtualNetworkSubnetId string
 
 param allowPublicAccess bool = false
 
+var anyPublicContainer = length(filter(blobContainers, c => (c.?publicAccess ?? 'None') != 'None')) > 0
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
@@ -24,6 +35,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   kind: 'StorageV2'
   properties: {
     minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: anyPublicContainer
     networkAcls: {
       resourceAccessRules: []
       bypass: 'AzureServices'
@@ -62,14 +74,14 @@ resource blobServices 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01
   name: 'default'
 }
 
-resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = [for containerName in containerNames: {
+resource containers 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = [for container in blobContainers: {
   parent: blobServices
-  name: containerName
+  name: container.name
   properties: {
     immutableStorageWithVersioning: {
       enabled: false
     }
-    publicAccess: 'None'
+    publicAccess: container.?publicAccess ?? 'None'
   }
 }]
 

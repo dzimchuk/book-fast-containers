@@ -1,5 +1,6 @@
 import { searchServiceParametersBundle } from 'modules/aiSearch.bicep'
 import { customDomainType } from 'modules/emailCustomDomain.bicep'
+import { blobContainerType } from 'modules/storageAccount.bicep'
 
 param solutionName string = 'bookfast'
 
@@ -73,10 +74,15 @@ param serviceBusZoneRedundant bool = false
 @description('Azure AI Search SKU, location and capacity.')
 param searchServiceParameters searchServiceParametersBundle
 
-@description('Blob containers to create.')
-param storageContainerNames array = [
-  'property-images'
-  'data-protection'
+@description('Blob containers to create, with their anonymous read access.')
+param storageContainers blobContainerType[] = [
+  {
+    name: 'property-images'
+    publicAccess: 'Blob'
+  }
+  {
+    name: 'data-protection'
+  }
 ]
 
 var rg = resourceGroup()
@@ -217,7 +223,7 @@ module storageAccount 'modules/storageAccount.bicep' = {
     location: location
     storageAccountName: storageAccountName != '' ? storageAccountName : 'bookfast${envSuffix}'
     storageAccountSku: storageAccountSku
-    containerNames: storageContainerNames
+    blobContainers: storageContainers
     queueNames: []
     fileShareNames: []
     keyVaultName: keyVault.outputs.keyVaultName

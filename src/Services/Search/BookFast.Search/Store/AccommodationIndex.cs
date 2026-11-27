@@ -155,6 +155,14 @@ namespace BookFast.Search.Store
             }
         }
 
+        public async Task<SearchResult> GetAsync(Guid accommodationId, CancellationToken cancellationToken = default)
+        {
+            var record = await collection.GetAsync(accommodationId, cancellationToken: cancellationToken);
+
+            // Same visibility rule as search
+            return record is { Active: true, Bookable: true } ? ToSearchResult(record) : null;
+        }
+
         public async Task<ListQueryResult<SearchResult>> SearchAsync(SearchQuery query, CancellationToken cancellationToken = default)
         {
             var pageNumber = query.PageNumber < 1 ? 1 : query.PageNumber;

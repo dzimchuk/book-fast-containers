@@ -42,6 +42,19 @@ namespace BookFast.Search.Endpoints
             })
             .Produces<ListQueryResult<SearchResult>>(StatusCodes.Status200OK)
             .WithTags("Search");
+
+            app.MapGet("search/{accommodationId:guid}", async (
+                Guid accommodationId,
+                AccommodationIndex store,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await store.GetAsync(accommodationId, cancellationToken);
+
+                return result is null ? Results.NotFound() : Results.Ok(result);
+            })
+            .Produces<SearchResult>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithTags("Search");
         }
     }
 }

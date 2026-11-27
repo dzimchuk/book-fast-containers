@@ -1,6 +1,8 @@
 using BookFast.Common.Application.Queries;
 using BookFast.Common.Domain;
+using BookFast.Booking.Integration;
 using BookFast.PropertyManagement.Integration;
+using BookFast.Search.Store;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -18,7 +20,9 @@ namespace BookFast.Search.Tests.Search
         string Country,
         double? Latitude,
         double? Longitude,
-        Money Price);
+        Money Price,
+        string PropertyName,
+        string PropertyDescription);
 
     public class SearchTests(SearchFixture fixture) : IClassFixture<SearchFixture>, IAsyncLifetime
     {
@@ -56,6 +60,160 @@ namespace BookFast.Search.Tests.Search
         }
 
         private static string Keyword() => $"Kw{Guid.NewGuid():N}";
+
+        private Task<HttpResponseMessage> GetByIdAsync(Guid accommodationId) =>
+            fixture.HttpClient.GetAsync($"/api/search/{accommodationId}", TestContext.Current.CancellationToken);
+
+        private Task PublishAccommodationCreatedAsync(Guid accommodationId, Guid propertyId, string name = "Suite", DateTimeOffset? occurredAt = null) =>
+            fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = propertyId,
+                Name = name,
+                Bedrooms = 1,
+                Images = [],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(150m, "USD")),
+                Facilities = [],
+                OccurredAt = occurredAt ?? DateTimeOffset.UtcNow,
+            }, TestContext.Current.CancellationToken);
+
+        [Fact]
+        public async Task GetById_BookableAccommodation_ReturnsAllSearchResultFieldsWithBookingRate()
+        {
+            var accommodationId = Guid.NewGuid();
+            var propertyId = Guid.NewGuid();
+            var bookingRate = new Money(222m, "USD");
+
+            await fixture.PublishAsync(new PropertyCreatedEvent
+            {
+                TenantId = "tenant-1",
+                PropertyId = propertyId,
+                Name = "Seaside Property",
+                Description = "Right on the beach",
+                Address = new AddressDTO("Spain", null, "Barcelona", null, null),
+                Location = new LocationDTO(41.38, 2.17),
+                Facilities = ["Pool"],
+                Images = ["https://images.test/property.jpg"],
+            }, TestContext.Current.CancellationToken);
+
+            await fixture.WaitForPropertyRecordAsync(propertyId);
+
+            await fixture.PublishAsync(new AccommodationCreatedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = propertyId,
+                Name = "Sea View Suite",
+                Description = "Two balconies",
+                Bedrooms = 2,
+                Images = ["https://images.test/suite.jpg"],
+                Quantity = 1,
+                PriceRange = new PriceRange(new Money(100m, "USD"), new Money(150m, "USD")),
+                Facilities = ["WiFi"],
+            }, TestContext.Current.CancellationToken);
+
+            await fixture.PublishBookableAsync(accommodationId, rate: bookingRate, cancellationToken: TestContext.Current.CancellationToken);
+
+            await fixture.WaitForAccommodationRecordAsync(accommodationId, r => r is { Bookable: true, City: "Barcelona" });
+
+            var response = await GetByIdAsync(accommodationId);
+
+            Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            var result = await response.Content.ReadFromJsonAsync<SearchResultDto>(jsonOptions, TestContext.Current.CancellationToken);
+
+            Assert.Equal(accommodationId, result.AccommodationId);
+            Assert.Equal(propertyId, result.PropertyId);
+            Assert.Equal("Sea View Suite", result.Name);
+            Assert.Equal("Two balconies", result.Description);
+            Assert.Equal(2, result.Bedrooms);
+            Assert.Equal(["https://images.test/suite.jpg"], result.Images);
+            Assert.Equal(["Pool", "WiFi"], result.Facilities.Order());
+            Assert.Equal("Seaside Property", result.PropertyName);
+            Assert.Equal("Right on the beach", result.PropertyDescription);
+            Assert.Equal("Barcelona", result.City);
+            Assert.Equal("Spain", result.Country);
+            Assert.Equal(41.38, result.Latitude);
+            Assert.Equal(2.17, result.Longitude);
+            Assert.Equal(bookingRate, result.Price);
+        }
+
+        [Fact]
+        public async Task GetById_UnknownAccommodation_ReturnsNotFound()
+        {
+            var response = await GetByIdAsync(Guid.NewGuid());
+
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetById_IndexedButNotBookable_ReturnsNotFound()
+        {
+            var notBookableId = Guid.NewGuid();
+            var notYetBookableId = Guid.NewGuid();
+
+            await PublishAccommodationCreatedAsync(notBookableId, Guid.NewGuid());
+            await PublishAccommodationCreatedAsync(notYetBookableId, Guid.NewGuid());
+
+            await fixture.PublishBookableAsync(notBookableId, bookable: false, cancellationToken: TestContext.Current.CancellationToken);
+
+            await fixture.WaitForAccommodationRecordAsync(notBookableId, r => r is { Bookable: false, BookableOccurredAt: not null });
+            await fixture.WaitForAccommodationRecordAsync(notYetBookableId, r => r is not null);
+
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, (await GetByIdAsync(notBookableId)).StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, (await GetByIdAsync(notYetBookableId)).StatusCode);
+        }
+
+        [Fact]
+        public async Task GetById_BookingEventSeenBeforeCatalogueDescription_ReturnsNotFound()
+        {
+            var accommodationId = Guid.NewGuid();
+
+            await fixture.PublishAsync(new AccommodationBookableChanged
+            {
+                AccommodationId = accommodationId,
+                Bookable = true,
+                Rate = new Money(100m, "USD"),
+                OccurredAt = DateTimeOffset.UtcNow,
+            }, TestContext.Current.CancellationToken);
+
+            await fixture.WaitForAccommodationRecordAsync(accommodationId, r => r is { Bookable: true });
+
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, (await GetByIdAsync(accommodationId)).StatusCode);
+        }
+
+        [Fact]
+        public async Task GetById_TombstonedOrPurgedAccommodation_ReturnsNotFound()
+        {
+            var accommodationId = Guid.NewGuid();
+            var propertyId = Guid.NewGuid();
+            var now = DateTimeOffset.UtcNow;
+
+            await PublishAccommodationCreatedAsync(accommodationId, propertyId, occurredAt: now);
+            await fixture.PublishBookableAsync(accommodationId, cancellationToken: TestContext.Current.CancellationToken);
+            await fixture.WaitForAccommodationRecordAsync(accommodationId, r => r is { Active: true, Bookable: true });
+
+            Assert.Equal(System.Net.HttpStatusCode.OK, (await GetByIdAsync(accommodationId)).StatusCode);
+
+            await fixture.PublishAsync(new AccommodationDeletedEvent
+            {
+                AccommodationId = accommodationId,
+                TenantId = "tenant-1",
+                PropertyId = propertyId,
+                OccurredAt = now.AddMinutes(1),
+            }, TestContext.Current.CancellationToken);
+
+            await fixture.WaitForAccommodationRecordAsync(accommodationId, r => r is { Active: false });
+
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, (await GetByIdAsync(accommodationId)).StatusCode);
+
+            await fixture.PurgeAsync(now.AddMinutes(2), TestContext.Current.CancellationToken);
+
+            Assert.Null(await fixture.GetRecordAsync<AccommodationIndexRecord>(accommodationId, TestContext.Current.CancellationToken));
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, (await GetByIdAsync(accommodationId)).StatusCode);
+        }
 
         [Fact]
         public async Task AccommodationCreated_FindableByKeywordFromNameOrDescription()

@@ -8,6 +8,13 @@ namespace BookFast.Identity.Tests
 {
     public sealed class IdentityApiFixture : ApiFixture<Program>
     {
+        public override async ValueTask InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            Environment.SetEnvironmentVariable("AuthServer__RequireConfirmedAccount", "false");
+        }
+
         // Quartz.NET's own logging bridge (Quartz.Logging.LogProvider) caches a reference to
         // whichever host's ILoggerFactory first starts the scheduler in a process-wide static field.
         //

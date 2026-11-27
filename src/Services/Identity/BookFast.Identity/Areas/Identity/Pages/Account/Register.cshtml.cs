@@ -3,6 +3,7 @@
 #nullable disable
 
 using BookFast.Common.Application.Integration;
+using BookFast.Common.Application.Security;
 using BookFast.Common.SeedWork;
 using BookFast.Identity.Core;
 using BookFast.Identity.Core.Email;
@@ -107,11 +108,16 @@ namespace BookFast.Identity.Areas.Identity.Pages.Account
 
         private async Task<Result<User>> CreateNewUserAsync(CancellationToken cancellationToken)
         {
-            var user = new User();
+            var user = new User { Id = Guid.CreateVersion7().ToString() };
 
             await userStore.SetUserNameAsync(user, Input.Email, cancellationToken);
             await emailStore.SetEmailAsync(user, Input.Email, cancellationToken);
             var result = await userManager.CreateAsync(user, Input.Password);
+
+            if (result.Succeeded)
+            {
+                result = await userManager.AddToRoleAsync(user, Roles.Customer);
+            }
 
             if (!result.Succeeded)
             {

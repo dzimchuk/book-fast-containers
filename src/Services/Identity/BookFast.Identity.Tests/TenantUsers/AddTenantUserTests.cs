@@ -69,6 +69,9 @@ namespace BookFast.Identity.Tests.TenantUsers
 
             var role = fixture.DbContext.Roles.Single(role => role.Name == Roles.TenantUser);
             Assert.Contains(fixture.DbContext.UserRoles, userRole => userRole.RoleId == role.Id && userRole.UserId == userId);
+
+            var customerRole = fixture.DbContext.Roles.Single(role => role.Name == Roles.Customer);
+            Assert.DoesNotContain(fixture.DbContext.UserRoles, userRole => userRole.RoleId == customerRole.Id && userRole.UserId == userId);
         }
     }
 }

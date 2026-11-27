@@ -23,6 +23,8 @@
 
             public int CookieExpireTimeInMinutes { get; set; }
             public bool CookieSlidingExpiration { get; set; }
+
+            public bool RequireConfirmedAccount { get; set; } = true;
         }
     }
 }

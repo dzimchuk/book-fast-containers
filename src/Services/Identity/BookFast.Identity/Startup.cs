@@ -108,7 +108,7 @@ namespace BookFast.Identity
 
             services.AddDefaultIdentity<User>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = authServerSettings.RequireConfirmedAccount;
 
                 options.Password.RequiredLength = 8;
                 options.Password.RequireDigit = true;

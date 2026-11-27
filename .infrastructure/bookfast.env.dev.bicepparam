@@ -26,6 +26,11 @@ param sqlServerAdministratorPassword = az.getSecret(sourceKeyVaultSubscriptionId
 param identitySigningCertificate = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-identity-signing-certificate')
 param identityEncryptionKey = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-identity-encryption-key')
 
+param providerAppClientSecret = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-provider-app-client-secret')
+param providerAppClientSecretHash = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-provider-app-client-secret-hash')
+param guestAppClientSecret = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-guest-app-client-secret')
+param guestAppClientSecretHash = az.getSecret(sourceKeyVaultSubscriptionId, sourceKeyVaultResourceGroup, sourceKeyVaultName, 'bookfast-dev-guest-app-client-secret-hash')
+
 param searchServiceParameters = {
   location: 'switzerlandnorth'
   sku: 'serverless'

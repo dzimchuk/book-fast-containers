@@ -14,7 +14,7 @@ RUN ! ldd /opt/microsoft/msodbcsql18/lib64/libmsodbcsql-*.so.* | grep "not found
 
 WORKDIR /migrations
 
-COPY Identity.sql PropertyManagement.sql Booking.sql OpenIddictClients.sql /migrations/
+COPY Identity.sql PropertyManagement.sql Booking.sql OpenIddictClients.sql WebSessions.sql /migrations/
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh

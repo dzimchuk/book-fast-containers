@@ -55,6 +55,22 @@ param identitySigningCertificate string
 @secure()
 param identityEncryptionKey string
 
+@description('Provider app OpenIddict client secret.')
+@secure()
+param providerAppClientSecret string
+
+@description('Provider app OpenIddict client secret hash.')
+@secure()
+param providerAppClientSecretHash string
+
+@description('Guest app OpenIddict client secret.')
+@secure()
+param guestAppClientSecret string
+
+@description('Guest app OpenIddict client secret hash.')
+@secure()
+param guestAppClientSecretHash string
+
 @description('Optional customer-managed email sender domain. Leave null to send from the Azure-managed domain only. The domain DNS records must be verified in Azure before it can be used.')
 param emailCustomDomain customDomainType?
 
@@ -170,6 +186,46 @@ module identityEncryptionKeySecret 'modules/keyVaultSecret.bicep' = {
     keyVaultName: keyVault.outputs.keyVaultName
     secretName: 'identity-encryption-key'
     secretValue: identityEncryptionKey
+  }
+}
+
+module providerAppClientSecretValue 'modules/keyVaultSecret.bicep' = {
+  name: '${solutionName}-${environment}-provider-app-client-secret'
+  scope: rg
+  params: {
+    keyVaultName: keyVault.outputs.keyVaultName
+    secretName: 'provider-app-client-secret'
+    secretValue: providerAppClientSecret
+  }
+}
+
+module providerAppClientSecretHashValue 'modules/keyVaultSecret.bicep' = {
+  name: '${solutionName}-${environment}-provider-app-client-secret-hash'
+  scope: rg
+  params: {
+    keyVaultName: keyVault.outputs.keyVaultName
+    secretName: 'provider-app-client-secret-hash'
+    secretValue: providerAppClientSecretHash
+  }
+}
+
+module guestAppClientSecretValue 'modules/keyVaultSecret.bicep' = {
+  name: '${solutionName}-${environment}-guest-app-client-secret'
+  scope: rg
+  params: {
+    keyVaultName: keyVault.outputs.keyVaultName
+    secretName: 'guest-app-client-secret'
+    secretValue: guestAppClientSecret
+  }
+}
+
+module guestAppClientSecretHashValue 'modules/keyVaultSecret.bicep' = {
+  name: '${solutionName}-${environment}-guest-app-client-secret-hash'
+  scope: rg
+  params: {
+    keyVaultName: keyVault.outputs.keyVaultName
+    secretName: 'guest-app-client-secret-hash'
+    secretValue: guestAppClientSecretHash
   }
 }
 

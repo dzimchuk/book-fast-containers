@@ -20,6 +20,12 @@ param resources object = {
 @description('Maximum number of seconds a migration run may take before the replica is terminated.')
 param replicaTimeout int = 1800
 
+@description('Provider app base URL without a trailing slash. Leave empty to skip its client.')
+param providerAppUrl string = ''
+
+@description('Guest app base URL without a trailing slash. Leave empty to skip its client.')
+param guestAppUrl string = ''
+
 var rg = resourceGroup()
 var location = rg.location
 
@@ -64,14 +70,26 @@ module migrationsJob 'modules/containerAppJob.bicep' = {
     replicaTimeout: replicaTimeout
     replicaRetryLimit: 0
     resources: resources
-    secrets: [
+    secrets: concat([
       {
         name: 'sql-connection'
         keyVaultUrl: '${urlPrefix}/sql-connection'
         identity: secretAccessIdentity.id
       }
-    ]
-    env: [
+    ], empty(providerAppUrl) ? [] : [
+      {
+        name: 'provider-app-client-secret-hash'
+        keyVaultUrl: '${urlPrefix}/provider-app-client-secret-hash'
+        identity: secretAccessIdentity.id
+      }
+    ], empty(guestAppUrl) ? [] : [
+      {
+        name: 'guest-app-client-secret-hash'
+        keyVaultUrl: '${urlPrefix}/guest-app-client-secret-hash'
+        identity: secretAccessIdentity.id
+      }
+    ])
+    env: concat([
       {
         name: 'SQL_CONNECTION_STRING'
         secretRef: 'sql-connection'
@@ -92,7 +110,25 @@ module migrationsJob 'modules/containerAppJob.bicep' = {
         name: 'BOOKING_URL'
         value: bookingUrl
       }
-    ]
+    ], empty(providerAppUrl) ? [] : [
+      {
+        name: 'PROVIDER_APP_URL'
+        value: providerAppUrl
+      }
+      {
+        name: 'PROVIDER_APP_CLIENT_SECRET_HASH'
+        secretRef: 'provider-app-client-secret-hash'
+      }
+    ], empty(guestAppUrl) ? [] : [
+      {
+        name: 'GUEST_APP_URL'
+        value: guestAppUrl
+      }
+      {
+        name: 'GUEST_APP_CLIENT_SECRET_HASH'
+        secretRef: 'guest-app-client-secret-hash'
+      }
+    ])
   }
 }
 

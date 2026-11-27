@@ -7,6 +7,11 @@ set -eu
 : "${PROPERTY_MANAGEMENT_URL:?PROPERTY_MANAGEMENT_URL must be set}"
 : "${SEARCH_URL:?SEARCH_URL must be set}"
 : "${BOOKING_URL:?BOOKING_URL must be set}"
+# Optional: each app's OpenIddict client is only registered when both of its variables are supplied
+: "${PROVIDER_APP_URL:=}"
+: "${PROVIDER_APP_CLIENT_SECRET_HASH:=}"
+: "${GUEST_APP_URL:=}"
+: "${GUEST_APP_CLIENT_SECRET_HASH:=}"
 
 SQLCMD=/opt/mssql-tools18/bin/sqlcmd
 
@@ -46,11 +51,18 @@ for script in Identity.sql PropertyManagement.sql Booking.sql; do
     "$SQLCMD" -b -I -t 0 -i "/migrations/${script}"
 done
 
+echo "==> Applying the web apps' session tables"
+"$SQLCMD" -b -I -t 0 -i /migrations/WebSessions.sql
+
 echo "==> Applying OpenIddict client configuration"
 "$SQLCMD" -b -I -t 0 -i /migrations/OpenIddictClients.sql \
     -v IdentityUrl="$IDENTITY_URL" \
        PropertyManagementUrl="$PROPERTY_MANAGEMENT_URL" \
        SearchUrl="$SEARCH_URL" \
-       BookingUrl="$BOOKING_URL"
+       BookingUrl="$BOOKING_URL" \
+       ProviderAppUrl="$PROVIDER_APP_URL" \
+       ProviderAppSecretHash="$PROVIDER_APP_CLIENT_SECRET_HASH" \
+       GuestAppUrl="$GUEST_APP_URL" \
+       GuestAppSecretHash="$GUEST_APP_CLIENT_SECRET_HASH"
 
 echo "==> Database migrations completed successfully"
